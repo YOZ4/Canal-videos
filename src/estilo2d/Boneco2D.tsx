@@ -374,7 +374,33 @@ const CabeloTopete: React.FC<{ d: Design }> = ({ d }) => (
   </g>
 );
 
-const Cabeca: React.FC<{ d: Design; r: Rosto; id: string }> = ({ d, r, id }) => {
+const CabeloSaiyajin: React.FC<{ id: string }> = ({ id }) => {
+  const contorno =
+    "M -138 14 L -186 -40 L -150 -62 L -212 -140 L -134 -132 L -176 -236 L -82 -176 L -70 -300 L -6 -196 L 46 -318 L 70 -192 L 160 -282 L 136 -150 L 220 -160 L 160 -72 L 196 -36 L 140 14 Q 122 -50 104 -70 Q 40 -92 -70 -86 Q -112 -70 -124 -20 Z";
+  return (
+    <g>
+      <defs>
+        <filter id={`brilho-${id}`} x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="14" />
+        </filter>
+        <linearGradient id={`ouro-${id}`} x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" stopColor="#fff38a" />
+          <stop offset="0.55" stopColor="#ffd93a" />
+          <stop offset="1" stopColor="#f0a81c" />
+        </linearGradient>
+      </defs>
+      <path d={contorno} fill="#ffe14a" opacity={0.75} filter={`url(#brilho-${id})`} />
+      <path d={contorno} fill={`url(#ouro-${id})`} stroke={CONTORNO} strokeWidth={LINHA} strokeLinejoin="round" />
+      {/* mecha caindo na testa */}
+      <path d="M -20 -92 L 6 -30 L 22 -90 Z" fill="#ffd93a" stroke={CONTORNO} strokeWidth={6} strokeLinejoin="round" />
+      {["M -120 -60 L -150 -130", "M -50 -95 L -60 -200", "M 30 -95 L 46 -230", "M 100 -80 L 130 -170"].map((p, i) => (
+        <path key={i} d={p} stroke="#e0a21c" strokeWidth={6} strokeLinecap="round" />
+      ))}
+    </g>
+  );
+};
+
+const Cabeca: React.FC<{ d: Design; r: Rosto; id: string; poder?: number }> = ({ d, r, id, poder = 0 }) => {
   const gid = `pele-${id}`;
   const browY = -78 - r.sobrancelhaY;
   return (
@@ -398,7 +424,7 @@ const Cabeca: React.FC<{ d: Design; r: Rosto; id: string }> = ({ d, r, id }) => 
       {[-1, 1].map((s) => (
         <ellipse key={s} cx={s * 78} cy={50} rx={30} ry={15} fill="#f2928f" opacity={0.45 * r.bochecha} />
       ))}
-      {d.cabelo === "cacheado" ? <CabeloCacheado d={d} /> : <CabeloTopete d={d} />}
+      {poder >= 0.5 ? <CabeloSaiyajin id={id} /> : d.cabelo === "cacheado" ? <CabeloCacheado d={d} /> : <CabeloTopete d={d} />}
       {/* sobrancelhas */}
       {[-1, 1].map((s) => (
         <g key={s} transform={`translate(${s * 52} ${browY}) rotate(${r.sobrancelha * s})`}>
@@ -409,8 +435,8 @@ const Cabeca: React.FC<{ d: Design; r: Rosto; id: string }> = ({ d, r, id }) => 
           )}
         </g>
       ))}
-      <Olho cx={-50} abre={r.olhos} olhar={r.olhar} d={d} id={id} />
-      <Olho cx={50} abre={r.olhos} olhar={r.olhar} d={d} id={id} />
+      <Olho cx={-50} abre={r.olhos} olhar={r.olhar} d={poder >= 0.5 ? { ...d, olhos: "#18b3a3" } : d} id={id} />
+      <Olho cx={50} abre={r.olhos} olhar={r.olhar} d={poder >= 0.5 ? { ...d, olhos: "#18b3a3" } : d} id={id} />
       {/* nariz */}
       <path d="M -9 38 Q 0 48 9 38" stroke={CONTORNO} strokeWidth={5} fill="none" strokeLinecap="round" />
       <Boca r={r} />
@@ -420,7 +446,7 @@ const Cabeca: React.FC<{ d: Design; r: Rosto; id: string }> = ({ d, r, id }) => 
 
 // ---------- corpo completo ----------
 
-export const Boneco2D: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string }> = ({ d, pose, rosto, id }) => {
+export const Boneco2D: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder?: number }> = ({ d, pose, rosto, id, poder = 0 }) => {
   const quadrilY = QUADRIL_Y + pose.agacha;
   const ombroY = -TRONCO + 32;
   const tid = `camisa-${id}`;
@@ -479,7 +505,7 @@ export const Boneco2D: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: strin
 
         {/* cabeça */}
         <g transform={`translate(0 ${-TRONCO - 60}) rotate(${pose.cabeca}) translate(0 ${-R_CABECA + 18})`}>
-          <Cabeca d={d} r={rosto} id={id} />
+          <Cabeca d={d} r={rosto} id={id} poder={poder} />
         </g>
       </g>
     </g>

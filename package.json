@@ -8,6 +8,7 @@
     "render": "remotion render LucasSaiyajin out/lucas-saiyajin.mp4",
     "render:teste": "remotion render TesteEstilo out/teste-estilo.mp4",
     "render:animacao": "remotion render TesteAnimacao out/teste-animacao.mp4",
+    "render:saiyajin": "remotion render Saiyajin2D out/saiyajin-2d.mp4",
     "upgrade": "remotion upgrade"
   },
   "dependencies": {

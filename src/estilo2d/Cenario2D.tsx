@@ -114,3 +114,48 @@ export const Praca: React.FC<{ camX: number }> = ({ camX }) => {
     </g>
   );
 };
+
+/** Quarto (cena interna). Coordenadas de tela 1080x1920; chão em CHAO_Y. */
+export const Quarto: React.FC<{ manha?: number }> = ({ manha = 1 }) => (
+  <g>
+    <rect x={-600} y={-600} width={2400} height={3200} fill="#8fb7c9" />
+    {/* faixa de parede inferior */}
+    <rect x={-600} y={CHAO_Y - 420} width={2400} height={420} fill="#7aa3b8" />
+    <rect x={-600} y={CHAO_Y - 432} width={2400} height={16} fill="#e9eef0" />
+    {/* janela */}
+    <g transform="translate(700 380)">
+      <rect x={-20} y={-20} width={340} height={440} rx={14} fill="#e9eef0" />
+      <rect x={0} y={0} width={300} height={400} fill={manha > 0.5 ? "#ffd59a" : "#2c2f5e"} />
+      <circle cx={210} cy={300} r={70} fill="#fff1c1" opacity={manha} />
+      <rect x={140} y={0} width={20} height={400} fill="#e9eef0" />
+      <rect x={0} y={190} width={300} height={20} fill="#e9eef0" />
+      {/* cortina */}
+      <path d="M -40 -30 Q 30 200 -10 450 L -70 450 L -70 -30 Z" fill="#e5735f" />
+      <path d="M 340 -30 Q 270 200 310 450 L 370 450 L 370 -30 Z" fill="#e5735f" />
+    </g>
+    {/* luz da janela no chão */}
+    <path d={`M 690 820 L 1010 820 L 1200 ${CHAO_Y + 300} L 500 ${CHAO_Y + 300} Z`} fill="#fff3d6" opacity={0.12 * manha} />
+    {/* pôster */}
+    <g transform="translate(150 520) rotate(-4)">
+      <rect x={0} y={0} width={210} height={290} rx={8} fill="#f2c94c" stroke="#1d1424" strokeWidth={6} />
+      <circle cx={105} cy={120} r={60} fill="#e5735f" />
+      <path d="M 70 200 L 140 200" stroke="#1d1424" strokeWidth={10} strokeLinecap="round" />
+      <path d="M 55 235 L 155 235" stroke="#1d1424" strokeWidth={10} strokeLinecap="round" />
+    </g>
+    {/* cama */}
+    <g transform={`translate(-60 ${CHAO_Y - 60})`}>
+      <rect x={-200} y={-320} width={40} height={340} rx={12} fill="#7c5236" />
+      <rect x={-200} y={-150} width={520} height={130} rx={20} fill="#9a6a45" />
+      <rect x={-180} y={-210} width={500} height={90} rx={30} fill="#f3f0ea" />
+      <rect x={-170} y={-245} width={150} height={60} rx={26} fill="#ffffff" stroke="#d9d5cc" strokeWidth={4} />
+      <path d="M -30 -220 Q 150 -260 320 -200 L 320 -120 L -30 -120 Z" fill="#5a8fd8" />
+    </g>
+    {/* piso */}
+    <rect x={-600} y={CHAO_Y - 20} width={2400} height={1200} fill="#c98f5a" />
+    {new Array(10).fill(0).map((_, i) => (
+      <rect key={i} x={-600} y={CHAO_Y + 40 + i * 70} width={2400} height={5} fill="#b07a48" />
+    ))}
+    {/* tapete */}
+    <ellipse cx={540} cy={CHAO_Y + 40} rx={340} ry={70} fill="#e5735f" opacity={0.9} />
+  </g>
+);
