@@ -46,6 +46,10 @@ export type Pose = {
   cruzado: number;
   /** balanço do cabelo em graus (movimento secundário) */
   cabelo: number;
+  /** vista 3/4 (só na vista de frente): -1 = virado pra esquerda, 0 = frente, 1 = direita */
+  vira: number;
+  /** "muque": 0..1 incha o bíceps do braço direito da tela (frente) */
+  biceps: number;
 };
 
 export type Rosto = {
@@ -84,6 +88,8 @@ export const POSE_BASE: Pose = {
   peD: { dx: 0, dy: 0 },
   cruzado: 0,
   cabelo: 0,
+  vira: 0,
+  biceps: 0,
 };
 
 /** pose base de perfil (em pé, olhando pra direita) */
@@ -259,15 +265,33 @@ const BracoDesenho: React.FC<{
   d: Design;
   alonga?: number;
   atras?: boolean;
-}> = ({ o, sentido, b, gesto, d, alonga = 1, atras }) => {
+  biceps?: number;
+  objeto?: React.ReactNode;
+}> = ({ o, sentido, b, gesto, d, alonga = 1, atras, biceps = 0, objeto }) => {
   const { c, m, dir } = pontosBraco(o, sentido, b, alonga);
+  // músculo: incha pro lado em que o antebraço dobra
+  const meio: P = [o[0] + (c[0] - o[0]) * 0.66, o[1] + (c[1] - o[1]) * 0.66];
+  const ux = (c[0] - o[0]) / BRACO;
+  const uy = (c[1] - o[1]) / BRACO;
+  const lado = (ux * dir[1] - uy * dir[0]) > 0 ? 1 : -1;
+  const bulge: P = [meio[0] - uy * 36 * lado * biceps, meio[1] + ux * 36 * lado * biceps];
+  const rb = 30 + 30 * biceps;
   const pele = atras ? d.peleSombra : d.pele;
   const camisa = atras ? d.camisaSombra : d.camisa;
-  const mangaFim: P = [o[0] + (c[0] - o[0]) * 0.62, o[1] + (c[1] - o[1]) * 0.62];
-  const punho: P = [o[0] + (c[0] - o[0]) * 0.5, o[1] + (c[1] - o[1]) * 0.5];
+  const fm = 0.62 - 0.26 * biceps;
+  const mangaFim: P = [o[0] + (c[0] - o[0]) * fm, o[1] + (c[1] - o[1]) * fm];
+  const punho: P = [o[0] + (c[0] - o[0]) * (fm - 0.12), o[1] + (c[1] - o[1]) * (fm - 0.12)];
   return (
     <g>
+      {biceps > 0.02 ? <circle cx={bulge[0]} cy={bulge[1]} r={rb + LINHA} fill={CONTORNO} /> : null}
       <Tubo pts={[o, c, m]} largura={62} cor={pele} sombra={atras ? undefined : d.peleSombra} curvo />
+      {biceps > 0.02 ? (
+        <>
+          <circle cx={bulge[0]} cy={bulge[1]} r={rb} fill={pele} />
+          <path d={`M ${bulge[0] - rb * 0.4} ${bulge[1] - rb * 0.3} Q ${bulge[0]} ${bulge[1] - rb * 0.75} ${bulge[0] + rb * 0.4} ${bulge[1] - rb * 0.3}`} stroke="#ffffff" strokeWidth={6} opacity={0.5} fill="none" strokeLinecap="round" />
+        </>
+      ) : null}
+      {objeto ? <g transform={`translate(${m[0] + dir[0] * 30} ${m[1] + dir[1] * 30})`}>{objeto}</g> : null}
       <Mao p={m} dir={dir} gesto={gesto} d={d} espelho={sentido} cor={pele} />
       <Tubo pts={[o, mangaFim]} largura={98} cor={camisa} />
       <circle cx={punho[0]} cy={punho[1]} r={40} fill={atras ? d.camisaSombra : d.manga} opacity={0.85} />
@@ -472,7 +496,7 @@ const CabeloTopete: React.FC<{ d: Design; perfil?: boolean }> = ({ d, perfil }) 
       {["M -120 0 Q -120 -120 -40 -170", "M -60 -40 Q -40 -150 60 -190", "M 10 -90 Q 60 -160 140 -198"].map((p, i) => (
         <path key={i} d={p} stroke={d.corCabeloSombra} strokeWidth={5} fill="none" strokeLinecap="round" />
       ))}
-      <path d="M -80 -150 Q -30 -190 40 -196" stroke="#fff6c8" strokeWidth={12} fill="none" strokeLinecap="round" opacity={0.6} />
+      <path d="M -80 -150 Q -30 -190 40 -196" stroke={d.brilhoCabelo} strokeWidth={12} fill="none" strokeLinecap="round" opacity={0.6} />
     </g>
   ) : (
     <g>
@@ -487,7 +511,7 @@ const CabeloTopete: React.FC<{ d: Design; perfil?: boolean }> = ({ d, perfil }) 
       {["M -110 -40 Q -110 -130 -40 -170", "M -60 -84 Q -40 -160 40 -190", "M 0 -86 Q 30 -160 100 -196", "M 60 -82 Q 90 -140 130 -176"].map((p, i) => (
         <path key={i} d={p} stroke={d.corCabeloSombra} strokeWidth={5} fill="none" strokeLinecap="round" />
       ))}
-      <path d="M -80 -150 Q -30 -190 40 -198" stroke="#fff6c8" strokeWidth={12} fill="none" strokeLinecap="round" opacity={0.6} />
+      <path d="M -80 -150 Q -30 -190 40 -198" stroke={d.brilhoCabelo} strokeWidth={12} fill="none" strokeLinecap="round" opacity={0.6} />
     </g>
   );
 
@@ -531,7 +555,7 @@ const Cabelo: React.FC<{ d: Design; poder: number; id: string; perfil?: boolean;
 
 // ---------- cabeça ----------
 
-const Cabeca: React.FC<{ d: Design; r: Rosto; id: string; poder: number; balanco: number }> = ({ d, r, id, poder, balanco }) => {
+const Cabeca: React.FC<{ d: Design; r: Rosto; id: string; poder: number; balanco: number; vira?: number }> = ({ d, r, id, poder, balanco, vira = 0 }) => {
   const gid = `pele-${id}`;
   const browY = -78 - r.sobrancelhaY;
   const corOlho = poder >= 0.5 ? "#18b3a3" : d.olhos;
@@ -544,26 +568,31 @@ const Cabeca: React.FC<{ d: Design; r: Rosto; id: string; poder: number; balanco
           <stop offset="0.9" stopColor={d.peleSombra} />
         </linearGradient>
       </defs>
-      {[-1, 1].map((s) => (
-        <g key={s}>
-          <ellipse cx={s * 132} cy={8} rx={28} ry={42} fill={s > 0 ? d.peleSombra : d.pele} stroke={CONTORNO} strokeWidth={LINHA} />
-          <ellipse cx={s * 136} cy={10} rx={12} ry={22} fill={d.peleSombra} opacity={0.7} />
-        </g>
-      ))}
+      {[-1, 1].map((s) =>
+        // a orelha do lado pra onde ele vira some atrás da cabeça
+        s * vira > 0.45 ? null : (
+          <g key={s} transform={`translate(${-vira * 34 * (s * vira < 0 ? 1.2 : 1)} 0)`}>
+            <ellipse cx={s * 132} cy={8} rx={28} ry={42} fill={s > 0 ? d.peleSombra : d.pele} stroke={CONTORNO} strokeWidth={LINHA} />
+            <ellipse cx={s * 136} cy={10} rx={12} ry={22} fill={d.peleSombra} opacity={0.7} />
+          </g>
+        ),
+      )}
       <circle r={R_CABECA} fill={`url(#${gid})`} stroke={CONTORNO} strokeWidth={LINHA} />
       {[-1, 1].map((s) => (
-        <ellipse key={s} cx={s * 78} cy={50} rx={30} ry={15} fill="#f2928f" opacity={0.45 * r.bochecha} />
+        <ellipse key={s} cx={s * 78 + vira * 40} cy={50} rx={30 * (1 - s * vira * 0.3)} ry={15} fill="#f2928f" opacity={0.45 * r.bochecha} />
       ))}
-      <Cabelo d={d} poder={poder} id={id} balanco={balanco} />
+      <g transform={`translate(${-vira * 22} 0)`}>
+        <Cabelo d={d} poder={poder} id={id} balanco={balanco} />
+      </g>
       {[-1, 1].map((s) => (
-        <g key={s} transform={`translate(${s * 52} ${browY}) rotate(${r.sobrancelha * s})`}>
+        <g key={s} transform={`translate(${s * 52 * (1 - s * vira * 0.25) + vira * 42} ${browY}) rotate(${r.sobrancelha * s}) scale(${1 - s * vira * 0.25} 1)`}>
           {d.sobrancelhaGrossa ? <rect x={-38} y={-10} width={76} height={20} rx={10} fill={d.sobrancelha} /> : <rect x={-30} y={-5} width={60} height={10} rx={5} fill={d.sobrancelha} />}
         </g>
       ))}
-      <Olho cx={-50} abre={r.olhos} olhar={r.olhar} cor={corOlho} pele={d.pele} id={id} />
-      <Olho cx={50} abre={r.olhos} olhar={r.olhar} cor={corOlho} pele={d.pele} id={id} />
-      <path d="M -9 38 Q 0 48 9 38" stroke={CONTORNO} strokeWidth={5} fill="none" strokeLinecap="round" />
-      <Boca r={r} />
+      <Olho cx={-50 * (1 + vira * 0.25) + vira * 42} abre={r.olhos} olhar={[r.olhar[0] + vira * 0.5, r.olhar[1]]} cor={corOlho} pele={d.pele} id={id} rx0={40 * (1 + vira * 0.22)} />
+      <Olho cx={50 * (1 - vira * 0.25) + vira * 42} abre={r.olhos} olhar={[r.olhar[0] + vira * 0.5, r.olhar[1]]} cor={corOlho} pele={d.pele} id={`${id}b`} rx0={40 * (1 - vira * 0.22)} />
+      <path d={`M ${-9 + vira * 70} 38 Q ${vira * 70} 48 ${9 + vira * 70} 38`} stroke={CONTORNO} strokeWidth={5} fill="none" strokeLinecap="round" />
+      <Boca r={r} x={vira * 55} escalaX={1 - Math.abs(vira) * 0.2} />
     </g>
   );
 };
@@ -586,14 +615,14 @@ const CabecaPerfil: React.FC<{ d: Design; r: Rosto; id: string; poder: number; b
       <circle r={R_CABECA} fill={`url(#${gid})`} stroke={CONTORNO} strokeWidth={LINHA} />
       <circle cx={R_CABECA - 6} cy={34} r={19} fill={d.pele} />
       {/* orelha */}
-      <ellipse cx={-22} cy={8} rx={30} ry={42} fill={d.pele} stroke={CONTORNO} strokeWidth={LINHA} />
-      <path d="M -26 -14 Q -8 6 -26 28" stroke={d.peleSombra} strokeWidth={8} fill="none" strokeLinecap="round" />
+      <path d="M -24 -26 Q -64 -30 -62 6 Q -60 40 -24 36" fill={d.pele} stroke={CONTORNO} strokeWidth={6} strokeLinejoin="round" />
+      <path d="M -32 -12 Q -50 -10 -48 6 Q -46 20 -34 20" stroke={d.peleSombra} strokeWidth={7} fill="none" strokeLinecap="round" />
       <ellipse cx={70} cy={50} rx={26} ry={14} fill="#f2928f" opacity={0.45 * r.bochecha} />
       <Cabelo d={d} poder={poder} id={id} perfil balanco={balanco} />
-      <g transform={`translate(74 ${browY}) rotate(${-r.sobrancelha * 0.8})`}>
+      <g transform={`translate(82 ${browY}) rotate(${-r.sobrancelha * 0.8})`}>
         {d.sobrancelhaGrossa ? <rect x={-30} y={-10} width={62} height={20} rx={10} fill={d.sobrancelha} /> : <rect x={-24} y={-5} width={50} height={10} rx={5} fill={d.sobrancelha} />}
       </g>
-      <Olho cx={76} abre={r.olhos} olhar={[0.9 + r.olhar[0] * 0.1, r.olhar[1]]} cor={corOlho} pele={d.pele} id={`${id}p`} rx0={30} />
+      <Olho cx={84} abre={r.olhos} olhar={[0.9 + r.olhar[0] * 0.1, r.olhar[1]]} cor={corOlho} pele={d.pele} id={`${id}p`} rx0={30} />
       <Boca r={r} x={98} escalaX={0.6} />
     </g>
   );
@@ -601,7 +630,7 @@ const CabecaPerfil: React.FC<{ d: Design; r: Rosto; id: string; poder: number; b
 
 // ---------- corpo: vista de frente ----------
 
-const Frente: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder: number }> = ({ d, pose, rosto, id, poder }) => {
+const Frente: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder: number; objeto?: React.ReactNode }> = ({ d, pose, rosto, id, poder, objeto }) => {
   const quadrilY = QUADRIL_Y + pose.agacha;
   const ombroY = -TRONCO + 32;
   const tid = `camisa-${id}`;
@@ -623,6 +652,7 @@ const Frente: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
       <PernaDesenho joelhoX={-1} quadril={[-56, quadrilY]} pe={peE} d={d} ladoTenis={-1} />
       <PernaDesenho joelhoX={1} quadril={[56, quadrilY]} pe={peD} d={d} ladoTenis={1} />
       <g transform={`translate(0 ${quadrilY}) rotate(${pose.inclina})`}>
+        <g transform={`scale(${1 - Math.abs(pose.vira) * 0.12} 1)`}>
         <rect x={-36} y={-TRONCO - 72} width={72} height={90} rx={10} fill={d.pele} stroke={CONTORNO} strokeWidth={LINHA} />
         <rect x={-30} y={-TRONCO - 4} width={60} height={22} fill={d.peleSombra} opacity={0.6} />
         <path
@@ -634,10 +664,26 @@ const Frente: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
         />
         <path d="M -95 -250 Q -78 -205 -92 -160" stroke={d.camisaSombra} strokeWidth={4} fill="none" strokeLinecap="round" />
         <path d="M 108 -110 Q 82 -95 88 -60" stroke={d.camisaSombra} strokeWidth={4} fill="none" strokeLinecap="round" />
+        {d.numero ? (
+          <text
+            x={pose.vira * 50}
+            y={-150}
+            textAnchor="middle"
+            fontFamily="Fredoka"
+            fontWeight={700}
+            fontSize={170}
+            fill={d.corNumero ?? CONTORNO}
+            transform={`skewX(${-pose.vira * 8})`}
+            opacity={0.92}
+          >
+            {d.numero}
+          </text>
+        ) : null}
+        </g>
         <BracoDesenho o={[-OMBRO_X + 8, ombroY]} sentido={-1} b={bE} gesto={cruz > 0.5 ? "bola" : pose.maoE} d={d} alonga={alonga} />
-        <BracoDesenho o={[OMBRO_X - 8, ombroY]} sentido={1} b={bD} gesto={cruz > 0.5 ? "bola" : pose.maoD} d={d} alonga={alonga} />
+        <BracoDesenho o={[OMBRO_X - 8, ombroY]} sentido={1} b={bD} gesto={cruz > 0.5 ? "bola" : pose.maoD} d={d} alonga={alonga} biceps={pose.biceps} objeto={objeto} />
         <g transform={`translate(0 ${-TRONCO - 60}) rotate(${pose.cabeca}) translate(0 ${-R_CABECA + 18})`}>
-          <Cabeca d={d} r={rosto} id={id} poder={poder} balanco={pose.cabelo} />
+          <Cabeca d={d} r={rosto} id={id} poder={poder} balanco={pose.cabelo} vira={pose.vira} />
         </g>
       </g>
     </g>
@@ -646,7 +692,7 @@ const Frente: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
 
 // ---------- corpo: vista de perfil (olhando pra +x) ----------
 
-const Perfil: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder: number }> = ({ d, pose, rosto, id, poder }) => {
+const Perfil: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder: number; objeto?: React.ReactNode }> = ({ d, pose, rosto, id, poder, objeto }) => {
   const quadrilY = QUADRIL_Y + pose.agacha;
   const ombroY = -TRONCO + 40;
   const tid = `camisap-${id}`;
@@ -680,7 +726,7 @@ const Perfil: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
         <g transform={`translate(4 ${-TRONCO - 60}) rotate(${pose.cabeca}) translate(0 ${-R_CABECA + 18})`}>
           <CabecaPerfil d={d} r={rosto} id={id} poder={poder} balanco={pose.cabelo} />
         </g>
-        <BracoDesenho o={[8, ombroY]} sentido={1} b={pose.bracoD} gesto={pose.maoD} d={d} />
+        <BracoDesenho o={[8, ombroY]} sentido={1} b={pose.bracoD} gesto={pose.maoD} d={d} objeto={objeto} />
       </g>
     </g>
   );
@@ -688,13 +734,23 @@ const Perfil: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
 
 // ---------- componente principal ----------
 
-export const Boneco2D: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder?: number; opacidade?: number }> = ({
+export const Boneco2D: React.FC<{
+  d: Design;
+  pose: Pose;
+  rosto: Rosto;
+  id: string;
+  poder?: number;
+  opacidade?: number;
+  /** objeto segurado (frente: mão direita da tela; perfil: mão da frente) */
+  naMao?: React.ReactNode;
+}> = ({
   d,
   pose,
   rosto,
   id,
   poder = 0,
   opacidade = 1,
+  naMao,
 }) => {
   const peMin = Math.min(pose.peE.dy, pose.peD.dy);
   return (
@@ -703,7 +759,11 @@ export const Boneco2D: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: strin
       transform={`translate(${pose.x} ${pose.y}) scale(${(pose.escala * pose.lado * pose.largura) / Math.sqrt(pose.estica)} ${pose.escala * pose.estica})`}
     >
       <ellipse cx={0} cy={2} rx={pose.vista === "perfil" ? 150 : 190} ry={22} fill="#000" opacity={0.18 * Math.max(0.2, 1 + peMin / 400)} />
-      {pose.vista === "perfil" ? <Perfil d={d} pose={pose} rosto={rosto} id={id} poder={poder} /> : <Frente d={d} pose={pose} rosto={rosto} id={id} poder={poder} />}
+      {pose.vista === "perfil" ? (
+        <Perfil d={d} pose={pose} rosto={rosto} id={id} poder={poder} objeto={naMao} />
+      ) : (
+        <Frente d={d} pose={pose} rosto={rosto} id={id} poder={poder} objeto={naMao} />
+      )}
     </g>
   );
 };

@@ -23,6 +23,11 @@ export type Design = {
   sobrancelha: string;
   /** sobrancelhas grossas aparecem (Diego); no Lucas ficam finas */
   sobrancelhaGrossa: boolean;
+  /** reflexo de luz no cabelo */
+  brilhoCabelo: string;
+  /** número estampado na camiseta (opcional) */
+  numero?: string;
+  corNumero?: string;
 };
 
 export const CONTORNO = "#1d1424";
@@ -31,9 +36,9 @@ export const LUCAS: Design = {
   nome: "Lucas",
   pele: "#f2c39d",
   peleSombra: "#dea27c",
-  camisa: "#3474dc",
-  camisaSombra: "#2f58b4",
-  manga: "#2a62c6",
+  camisa: "#f4c531",
+  camisaSombra: "#d39d1c",
+  manga: "#e0ab22",
   calca: "#3d5d9b",
   calcaSombra: "#33508a",
   tenis: "#f7f7fa",
@@ -44,23 +49,27 @@ export const LUCAS: Design = {
   corCabeloSombra: "#3d3540",
   sobrancelha: "#1f171d",
   sobrancelhaGrossa: false,
+  brilhoCabelo: "#5a5060",
+  numero: "3",
+  corNumero: "#1d1424",
 };
 
 export const DIEGO: Design = {
   nome: "Diego",
   pele: "#e9ad84",
   peleSombra: "#cf8f69",
-  camisa: "#d8363c",
-  camisaSombra: "#b22c40",
-  manga: "#b8262f",
+  camisa: "#2f9e57",
+  camisaSombra: "#237844",
+  manga: "#27884b",
   calca: "#3d5d9b",
   calcaSombra: "#33508a",
   tenis: "#f7f7fa",
   sola: "#cfcfd8",
   olhos: "#3f6a2a",
   cabelo: "topete",
-  corCabelo: "#f2cb48",
-  corCabeloSombra: "#c99a2c",
-  sobrancelha: "#c48d2a",
+  corCabelo: "#7b4a2b",
+  corCabeloSombra: "#5a331c",
+  sobrancelha: "#4e2c18",
   sobrancelhaGrossa: true,
+  brilhoCabelo: "#b07a52",
 };

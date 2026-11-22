@@ -3,13 +3,17 @@
 Projeto Remotion de vídeos verticais (1080x1920, 30 fps) para o canal.
 
 ## Estilo principal: 2D vetorial (`src/estilo2d/`)
-- Personagens oficiais em `personagens.ts` (Lucas: cacheado, camiseta azul; Diego: topete loiro, camiseta vermelha,
-  olhar "meio fechado" e sorriso de canto, pose padrão braços cruzados). Folha renderizada: composição `Folha`.
+- Personagens oficiais em `personagens.ts`. Lucas (personalidade inspirada no Sanji): cacheado preto,
+  camiseta AMARELA com o número 3. Diego (inspirado no Zoro): topete MARROM, camiseta VERDE, olhar "meio fechado"
+  e sorriso de canto, pose padrão braços cruzados. Folhas renderizadas: composições `Folha` e `FolhaPoses`.
 - Visual: contorno escuro `#1d1424`, sombra suave no lado direito, olhos grandes com íris, braços "macarrão".
 - `Boneco2D.tsx`: pose (ombro/cotovelo em graus, pernas com IK — pés ficam plantados, `agacha`, `estica`
   para squash & stretch, `cruzado`) e rosto (olhos, olhar, sobrancelha, sorriso, boca, canto).
 - `anim.ts`: keyframes com curva por trecho (`k`, `kPose`, `kRosto`), `CURVA.antecipa/exagera/...`,
   automáticos `piscar`, `respira`, `fala`, `andar`, `tremor`.
+- Vista 3/4: `vira` (-1..1) na vista de frente. `biceps` (0..1) incha o braço. `naMao` segura objeto (`Objetos.tsx`).
+- Cenários: `Praca`, `Quarto`, `Cozinha`, `RuaNoite`. Transições (`Transicoes.tsx`): `Iris`, `Cortina`, `ZoomRapido`.
+- Trilha: `scripts/gerar_trilha.py` gera `public/musica/trilha-leve.wav` (abaixe o volume nos momentos de tensão).
 - Vistas: `vista: "frente" | "perfil"` (PERFIL_BASE; lado -1 = olha pra esquerda). `giro()` faz a virada cartoon.
 - Mãos: `maoE/maoD`: bola | aberta | punho | aponta | joia. Braços são curvos.
 - `Efeitos2D.tsx`: LinhasFoco, LinhasMovimento, Gota, Veia, Brilhos, Simbolo (?/!), Impacto, Poeira.

@@ -159,3 +159,80 @@ export const Quarto: React.FC<{ manha?: number }> = ({ manha = 1 }) => (
     <ellipse cx={540} cy={CHAO_Y + 40} rx={340} ry={70} fill="#e5735f" opacity={0.9} />
   </g>
 );
+
+/** Cozinha (cena interna). Chão em CHAO_Y; ocupa x -600..1700. */
+export const Cozinha: React.FC = () => (
+  <g>
+    <rect x={-600} y={-600} width={2400} height={3200} fill="#f3e3c3" />
+    {/* azulejos */}
+    {new Array(14).fill(0).map((_, i) =>
+      new Array(6).fill(0).map((__, j) => (
+        <rect key={`${i}-${j}`} x={-560 + i * 170} y={780 + j * 100} width={160} height={90} rx={6} fill="#e9d3a9" />
+      )),
+    )}
+    {/* armários de cima */}
+    {[0, 1, 2, 3].map((i) => (
+      <g key={i} transform={`translate(${-200 + i * 300} 260)`}>
+        <rect width={280} height={360} rx={14} fill="#5aa6a0" stroke="#1d1424" strokeWidth={6} />
+        <circle cx={i % 2 ? 40 : 240} cy={300} r={12} fill="#f1e0b0" stroke="#1d1424" strokeWidth={4} />
+      </g>
+    ))}
+    {/* geladeira */}
+    <g transform="translate(1180 520)">
+      <rect width={360} height={CHAO_Y - 520} rx={26} fill="#e9eef0" stroke="#1d1424" strokeWidth={7} />
+      <line x1={0} x2={360} y1={330} y2={330} stroke="#1d1424" strokeWidth={6} />
+      <rect x={300} y={120} width={18} height={150} rx={9} fill="#9aa4ad" />
+      <rect x={300} y={400} width={18} height={200} rx={9} fill="#9aa4ad" />
+      <rect x={60} y={60} width={90} height={110} fill="#f4c531" stroke="#1d1424" strokeWidth={4} transform="rotate(-6 100 110)" />
+    </g>
+    {/* bancada */}
+    <rect x={-600} y={CHAO_Y - 420} width={1760} height={420} fill="#5aa6a0" stroke="#1d1424" strokeWidth={6} />
+    <rect x={-620} y={CHAO_Y - 450} width={1800} height={40} rx={10} fill="#e7e2d6" stroke="#1d1424" strokeWidth={6} />
+    {[0, 1, 2, 3, 4].map((i) => (
+      <rect key={i} x={-560 + i * 340} y={CHAO_Y - 380} width={300} height={340} rx={10} fill="none" stroke="#1d1424" strokeWidth={5} opacity={0.5} />
+    ))}
+    {/* piso */}
+    <rect x={-600} y={CHAO_Y - 20} width={2400} height={1200} fill="#d9c7a7" />
+    {new Array(16).fill(0).map((_, i) => (
+      <rect key={i} x={-600 + i * 150} y={CHAO_Y - 20} width={6} height={1200} fill="#c7b38f" />
+    ))}
+  </g>
+);
+
+/** Rua à noite (externa). Chão em CHAO_Y; ocupa x -600..2600. */
+export const RuaNoite: React.FC<{ camX?: number }> = ({ camX = 0 }) => (
+  <g>
+    <defs>
+      <linearGradient id="ceuNoite" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0" stopColor="#141633" />
+        <stop offset="1" stopColor="#3a2e63" />
+      </linearGradient>
+    </defs>
+    <rect x={-2000} y={-1000} width={6000} height={4000} fill="url(#ceuNoite)" />
+    <g transform={`translate(${camX * 0.9} 0)`}>
+      <circle cx={900} cy={420} r={90} fill="#f6f1d6" />
+      {new Array(40).fill(0).map((_, i) => (
+        <circle key={i} cx={-600 + random(`e${i}`) * 3200} cy={100 + random(`ey${i}`) * 700} r={2 + random(`er${i}`) * 3} fill="#fff" opacity={0.8} />
+      ))}
+    </g>
+    <g transform={`translate(${camX * 0.4} 0)`}>
+      {new Array(12).fill(0).map((_, i) => (
+        <Predio key={i} x={-600 + i * 300} w={240} h={260 + random(`rn${i}`) * 380} cor="#272449" janela="#ffd36b" seed={300 + i} />
+      ))}
+    </g>
+    {/* postes */}
+    {[-200, 700, 1600, 2500].map((x, i) => (
+      <g key={i}>
+        <path d={`M ${x - 260} ${CHAO_Y} L ${x + 260} ${CHAO_Y} L ${x + 70} ${CHAO_Y - 720} L ${x - 70} ${CHAO_Y - 720} Z`} fill="#ffe9a8" opacity={0.12} />
+        <rect x={x - 10} y={CHAO_Y - 760} width={20} height={760} fill="#1d1d2c" />
+        <rect x={x - 50} y={CHAO_Y - 780} width={100} height={30} rx={10} fill="#1d1d2c" />
+        <ellipse cx={x} cy={CHAO_Y - 745} rx={40} ry={12} fill="#ffe9a8" />
+      </g>
+    ))}
+    <rect x={-2000} y={CHAO_Y - 20} width={6000} height={1200} fill="#26243a" />
+    <rect x={-2000} y={CHAO_Y - 26} width={6000} height={14} fill="#3b3856" />
+    {new Array(30).fill(0).map((_, i) => (
+      <rect key={i} x={-2000 + i * 220} y={CHAO_Y + 210} width={120} height={14} rx={7} fill="#e8d36b" opacity={0.8} />
+    ))}
+  </g>
+);
