@@ -1,0 +1,26 @@
+{
+  "name": "canal-videos",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vídeos do canal feitos com Remotion + React Three Fiber",
+  "scripts": {
+    "dev": "remotion studio",
+    "render": "remotion render LucasSaiyajin out/lucas-saiyajin.mp4",
+    "upgrade": "remotion upgrade"
+  },
+  "dependencies": {
+    "@react-three/fiber": "9.3.0",
+    "@remotion/cli": "4.0.545",
+    "@remotion/fonts": "4.0.545",
+    "@remotion/three": "4.0.545",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "remotion": "4.0.545",
+    "three": "0.180.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.12",
+    "@types/three": "0.180.0",
+    "typescript": "5.9.2"
+  }
+}
