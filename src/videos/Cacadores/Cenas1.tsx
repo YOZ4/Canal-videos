@@ -12,6 +12,25 @@ import { T, TF } from "./tempo";
 
 type P = { t0: number };
 
+const SOMBRA = {
+  ...EXAMINADOR,
+  pele: "#140a10",
+  peleSombra: "#140a10",
+  camisa: "#140a10",
+  camisaSombra: "#140a10",
+  manga: "#140a10",
+  calca: "#140a10",
+  calcaSombra: "#140a10",
+  tenis: "#140a10",
+  sola: "#140a10",
+  corCabelo: "#140a10",
+  corCabeloSombra: "#140a10",
+  sobrancelha: "#140a10",
+  brilhoCabelo: "#140a10",
+  gravata: "#140a10",
+  olhos: "#140a10",
+};
+
 // S01 — prova normal: esqueceu o próprio nome
 export const S01: React.FC<P> = () => {
   const f = useCurrentFrame();
@@ -44,11 +63,20 @@ export const S02: React.FC<P> = () => {
   const pose = frente(560, { cabeca: k(f, [[0, 0], [20, -6]]), bracoE: { ombro: 10, cotovelo: -10 }, bracoD: { ombro: 10, cotovelo: -10 } });
   const rosto = vivo({ ...ROSTO_BASE, olhos: 1.28, sobrancelha: -18, sobrancelhaY: 18, sorriso: -0.9, boca: 0 }, f, "s2");
   const sh = tremor(f, 3);
+  const sombraPose = frente(560, { escala: ESC * 1.9, y: CHAO_Y + 380, cruzado: 1 });
+  const [sx, sy] = posCabeca(sombraPose);
   return (
     <>
       <Palco cam={{ x: 560 + sh.x, y: 900 + sh.y, zoom: k(f, [[0, 1.6], [115, 1.9]]) }}>
         <Sala />
         <rect x={-800} y={-600} width={3000} height={3000} fill="#5a0a14" opacity={0.55} />
+        {/* sombra gigante do examinador surgindo atrás */}
+        <g opacity={k(f, [[10, 0], [40, 0.95]])} transform={`translate(0 ${k(f, [[10, 120], [50, 0, CURVA.sai]])})`}>
+          <Boneco2D id="s2sombra" d={SOMBRA} pose={sombraPose} rosto={{ ...ROSTO_BASE, olhos: 0, sorriso: 0 }} />
+          {[-1, 1].map((sd) => (
+            <path key={sd} transform={`translate(${sx + sd * 50 * ESC * 1.9} ${sy - 12 * ESC * 1.9}) rotate(${sd * 14})`} d="M -34 0 Q 0 -22 34 0 Q 0 10 -34 0 Z" fill="#ff2a3a" />
+          ))}
+        </g>
         <Boneco2D id="s2" d={LUCAS} pose={pose} rosto={rosto} />
         <LinhasFoco f={f} cx={560} cy={700} forca={0.5} cor="#ff6a6a" raio={420} />
       </Palco>
@@ -358,24 +386,36 @@ export const S13: React.FC<P> = ({ t0 }) => {
   );
 };
 
-// S14 — ancestrais: caça por persistência
+// S14 — ancestrais: caça por persistência (horas correndo até o animal cansar)
 export const S14: React.FC<P> = () => {
   const f = useCurrentFrame();
-  const camX = 1000 + f * 10;
-  const cansado = interpolate(f, [40, 110], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const camX = 1000 + f * 11;
+  const cansado = interpolate(f, [30, 100], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const w = andarPerfil(f, 1, 8);
-  const anX = 1650 + f * 10 - cansado * 260;
+  const anX = 1560 + f * 11 - cansado * 330;
   const sombra = { ...LUCAS, camisa: "#3a1f2a", camisaSombra: "#3a1f2a", manga: "#3a1f2a", pele: "#3a1f2a", peleSombra: "#3a1f2a", calca: "#3a1f2a", calcaSombra: "#3a1f2a", tenis: "#3a1f2a", sola: "#3a1f2a", corCabelo: "#3a1f2a", corCabeloSombra: "#3a1f2a", numero: undefined };
+  const lanca = (
+    <g>
+      <rect x={-6} y={-80} width={12} height={420} fill="#3a1f2a" />
+      <path d="M -16 330 L 0 400 L 16 330 Z" fill="#3a1f2a" />
+    </g>
+  );
   return (
     <>
-      <Palco cam={{ x: camX + 200, y: 1040, zoom: 0.78 }}>
+      <Palco cam={{ x: camX + 260, y: 1080, zoom: 1.0 }}>
         <Savana camX={camX - 1000} />
-        <g transform={`translate(${anX} ${CHAO_Y - 40}) scale(1.1)`}>
+        {/* ondas de calor */}
+        {[0, 1, 2, 3, 4].map((i) => (
+          <path key={i} d={`M ${camX - 300 + i * 260} ${CHAO_Y - 200 - ((f * 3 + i * 40) % 300)} q 30 -30 0 -60 q -30 -30 0 -60`} stroke="#fff1b8" strokeWidth={8} fill="none" opacity={0.35} strokeLinecap="round" />
+        ))}
+        <g transform={`translate(${anX} ${CHAO_Y - 40}) scale(1.35)`}>
           <Antilope fase={f} cansado={cansado} />
         </g>
-        <Boneco2D id="s14" d={sombra} pose={perfil(1000 + f * 10, { y: CHAO_Y - 40 - w.bob, peE: w.peE, peD: w.peD, bracoE: w.bracoE, bracoD: { ombro: 60, cotovelo: 40 }, inclina: 8 })} rosto={ROSTO_BASE} />
+        <Boneco2D id="s14" d={sombra} pose={perfil(1000 + f * 11, { y: CHAO_Y - 40 - w.bob, peE: w.peE, peD: w.peD, bracoE: w.bracoE, bracoD: { ombro: 70, cotovelo: 50 }, inclina: 9 })} rosto={ROSTO_BASE} naMao={lanca} naMaoGira />
+        <Poeira x={anX - 100} y={CHAO_Y - 40} f={f % 20} de={0} dur={20} />
       </Palco>
       <Rotulo2 texto="caça por persistência" x={540} y={420} de={10} tamanho={64} cor="#fff6dc" />
+      <Rotulo2 texto="horas correndo..." x={540} y={540} de={40} tamanho={52} cor="#ffd23f" />
     </>
   );
 };

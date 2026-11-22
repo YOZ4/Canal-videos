@@ -1,5 +1,6 @@
 import { AbsoluteFill, Html5Audio, Sequence, interpolate, staticFile } from "remotion";
 import { Conquista, Contagem, LegendaPalavra, Selo } from "../../estilo2d/UI";
+import { Cortina, Iris, ZoomRapido } from "../../estilo2d/Transicoes";
 import * as C1 from "./Cenas1";
 import * as C2 from "./Cenas2";
 import { Som } from "./comum";
@@ -47,6 +48,7 @@ const CENAS: [React.FC<{ t0: number }>, number][] = [
   [C2.S37, T("Na vida real")],
   [C2.S38, T("No mundo Hunter faz")],
   [C2.S39, T("Segundo round")],
+  [C2.S40, T("Três")],
   [C2.S41, T("um soco só")],
   [C2.S42, T("O Diego voa")],
   [C2.S43, T("Licença Hunter desbloqueada")],
@@ -77,6 +79,13 @@ export const Cacadores: React.FC = () => {
       <Conquista texto="NEN" icone="✦" de={T("Nen desbloqueado")} ate={T("Fase final") + 26} cor="#7d5bd6" />
       <Conquista texto="LICENÇA HUNTER" icone="★" de={T("Licença Hunter desbloqueada")} ate={T("Você estende") - 2} cor="#e8343f" />
       <Selo texto="ROUND 2" de={T("Segundo round")} ate={T("Três") - 1} cor="#e8343f" y={300} />
+      {/* transições */}
+      <Iris de={T("Seu avô sempre") - 8} dur={16} x={540} y={760} />
+      <Iris de={T("Aí você lembra") - 8} dur={16} x={540} y={900} />
+      <Cortina de={T("Primeira fase") - 7} dur={14} cor="#ff9b2f" />
+      <Cortina de={T("Segunda fase") - 7} dur={14} cor="#7d5bd6" cor2="#c9b6ff" />
+      <Cortina de={T("Fase final") - 7} dur={14} cor="#e8343f" cor2="#ffb0b5" />
+      <ZoomRapido de={T("Licença Hunter desbloqueada") - 5} dur={10} />
       <LegendaPalavra palavras={LEGENDAS} />
 
       {/* narração */}

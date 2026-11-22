@@ -16,6 +16,8 @@ Projeto Remotion de vídeos verticais (1080x1920, 30 fps) para o canal.
 - Trilha: `scripts/gerar_trilha.py` gera `public/musica/trilha-leve.wav` (abaixe o volume nos momentos de tensão).
 - Vistas: `vista: "frente" | "perfil" | "costas"` (folha de vistas: composição `FolhaVistas`, PNG em out/personagens/) (PERFIL_BASE; lado -1 = olha pra esquerda). `giro()` faz a virada cartoon.
 - Mãos: `maoE/maoD`: bola | aberta | punho | aponta | joia. Braços são curvos.
+- Aura (`Aura.tsx`): `AuraForte` (chamas em camadas; forca, caos, cor por personagem: AURA_LUCAS ciano, AURA_DIEGO verde),
+  `CorrentesAura` (energia indo até um ponto), `PunhoBrilhando`. Sons: aura.wav, coracao.wav.
 - `Efeitos2D.tsx`: LinhasFoco, LinhasMovimento, Gota, Veia, Brilhos, Simbolo (?/!), Impacto, Poeira.
 - Cabelo balança sozinho: `balancoCabelo()` (ver `comCabelo` em SaiyajinV2). `posCabeca(pose)` dá a posição da cabeça.
 - Sons sintetizados em `public/sfx/` (whoosh, pop, plim, impacto, brilho, rumble, carga, ronco) com `<Html5Audio>`.
