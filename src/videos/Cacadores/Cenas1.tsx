@@ -36,7 +36,7 @@ const SOMBRA = {
 export const S01: React.FC<P> = () => {
   const f = useCurrentFrame();
   const treme = Math.sin(f * 1.7) * 2;
-  const pose = frente(560, { agacha: 40, inclina: 6 + treme * 0.3, cabeca: 10, bracoD: { ombro: 30, cotovelo: -95 }, maoD: "bola", bracoE: { ombro: 26, cotovelo: -80 } });
+  const pose = frente(560, { agacha: 70, inclina: 6 + treme * 0.3, cabeca: 10, bracoD: { ombro: 40, cotovelo: -70 }, maoD: "bola", bracoE: { ombro: 36, cotovelo: -60 } });
   const rosto = vivo({ ...ROSTO_BASE, olhos: 1.2, sobrancelha: -14, sobrancelhaY: 10, sorriso: -0.5, olhar: [0, 1] }, f, "s1");
   const cam = { x: 560, y: 1000, zoom: k(f, [[0, 1.15], [110, 1.35]]) };
   const [hx, hy] = posCabeca(pose);
@@ -45,7 +45,7 @@ export const S01: React.FC<P> = () => {
       <Palco cam={cam}>
         <Fundo saturacao={0.6}><Sala /></Fundo>
         <Boneco2D id="s1" d={LUCAS} pose={pose} rosto={rosto} />
-        <Carteira x={560} />
+        <Carteira x={560} escala={0.75} />
         <Gota x={hx + 140} y={hy - 90} f={f} de={18} />
         <Simbolo texto="?" x={hx - 170} y={hy - 200} f={f} de={52} />
       </Palco>
@@ -280,7 +280,7 @@ export const S11: React.FC<P> = () => {
   const camX = 1000 + f * 14;
   const wl = andarPerfil(f, 1.1, 7);
   const wd = andarPerfil(f, 1.6, 4);
-  const dx = k(f, [[0, 700], [14, 760], [40, 1900, CURVA.entra]]) + f * 14;
+  const dx = k(f, [[0, 560], [14, 620], [40, 1900, CURVA.entra]]) + f * 14;
   return (
     <>
       <Palco cam={{ x: camX, y: 1000, zoom: 0.95 }}>
@@ -288,8 +288,8 @@ export const S11: React.FC<P> = () => {
         <Rastro x={dx} y={CHAO_Y} dir={1} forca={f > 14 ? 1 : 0} f={f} />
         <Boneco2D id="s11d" d={DIEGO} pose={perfil(dx, { y: CHAO_Y - wd.bob, peE: wd.peE, peD: wd.peD, bracoE: { ombro: -60, cotovelo: 30 }, bracoD: { ombro: -60, cotovelo: 30 }, inclina: 22 })} rosto={vivo({ ...ROSTO_DIEGO, olhos: 0.45, canto: 0.4 }, f, "s11d")} />
         <Boneco2D id="s11l" d={LUCAS} pose={perfil(950 + f * 14, { y: CHAO_Y - wl.bob, peE: wl.peE, peD: wl.peD, bracoE: wl.bracoE, bracoD: wl.bracoD, inclina: 9 })} rosto={vivo({ ...ROSTO_BASE, olhos: k(f, [[12, 1], [18, 1.25, CURVA.exagera]]), boca: 0.35, sobrancelhaY: 12 }, f, "s11l")} />
-        <Poeira x={760 + 14 * 14} y={CHAO_Y} f={f} de={14} />
-        <ObjetosFisica x={760 + 14 * 14} y={CHAO_Y - 40} f={f} de={14} n={12} chao={CHAO_Y + 30} velocidade={22} angulo={[-160, -110]} gravidade={0.6} semente="s11" desenho={(i) => <ellipse rx={14} ry={6} fill={["#a86a3a", "#c48a4a", "#8a5a30"][i % 3]} />} />
+        <Poeira x={620 + 14 * 14} y={CHAO_Y} f={f} de={14} />
+        <ObjetosFisica x={620 + 14 * 14} y={CHAO_Y - 40} f={f} de={14} n={12} chao={CHAO_Y + 30} velocidade={22} angulo={[-160, -110]} gravidade={0.6} semente="s11" desenho={(i) => <ellipse rx={14} ry={6} fill={["#a86a3a", "#c48a4a", "#8a5a30"][i % 3]} />} />
       </Palco>
       <Som src="whoosh" de={14} volume={0.5} />
     </>
@@ -399,7 +399,7 @@ export const S13: React.FC<P> = ({ t0 }) => {
           <Gota x={230 + 100} y={1600 - 820 * 0.5} f={f} de={6} escala={0.6} />
         </svg>
         <Rotulo2 texto="2 a 4 milhões" x={620} y={330} de={T("dois e quatro milhões") - t0} tamanho={110} />
-        <Rotulo2 texto="glândulas de suor" x={640} y={1260} de={T("glândulas") - t0} tamanho={60} cor="#ffffff" />
+        <Rotulo2 texto="glândulas de suor" x={640} y={1440} de={T("glândulas") - t0} tamanho={60} cor="#ffffff" />
       </AbsoluteFill>
     );
   }
@@ -459,8 +459,8 @@ export const S14: React.FC<P> = () => {
 export const S15: React.FC<P> = () => {
   const f = useCurrentFrame();
   const oferece = k(f, [[30, 0], [44, 1, CURVA.exagera]]);
-  const lpose = perfil(900, { agacha: 60, inclina: 18, bracoD: { ombro: 30 + 60 * oferece, cotovelo: 10 }, maoD: "punho" });
-  const cpose = perfil(1260, { lado: -1, agacha: 340, inclina: 10, cabeca: 10, peE: { dx: 240, dy: 0 }, peD: { dx: 290, dy: 0 }, bracoE: { ombro: 26, cotovelo: 26 }, bracoD: { ombro: 34, cotovelo: 30 } });
+  const lpose = perfil(840, { agacha: 60, inclina: 18, bracoD: { ombro: 30 + 32 * oferece, cotovelo: 6 }, maoD: "punho" });
+  const cpose = perfil(1350, { lado: -1, agacha: 340, inclina: 10, cabeca: 10, peE: { dx: 240, dy: 0 }, peD: { dx: 290, dy: 0 }, bracoE: { ombro: 26, cotovelo: 26 }, bracoD: { ombro: 34, cotovelo: 30 } });
   return (
     <>
       <Palco cam={{ x: 1080, y: 1060, zoom: 1.1 }}>

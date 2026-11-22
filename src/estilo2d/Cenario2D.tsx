@@ -264,12 +264,15 @@ export const Sala: React.FC = () => (
 );
 
 /** carteira escolar (desenhe na frente do personagem) */
-export const Carteira: React.FC<{ x: number; papel?: boolean }> = ({ x, papel = true }) => (
-  <g transform={`translate(${x} ${CHAO_Y})`}>
+export const Carteira: React.FC<{ x: number; papel?: boolean; escala?: number }> = ({ x, papel = true, escala = 1 }) => (
+  <g transform={`translate(${x} ${CHAO_Y}) scale(${escala})`}>
     <rect x={-20} y={-560} width={24} height={560} fill="#6e6a78" />
     <rect x={-240} y={-600} width={480} height={46} rx={8} fill="#c98f5a" stroke="#1d1424" strokeWidth={7} />
     <rect x={-200} y={-560} width={20} height={560} fill="#6e6a78" />
     <rect x={180} y={-560} width={20} height={560} fill="#6e6a78" />
+    {/* painel da frente (esconde as pernas de quem está sentado) */}
+    <rect x={-225} y={-556} width={450} height={470} rx={10} fill="#a8774a" stroke="#1d1424" strokeWidth={7} />
+    <rect x={-195} y={-520} width={390} height={12} rx={6} fill="#8a6440" />
     {papel ? <rect x={-90} y={-618} width={180} height={22} rx={4} fill="#ffffff" stroke="#1d1424" strokeWidth={4} transform="rotate(-3 0 -607)" /> : null}
   </g>
 );

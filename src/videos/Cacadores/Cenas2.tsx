@@ -285,11 +285,11 @@ export const S29: React.FC<P> = () => {
 export const S30: React.FC<P> = ({ t0 }) => {
   const f = useCurrentFrame();
   const trava = T("você trava") - t0;
-  const dx = k(f, [[0, 1420], [9, 1110, CURVA.entra]]);
+  const dx = k(f, [[0, 1420], [9, 1200, CURVA.entra]]);
   const dpose = kPose(f, [
     [0, perfil(1420, { lado: -1, agacha: 20, bracoD: { ombro: 160, cotovelo: 10 }, bracoE: { ombro: 150, cotovelo: 20 } })],
     [6, perfil(1300, { lado: -1, agacha: 40, inclina: -8, bracoD: { ombro: 170, cotovelo: 6 }, bracoE: { ombro: 160, cotovelo: 10 } }), CURVA.antecipa],
-    [11, perfil(1110, { lado: -1, agacha: 90, inclina: 22, peD: { dx: 160, dy: 0 }, peE: { dx: -130, dy: 0 }, bracoD: { ombro: 50, cotovelo: -10 }, bracoE: { ombro: 40, cotovelo: 0 } }), CURVA.sai],
+    [11, perfil(1200, { lado: -1, agacha: 90, inclina: 22, peD: { dx: 160, dy: 0 }, peE: { dx: -130, dy: 0 }, bracoD: { ombro: 50, cotovelo: -10 }, bracoE: { ombro: 40, cotovelo: 0 } }), CURVA.sai],
   ]);
   const cinza = f > trava;
   const sh = f >= 11 && f < 19 ? tremor(f, 12) : { x: 0, y: 0 };
@@ -649,7 +649,7 @@ export const S44: React.FC<P> = ({ t0 }) => {
   return (
     <Palco cam={{ x: 1250, y: 1000, zoom: 1.1 }}>
       <Fundo saturacao={0.6}><Arena camX={1800} /></Fundo>
-      <Boneco2D id="s44l" d={LUCAS} pose={perfil(1020, { inclina: 12 * (1 - levanta), bracoD: { ombro: k(f, [[0, 10], [12, 80, CURVA.exagera]]), cotovelo: 0 }, maoD: "aberta" })} rosto={vivo({ ...ROSTO_BASE, sorriso: 0.7 }, f, "s44l")} />
+      <Boneco2D id="s44l" d={LUCAS} pose={perfil(1020, { inclina: 12 * (1 - levanta), bracoD: { ombro: k(f, [[0, 10], [12, 42, CURVA.exagera]]) + 38 * levanta, cotovelo: 0 }, maoD: "aberta" })} rosto={vivo({ ...ROSTO_BASE, sorriso: 0.7 }, f, "s44l")} />
       <Boneco2D id="s44d" d={DIEGO} pose={levanta > 0 ? kPose(f, [[aceita, dsentado], [aceita + 18, dpe, CURVA.exagera]]) : dsentado} rosto={vivo({ ...ROSTO_DIEGO, olhos: 0.55, canto: 0, sorriso: 0, olhar: [0, 0.4] }, f, "s44d")} />
     </Palco>
   );
