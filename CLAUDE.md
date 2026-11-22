@@ -14,7 +14,7 @@ Projeto Remotion de vídeos verticais (1080x1920, 30 fps) para o canal.
 - Vista 3/4: `vira` (-1..1) na vista de frente. `biceps` (0..1) incha o braço. `naMao` segura objeto (`Objetos.tsx`).
 - Cenários: `Praca`, `Quarto`, `Cozinha`, `RuaNoite`. Transições (`Transicoes.tsx`): `Iris`, `Cortina`, `ZoomRapido`.
 - Trilha: `scripts/gerar_trilha.py` gera `public/musica/trilha-leve.wav` (abaixe o volume nos momentos de tensão).
-- Vistas: `vista: "frente" | "perfil"` (PERFIL_BASE; lado -1 = olha pra esquerda). `giro()` faz a virada cartoon.
+- Vistas: `vista: "frente" | "perfil" | "costas"` (folha de vistas: composição `FolhaVistas`, PNG em out/personagens/) (PERFIL_BASE; lado -1 = olha pra esquerda). `giro()` faz a virada cartoon.
 - Mãos: `maoE/maoD`: bola | aberta | punho | aponta | joia. Braços são curvos.
 - `Efeitos2D.tsx`: LinhasFoco, LinhasMovimento, Gota, Veia, Brilhos, Simbolo (?/!), Impacto, Poeira.
 - Cabelo balança sozinho: `balancoCabelo()` (ver `comCabelo` em SaiyajinV2). `posCabeca(pose)` dá a posição da cabeça.

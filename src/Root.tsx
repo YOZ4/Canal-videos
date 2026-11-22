@@ -4,6 +4,7 @@ import { LucasSaiyajin } from "./videos/LucasSaiyajin";
 import { Folha } from "./videos/Folha/Folha";
 import { LutaTeste, DURACAO as DUR_LUTA } from "./videos/Luta/LutaTeste";
 import { FolhaPoses } from "./videos/Folha/FolhaPoses";
+import { FolhaVistas } from "./videos/Folha/FolhaVistas";
 import { Saiyajin2D, DURACAO as DUR_SAI } from "./videos/Saiyajin2D/Saiyajin2D";
 import { SaiyajinV2, DURACAO as DUR_SAI2 } from "./videos/Saiyajin2D/SaiyajinV2";
 import { SaiyajinV3, DURACAO as DUR_SAI3 } from "./videos/Saiyajin2D/SaiyajinV3";
@@ -13,6 +14,7 @@ import { TesteEstilo, FIM } from "./videos/TesteEstilo/TesteEstilo";
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition id="FolhaVistas" component={FolhaVistas} durationInFrames={1} fps={30} width={2400} height={2560} />
       <Composition id="LutaTeste" component={LutaTeste} durationInFrames={DUR_LUTA} fps={30} width={1080} height={1920} />
       <Composition id="SaiyajinV3" component={SaiyajinV3} durationInFrames={DUR_SAI3} fps={30} width={1080} height={1920} />
       <Composition id="SaiyajinV2" component={SaiyajinV2} durationInFrames={DUR_SAI2} fps={30} width={1080} height={1920} />
