@@ -27,7 +27,7 @@ Projeto Remotion de vídeos verticais (1080x1920, 30 fps) para o canal.
 - `UI.tsx`: legenda palavra-por-palavra (`frase("texto *destaque*", de, ate)`), `Selo` (tópico no topo),
   `Etiqueta` (nome sobre o personagem), `Placar` (contador).
 - `Cenario2D.tsx`: praça ao pôr do sol com parallax. Câmera = transform do SVG (x, y, zoom).
-- Acabamento à mão (`Pintura.tsx`): `Ferve` (contorno fervendo 12x/s), `NoDois`, `SombraCel` (anime 80), `Desencaixe`
+- Acabamento (`Pintura.tsx`) — só o `FilmeMudo` (flashback) foi aprovado; o resto só se o usuário pedir: `Ferve` (contorno fervendo 12x/s), `NoDois`, `SombraCel` (anime 80), `Desencaixe`
   (anos 50), `Aquarela`, `FilmeMudo` (flashback), `Luz` (aditiva). `trocaRosto()` em anim.ts = troca de expressão atuada.
   Guia: `.claude/skills/video-do-canal/referencias/acabamento.md`. Exemplo: composição `TesteAcabamento`.
 - Final: `scripts/finalizar.sh bruto.mp4 final.mp4 [granulado]` (granulado no ffmpeg + áudio −14 LUFS). Revisão em

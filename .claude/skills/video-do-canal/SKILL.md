@@ -71,9 +71,9 @@ Toda afirmação "científica" do roteiro ganha um **infográfico com o Lucas in
 - Falas: `vivo(rosto, f, "id", falaDe, falaAte)` mexe a boca só nesse intervalo.
 - Mudança de expressão: use `trocaRosto(f, [[frame, rosto, tamanho], ...])` (anim.ts) em vez de trocar a cara direto.
   Ele aperta os olhos antes, troca a cara escondida e faz a reação com mola. Some `corpo.estica`/`corpo.agacha` na pose.
-- Acabamento à mão (`src/estilo2d/Pintura.tsx`, ver `referencias/acabamento.md`): envolva cenário e personagens em
-  `<Ferve>` (contorno fervendo; personagem com `ancora={[pose.x, pose.y]}`), use `<NoDois>` nas cenas de ação,
-  `<SombraCel>` em luta/aura, `<FilmeMudo>` para flashback antigo, `<Aquarela>` para lembrança e `<Luz>` para brilhos.
+- Flashback antigo (o avô, "antigamente"): envolva a cena em `<FilmeMudo>` (`src/estilo2d/Pintura.tsx`) — aprovado
+  pelo usuário. Os outros efeitos de `Pintura.tsx` (Ferve, NoDois, SombraCel, Desencaixe, Aquarela) o usuário NÃO
+  curtiu no teste: não use por padrão, só se ele pedir.
 
 ### 4. Sobreposições globais (arquivo principal)
 Legendas `LegendaPalavra` (+ palavras em laranja no `DESTAQUES` do tempo.ts), `Selo` de fase, `Conquista`

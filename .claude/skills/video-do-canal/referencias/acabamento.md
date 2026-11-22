@@ -1,12 +1,15 @@
 # Acabamento "feito à mão" (src/estilo2d/Pintura.tsx)
 
+**Decisão do usuário (teste de 22/11/2026):** aprovou só o `FilmeMudo` para flashbacks. Ferve, NoDois, SombraCel,
+Desencaixe e Aquarela ficam disponíveis, mas não entram nos vídeos a menos que ele peça.
+
 Técnicas estudadas em dois projetos abertos (Claude Animation Base, licença MIT; Lemo-Opuscar, código MIT) e
 reescritas do zero para SVG/Remotion. Nada foi instalado. Não use o mascote laranja de nenhum desses projetos
 (pertence à Anthropic) nem copie os textos dos guias do Lemo-Opuscar para o repositório (licença não comercial).
 
 | Componente | O que faz | Quando usar |
 |---|---|---|
-| `<Ferve chave ancora? forca=3>` | contorno treme de leve 12x/s, cada elemento com seu tremor | sempre: cenário (`forca` 2) e personagens (2–2,5). Personagem: `ancora={[pose.x, pose.y]}` |
+| `<Ferve chave ancora? forca=3>` | contorno treme de leve 12x/s, cada elemento com seu tremor | só se pedirem: cenário (`forca` 2) e personagens (2–2,5). Personagem: `ancora={[pose.x, pose.y]}` |
 | `<NoDois>` / `noDois(f)` | cada desenho fica 2 quadros | ação, luta, corrida, desenho anos 50. Não use em câmera lenta/panorâmica suave |
 | `trocaRosto(f, keys)` (anim.ts) | troca de expressão com antecipação + reação com mola | toda mudança de humor; `tamanho` 0,5 suave · 1 normal · 1,5–2 susto |
 | `<SombraCel chave luz=-135>` | sombra e brilho de borda dura a partir da silhueta | luta, aura, momentos épicos (visual anime 80) |
