@@ -9,6 +9,7 @@
     "render:teste": "remotion render TesteEstilo out/teste-estilo.mp4",
     "render:animacao": "remotion render TesteAnimacao out/teste-animacao.mp4",
     "render:saiyajin": "remotion render Saiyajin2D out/saiyajin-2d.mp4",
+    "render:saiyajin2": "remotion render SaiyajinV2 out/saiyajin-v2.mp4",
     "upgrade": "remotion upgrade"
   },
   "dependencies": {

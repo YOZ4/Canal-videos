@@ -61,6 +61,11 @@ export const mixPose = (a: Pose, b: Pose, t: number): Pose => ({
   y: mixN(a.y, b.y, t),
   escala: mixN(a.escala, b.escala, t),
   lado: t < 0.5 ? a.lado : b.lado,
+  vista: t < 0.5 ? a.vista : b.vista,
+  largura: mixN(a.largura, b.largura, t),
+  maoE: t < 0.5 ? a.maoE : b.maoE,
+  maoD: t < 0.5 ? a.maoD : b.maoD,
+  cabelo: mixN(a.cabelo, b.cabelo, t),
   inclina: mixN(a.inclina, b.inclina, t),
   estica: mixN(a.estica, b.estica, t),
   agacha: mixN(a.agacha, b.agacha, t),
@@ -143,3 +148,44 @@ export const tremor = (f: number, forca: number) => ({
   x: (random(`tx${f}`) - 0.5) * 2 * forca,
   y: (random(`ty${f}`) - 0.5) * 2 * forca,
 });
+
+/** caminhada de PERFIL (pernas pra frente/trás). Use com PERFIL_BASE. */
+export const andarPerfil = (f: number, intensidade = 1, passo = 12) => {
+  const ph = (f / passo) * Math.PI;
+  const s = Math.sin(ph);
+  const lift = (v: number) => Math.max(0, v);
+  return {
+    peE: { dx: -s * 85 * intensidade, dy: -lift(-Math.cos(ph)) * 45 * intensidade * (s < 0 ? 1 : 0.2) } as Pe,
+    peD: { dx: s * 85 * intensidade, dy: -lift(Math.cos(ph)) * 45 * intensidade * (s > 0 ? 1 : 0.2) } as Pe,
+    bob: Math.abs(Math.cos(ph)) * 16 * intensidade,
+    bracoE: { ombro: s * 32 * intensidade, cotovelo: 14 + lift(s) * 20 } as Braco,
+    bracoD: { ombro: -s * 32 * intensidade, cotovelo: 14 + lift(-s) * 20 } as Braco,
+    inclina: 5 * intensidade,
+  };
+};
+
+/**
+ * Giro entre vistas (frente <-> perfil) estilo cartoon: achata na horizontal,
+ * troca o desenho no meio e volta. Retorna { largura, trocou }.
+ */
+export const giro = (f: number, inicio: number, dur = 8) => {
+  if (f < inicio) return { largura: 1, trocou: false };
+  if (f >= inicio + dur) return { largura: 1, trocou: true };
+  const t = (f - inicio) / dur;
+  return { largura: Math.max(0.12, Math.abs(Math.cos(t * Math.PI))), trocou: t >= 0.5 };
+};
+
+/**
+ * Movimento secundário: cabelo balança atrasado em relação ao movimento do corpo.
+ * Passe uma função de posição x(f) e de inclinação; retorna graus.
+ */
+export const balancoCabelo = (f: number, posX: (f: number) => number, inclina: (f: number) => number = () => 0) => {
+  let acc = 0;
+  // mola amortecida simples: soma dos impulsos recentes com decaimento oscilante
+  for (let i = 1; i <= 14; i++) {
+    const v = posX(f - i) - posX(f - i - 1);
+    const vi = inclina(f - i) - inclina(f - i - 1);
+    acc += (-v * 0.35 - vi * 1.2) * Math.exp(-i * 0.22) * Math.cos(i * 0.55);
+  }
+  return Math.max(-18, Math.min(18, acc));
+};

@@ -10,6 +10,11 @@ Projeto Remotion de vídeos verticais (1080x1920, 30 fps) para o canal.
   para squash & stretch, `cruzado`) e rosto (olhos, olhar, sobrancelha, sorriso, boca, canto).
 - `anim.ts`: keyframes com curva por trecho (`k`, `kPose`, `kRosto`), `CURVA.antecipa/exagera/...`,
   automáticos `piscar`, `respira`, `fala`, `andar`, `tremor`.
+- Vistas: `vista: "frente" | "perfil"` (PERFIL_BASE; lado -1 = olha pra esquerda). `giro()` faz a virada cartoon.
+- Mãos: `maoE/maoD`: bola | aberta | punho | aponta | joia. Braços são curvos.
+- `Efeitos2D.tsx`: LinhasFoco, LinhasMovimento, Gota, Veia, Brilhos, Simbolo (?/!), Impacto, Poeira.
+- Cabelo balança sozinho: `balancoCabelo()` (ver `comCabelo` em SaiyajinV2). `posCabeca(pose)` dá a posição da cabeça.
+- Sons sintetizados em `public/sfx/` (whoosh, pop, plim, impacto, brilho, rumble, carga, ronco) com `<Html5Audio>`.
 - `UI.tsx`: legenda palavra-por-palavra (`frase("texto *destaque*", de, ate)`), `Selo` (tópico no topo),
   `Etiqueta` (nome sobre o personagem), `Placar` (contador).
 - `Cenario2D.tsx`: praça ao pôr do sol com parallax. Câmera = transform do SVG (x, y, zoom).

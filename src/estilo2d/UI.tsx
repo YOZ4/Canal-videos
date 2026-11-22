@@ -186,3 +186,37 @@ export const Placar: React.FC<{ titulo: string; valor: string; x: number; y: num
     </div>
   );
 };
+
+// ---------- rótulo solto (texto com contorno que "pula" na tela) ----------
+export const Rotulo2: React.FC<{ texto: string; x: number; y: number; de: number; tamanho?: number; cor?: string }> = ({
+  texto,
+  x,
+  y,
+  de,
+  tamanho = 72,
+  cor = AMARELO,
+}) => {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  if (f < de) return null;
+  const s = spring({ frame: f - de, fps, config: { damping: 9, stiffness: 220 } });
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: x,
+        top: y,
+        transform: `translate(-50%, -50%) scale(${s}) rotate(${Math.sin((f - de) * 0.2) * 3}deg)`,
+        fontFamily: FONTE_ROTULO,
+        fontWeight: 700,
+        fontSize: tamanho,
+        color: cor,
+        WebkitTextStroke: `${Math.round(tamanho / 9)}px ${ESCURO}`,
+        paintOrder: "stroke fill",
+        whiteSpace: "nowrap",
+      }}
+    >
+      {texto}
+    </div>
+  );
+};
