@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "remotion studio",
     "render": "remotion render LucasSaiyajin out/lucas-saiyajin.mp4",
+    "render:teste": "remotion render TesteEstilo out/teste-estilo.mp4",
     "upgrade": "remotion upgrade"
   },
   "dependencies": {
