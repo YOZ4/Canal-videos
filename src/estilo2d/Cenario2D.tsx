@@ -236,3 +236,100 @@ export const RuaNoite: React.FC<{ camX?: number }> = ({ camX = 0 }) => (
     ))}
   </g>
 );
+
+/** Sala de prova. Chão em CHAO_Y; ocupa x -600..1700. */
+export const Sala: React.FC = () => (
+  <g>
+    <rect x={-800} y={-600} width={2800} height={3200} fill="#e8dcc0" />
+    <rect x={-800} y={CHAO_Y - 380} width={2800} height={380} fill="#c9b58f" />
+    {/* quadro */}
+    <g transform="translate(60 300)">
+      <rect x={-20} y={-20} width={1000} height={500} rx={16} fill="#8a6440" />
+      <rect x={0} y={0} width={960} height={460} rx={8} fill="#2f5a46" />
+      <text x={60} y={110} fontFamily="Fredoka" fontWeight={700} fontSize={70} fill="#f3f3ea" opacity={0.9}>PROVA</text>
+      <path d="M 60 190 L 600 190 M 60 260 L 760 260 M 60 330 L 500 330" stroke="#f3f3ea" strokeWidth={10} opacity={0.6} strokeLinecap="round" />
+      <text x={760} y={400} fontFamily="Fredoka" fontWeight={700} fontSize={60} fill="#ffd23f" opacity={0.9}>x² + ?</text>
+    </g>
+    {/* relógio */}
+    <g transform="translate(1250 380)">
+      <circle r={90} fill="#fff" stroke="#1d1424" strokeWidth={10} />
+      <path d="M 0 0 L 0 -60 M 0 0 L 40 20" stroke="#1d1424" strokeWidth={10} strokeLinecap="round" />
+    </g>
+    {/* piso */}
+    <rect x={-800} y={CHAO_Y - 20} width={2800} height={1200} fill="#b98d5e" />
+    {new Array(14).fill(0).map((_, i) => (
+      <rect key={i} x={-800 + i * 200} y={CHAO_Y - 20} width={6} height={1200} fill="#a37a4e" />
+    ))}
+  </g>
+);
+
+/** carteira escolar (desenhe na frente do personagem) */
+export const Carteira: React.FC<{ x: number; papel?: boolean }> = ({ x, papel = true }) => (
+  <g transform={`translate(${x} ${CHAO_Y})`}>
+    <rect x={-20} y={-560} width={24} height={560} fill="#6e6a78" />
+    <rect x={-240} y={-600} width={480} height={46} rx={8} fill="#c98f5a" stroke="#1d1424" strokeWidth={7} />
+    <rect x={-200} y={-560} width={20} height={560} fill="#6e6a78" />
+    <rect x={180} y={-560} width={20} height={560} fill="#6e6a78" />
+    {papel ? <rect x={-90} y={-618} width={180} height={22} rx={4} fill="#ffffff" stroke="#1d1424" strokeWidth={4} transform="rotate(-3 0 -607)" /> : null}
+  </g>
+);
+
+/** Arena de pedra com plateia. Centro em x=1100. */
+export const Arena: React.FC<{ camX?: number; tensao?: number }> = ({ camX = 1100, tensao = 0 }) => (
+  <g>
+    <defs>
+      <linearGradient id="ceuArena" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0" stopColor={tensao > 0.5 ? "#3b2a5e" : "#6fb3e6"} />
+        <stop offset="1" stopColor={tensao > 0.5 ? "#8a4a6a" : "#cfe8f2"} />
+      </linearGradient>
+    </defs>
+    <rect x={-2000} y={-1000} width={6000} height={4000} fill="url(#ceuArena)" />
+    {/* arquibancada com plateia */}
+    <g transform={`translate(${(camX - 1100) * 0.4} 0)`}>
+      <path d={`M -1200 ${CHAO_Y - 300} Q 1100 ${CHAO_Y - 900} 3400 ${CHAO_Y - 300} L 3400 ${CHAO_Y} L -1200 ${CHAO_Y} Z`} fill="#8c8597" />
+      {new Array(90).fill(0).map((_, i) => {
+        const x = -1100 + (i % 45) * 100 + (i >= 45 ? 50 : 0);
+        const base = CHAO_Y - 300 - 600 * Math.sin(((x + 1200) / 4600) * Math.PI) + (i >= 45 ? 120 : 0);
+        const cores = ["#d8363c", "#3474dc", "#f4c531", "#2f9e57", "#7d5bd6", "#ef7d2b"];
+        return (
+          <g key={i} transform={`translate(${x} ${base + 60})`}>
+            <rect x={-26} y={0} width={52} height={60} rx={14} fill={cores[i % 6]} opacity={0.85} />
+            <circle cx={0} cy={-18} r={22} fill="#e4b08a" opacity={0.9} />
+          </g>
+        );
+      })}
+    </g>
+    {/* chão da arena (pedra) */}
+    <rect x={-2000} y={CHAO_Y - 30} width={6000} height={1200} fill="#5a5466" />
+    <path d={`M -100 ${CHAO_Y - 30} L 2300 ${CHAO_Y - 30} L 2500 ${CHAO_Y + 220} L -300 ${CHAO_Y + 220} Z`} fill="#b7ad9c" stroke="#1d1424" strokeWidth={8} />
+    {new Array(12).fill(0).map((_, i) => (
+      <path key={i} d={`M ${-100 + i * 220} ${CHAO_Y - 30} L ${-300 + i * 245} ${CHAO_Y + 220}`} stroke="#9a907f" strokeWidth={6} />
+    ))}
+    <rect x={-300} y={CHAO_Y + 220} width={2800} height={60} fill="#8f8574" stroke="#1d1424" strokeWidth={8} />
+  </g>
+);
+
+/** Savana ao entardecer (silhuetas). */
+export const Savana: React.FC<{ camX?: number }> = ({ camX = 0 }) => (
+  <g>
+    <defs>
+      <linearGradient id="ceuSavana" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0" stopColor="#f07a3a" />
+        <stop offset="0.6" stopColor="#f9b04f" />
+        <stop offset="1" stopColor="#ffe08a" />
+      </linearGradient>
+    </defs>
+    <rect x={-3000} y={-1000} width={9000} height={4000} fill="url(#ceuSavana)" />
+    <circle cx={camX * 0.95 + 700} cy={CHAO_Y - 300} r={260} fill="#fff1b8" opacity={0.9} />
+    <g transform={`translate(${camX * 0.5} 0)`}>
+      {[-800, 300, 1500, 2600].map((x, i) => (
+        <g key={i} transform={`translate(${x} ${CHAO_Y - 60})`} fill="#3a1f2a">
+          <rect x={-14} y={-300} width={28} height={300} />
+          <ellipse cx={0} cy={-320} rx={230} ry={50} />
+          <ellipse cx={-60} cy={-350} rx={140} ry={36} />
+        </g>
+      ))}
+    </g>
+    <rect x={-3000} y={CHAO_Y - 40} width={9000} height={1200} fill="#3a1f2a" />
+  </g>
+);

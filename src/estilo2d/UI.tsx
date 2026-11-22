@@ -220,3 +220,82 @@ export const Rotulo2: React.FC<{ texto: string; x: number; y: number; de: number
     </div>
   );
 };
+
+// ---------- conquista desbloqueada (estilo jogo) ----------
+export const Conquista: React.FC<{ texto: string; de: number; ate: number; icone?: string; cor?: string }> = ({ texto, de, ate, icone = "★", cor = "#2e9b6a" }) => {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  if (f < de || f > ate + 10) return null;
+  const entra = spring({ frame: f - de, fps, config: { damping: 12, stiffness: 160 } });
+  const sai = interpolate(f, [ate, ate + 10], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const brilho = interpolate((f - de) % 30, [0, 15, 30], [0.6, 1, 0.6]);
+  return (
+    <div style={{ position: "absolute", top: 300 - sai * 500, width: "100%", display: "flex", justifyContent: "center", transform: `scale(${entra})` }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 26,
+          background: "#1f1a2e",
+          border: `7px solid ${AMARELO}`,
+          borderRadius: 26,
+          padding: "22px 40px",
+          boxShadow: `0 0 ${40 * brilho}px ${AMARELO}, 0 10px 0 ${ESCURO}`,
+        }}
+      >
+        <div
+          style={{
+            width: 110,
+            height: 110,
+            borderRadius: 999,
+            background: cor,
+            border: `6px solid ${ESCURO}`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 70,
+            color: "#fff",
+            fontFamily: FONTE_ROTULO,
+            fontWeight: 700,
+          }}
+        >
+          {icone}
+        </div>
+        <div>
+          <div style={{ fontFamily: FONTE_ROTULO, fontWeight: 700, fontSize: 34, color: AMARELO, letterSpacing: 3 }}>DESBLOQUEADO!</div>
+          <div style={{ fontFamily: FONTE_ROTULO, fontWeight: 700, fontSize: 64, color: "#fff", lineHeight: 1.05 }}>{texto}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ---------- contagem regressiva gigante ----------
+export const Contagem: React.FC<{ numeros: { n: string; de: number }[]; ate: number }> = ({ numeros, ate }) => {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const atual = [...numeros].reverse().find((x) => f >= x.de);
+  if (!atual || f > ate) return null;
+  const s = spring({ frame: f - atual.de, fps, config: { damping: 8, stiffness: 240 } });
+  return (
+    <div style={{ position: "absolute", top: 520, width: "100%", textAlign: "center", fontFamily: FONTE_ROTULO, fontWeight: 700, fontSize: 420, color: "#fff", WebkitTextStroke: `28px ${ESCURO}`, paintOrder: "stroke fill", transform: `scale(${0.4 + s * 0.6}) rotate(${(1 - s) * -20}deg)` }}>
+      {atual.n}
+    </div>
+  );
+};
+
+// ---------- balão de fala ----------
+export const Balao: React.FC<{ texto: string; x: number; y: number; de: number; ate: number; ponta?: "esq" | "dir" }> = ({ texto, x, y, de, ate, ponta = "esq" }) => {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  if (f < de || f > ate) return null;
+  const s = spring({ frame: f - de, fps, config: { damping: 11, stiffness: 220 } });
+  return (
+    <div style={{ position: "absolute", left: x, top: y, transform: `translate(-50%, -100%) scale(${s})`, transformOrigin: ponta === "esq" ? "20% 100%" : "80% 100%" }}>
+      <div style={{ background: "#fff", border: `6px solid ${ESCURO}`, borderRadius: 40, padding: "18px 34px", fontFamily: FONTE_ROTULO, fontWeight: 700, fontSize: 52, color: ESCURO, maxWidth: 760, textAlign: "center", lineHeight: 1.1 }}>
+        {texto}
+      </div>
+      <div style={{ position: "absolute", bottom: -30, [ponta === "esq" ? "left" : "right"]: 70, width: 0, height: 0, borderLeft: "22px solid transparent", borderRight: "22px solid transparent", borderTop: `36px solid ${ESCURO}` }} />
+    </div>
+  );
+};

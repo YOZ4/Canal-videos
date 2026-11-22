@@ -40,3 +40,12 @@ Projeto Remotion de vídeos verticais (1080x1920, 30 fps) para o canal.
 ## Renderizar neste ambiente (sem GPU / sem acesso ao download do Chrome)
 npx remotion render <Composicao> out/<arquivo>.mp4 --browser-executable=/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell
 (3D com @remotion/three: adicionar --gl=swangle). Fontes ficam em public/fonts (sem internet no render).
+
+## Fluxo de um vídeo com narração (ex.: src/videos/Cacadores)
+1. Áudio em `public/narracao/<nome>.mp3`, roteiro em `roteiros/<nome>.txt` (texto exato da fala).
+2. `python3 scripts/alinhar.py public/narracao/<nome>.mp3 roteiros/<nome>.txt src/videos/<Pasta>/alinhamento.json`
+   (sem transcrição automática: divide as palavras do roteiro pelos trechos de fala; precisão ~0,2 s).
+3. `tempo.ts`: `T("trecho")` = frame em que o trecho começa; `TF()` = onde termina; `LEGENDAS` prontas.
+4. Cada cena é um componente com `t0`; a lista `CENAS` em `<Nome>.tsx` diz em que trecho cada cena começa.
+5. Trilhas longas: `python3 scripts/gerar_trilha.py public/musica/x.wav 131` (volume ~0.1 por baixo da voz).
+6. Personagens extras: AVO, EXAMINADOR, CANDIDATOS (personagens.ts). Cenários: Sala, Arena, Savana.

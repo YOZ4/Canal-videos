@@ -618,6 +618,23 @@ const Cabeca: React.FC<{ d: Design; r: Rosto; id: string; poder: number; balanco
       <Olho cx={50 * (1 - vira * 0.25) + vira * 42} abre={r.olhos} olhar={[r.olhar[0] + vira * 0.5, r.olhar[1]]} cor={corOlho} pele={d.pele} id={`${id}b`} rx0={40 * (1 - vira * 0.22)} />
       <path d={`M ${-9 + vira * 70} 38 Q ${vira * 70} 48 ${9 + vira * 70} 38`} stroke={CONTORNO} strokeWidth={5} fill="none" strokeLinecap="round" />
       <Boca r={r} x={vira * 55} escalaX={1 - Math.abs(vira) * 0.2} />
+      {d.bigode ? (
+        <path
+          transform={`translate(${vira * 60} 58)`}
+          d="M -70 6 Q -50 -22 -10 -10 Q 0 -14 10 -10 Q 50 -22 70 6 Q 40 0 10 6 Q 0 12 -10 6 Q -40 0 -70 6 Z"
+          fill={d.corCabelo}
+          stroke={CONTORNO}
+          strokeWidth={5}
+          strokeLinejoin="round"
+        />
+      ) : null}
+      {d.oculos ? (
+        <g transform={`translate(${vira * 42} 0)`} fill="none" stroke={CONTORNO} strokeWidth={7}>
+          <circle cx={-52} cy={-10} r={50} fill="#ffffff" fillOpacity={0.12} />
+          <circle cx={52} cy={-10} r={50} fill="#ffffff" fillOpacity={0.12} />
+          <path d="M -4 -14 Q 0 -22 4 -14" />
+        </g>
+      ) : null}
     </g>
   );
 };
@@ -649,6 +666,13 @@ const CabecaPerfil: React.FC<{ d: Design; r: Rosto; id: string; poder: number; b
       </g>
       <Olho cx={84} abre={r.olhos} olhar={[0.9 + r.olhar[0] * 0.1, r.olhar[1]]} cor={corOlho} pele={d.pele} id={`${id}p`} rx0={30} />
       <Boca r={r} x={98} escalaX={0.6} />
+      {d.bigode ? <path d="M 84 54 Q 110 38 140 52 Q 128 66 96 64 Z" fill={d.corCabelo} stroke={CONTORNO} strokeWidth={5} strokeLinejoin="round" /> : null}
+      {d.oculos ? (
+        <g fill="none" stroke={CONTORNO} strokeWidth={7}>
+          <circle cx={88} cy={-10} r={42} fill="#ffffff" fillOpacity={0.12} />
+          <path d="M 46 -14 L -10 -6" />
+        </g>
+      ) : null}
     </g>
   );
 };
@@ -748,6 +772,9 @@ const Frente: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
         />
         <path d="M -95 -250 Q -78 -205 -92 -160" stroke={d.camisaSombra} strokeWidth={4} fill="none" strokeLinecap="round" />
         <path d="M 108 -110 Q 82 -95 88 -60" stroke={d.camisaSombra} strokeWidth={4} fill="none" strokeLinecap="round" />
+        {d.gravata && !costas ? (
+          <path d={`M ${pose.vira * 40} ${-TRONCO + 16} l -20 26 l 14 170 l 6 18 l 6 -18 l 14 -170 Z`} fill={d.gravata} stroke={CONTORNO} strokeWidth={5} strokeLinejoin="round" />
+        ) : null}
         {d.numero ? (
           <text
             x={pose.vira * 50}
