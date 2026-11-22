@@ -37,7 +37,14 @@ const falaAte = TF("chorar Cachinho") - t0;
 `Palco cam={{ x: 1250, y: 1000, zoom: 1.05 }}`, Lucas `frente(900, { vira: 0.5 })`, Diego `frente(1500, { vira: -0.5 })`.
 Close de rosto: zoom 1.6–1.8 com `y` ~760. Close de olho: `posCabeca(pose)` + zoom 4.6–5.
 
-## Correndo (câmera acompanha)
+## Correndo DE VERDADE (ciclo novo — prefira este)
+`src/estilo2d/corrida.ts`: `poseCorrida(fase, "normal"|"rapida"|"ninja"|"panico", intensidade)` dá pernas (FK com
+fase no ar e pé de apoio sem escorregar), braços opostos, inclinação e squash. `xCorrida(f, ciclo, estilo, escala)`
+dá o deslocamento que mantém o pé plantado. Ciclos: normal 20, rápida 13–15, ninja 13, pânico 9 frames.
+Poeira a cada passo: `contatos(fase, de, ate)` + `posPe`. Pulo: `pernasFK(...)` (ver `src/videos/Corrida/TesteCorrida.tsx`:
+antecipa 4 frames → voo parabólico com joelhos encolhidos → pouso com squash). Câmera acompanha a altura do pulo.
+
+## Correndo (câmera acompanha — versão antiga, simples)
 ```tsx
 const camX = 1000 + f * 12;
 const w = andarPerfil(f, 1, 8);

@@ -2,6 +2,8 @@ import { Composition } from "remotion";
 import "./estilo/fontes";
 import { LucasSaiyajin } from "./videos/LucasSaiyajin";
 import { Folha } from "./videos/Folha/Folha";
+import { TesteCorrida, DURACAO as DUR_CORR } from "./videos/Corrida/TesteCorrida";
+import { FolhaCorrida } from "./videos/Folha/FolhaCorrida";
 import { ComparaEstilos } from "./videos/Folha/ComparaEstilos";
 import { Cacadores, DURACAO as DUR_CAC } from "./videos/Cacadores/Cacadores";
 import { LutaTeste, DURACAO as DUR_LUTA } from "./videos/Luta/LutaTeste";
@@ -16,6 +18,8 @@ import { TesteEstilo, FIM } from "./videos/TesteEstilo/TesteEstilo";
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition id="TesteCorrida" component={TesteCorrida} durationInFrames={DUR_CORR} fps={30} width={1080} height={1920} />
+      <Composition id="FolhaCorrida" component={FolhaCorrida} durationInFrames={1} fps={30} width={3200} height={2400} />
       <Composition id="ComparaEstilos" component={ComparaEstilos} durationInFrames={1} fps={30} width={2160} height={1920} />
       <Composition id="Cacadores" component={Cacadores} durationInFrames={DUR_CAC} fps={30} width={1080} height={1920} />
       <Composition id="FolhaVistas" component={FolhaVistas} durationInFrames={1} fps={30} width={2400} height={2560} />
