@@ -876,7 +876,12 @@ export const Boneco2D: React.FC<{
       opacity={opacidade}
       transform={`translate(${pose.x} ${pose.y}) rotate(${pose.gira * pose.lado} 0 ${-600 * pose.escala}) scale(${(pose.escala * pose.lado * pose.largura) / Math.sqrt(pose.estica)} ${pose.escala * pose.estica})`}
     >
-      <ellipse cx={0} cy={2} rx={pose.vista === "perfil" ? 150 : 190} ry={22} fill="#000" opacity={0.18 * Math.max(0.2, 1 + peMin / 400)} />
+      <defs>
+        <filter id={`sombra-${id}`} x="-50%" y="-200%" width="200%" height="500%">
+          <feGaussianBlur stdDeviation={16} />
+        </filter>
+      </defs>
+      <ellipse cx={0} cy={4} rx={pose.vista === "perfil" ? 170 : 210} ry={30} fill="#1d1424" opacity={0.26 * Math.max(0.2, 1 + peMin / 400)} filter={`url(#sombra-${id})`} />
       {pose.vista === "perfil" ? (
         <Perfil d={d} pose={pose} rosto={rosto} id={id} poder={poder} objeto={naMao} objetoGira={naMaoGira} />
       ) : (

@@ -1,6 +1,8 @@
 import { AbsoluteFill, Html5Audio, Sequence, interpolate, staticFile } from "remotion";
 import { Conquista, Contagem, LegendaPalavra, Selo } from "../../estilo2d/UI";
 import { Cortina, Iris, ZoomRapido } from "../../estilo2d/Transicoes";
+import { PoeiraFlutuante } from "../../estilo2d/Acabamento";
+import { Textura } from "../../estilo2d/chibi/RuaTexturizada";
 import * as C1 from "./Cenas1";
 import * as C2 from "./Cenas2";
 import { Som } from "./comum";
@@ -86,7 +88,14 @@ export const Cacadores: React.FC = () => {
       <Cortina de={T("Segunda fase") - 7} dur={14} cor="#7d5bd6" cor2="#c9b6ff" />
       <Cortina de={T("Fase final") - 7} dur={14} cor="#e8343f" cor2="#ffb0b5" />
       <ZoomRapido de={T("Licença Hunter desbloqueada") - 5} dur={10} />
-      <LegendaPalavra palavras={LEGENDAS} />
+      {/* acabamento: poeira flutuante + grão de papel + vinheta suave */}
+      <AbsoluteFill style={{ pointerEvents: "none" }}>
+        <svg width={1080} height={1920}>
+          <PoeiraFlutuante />
+          <Textura />
+        </svg>
+      </AbsoluteFill>
+      <LegendaPalavra palavras={LEGENDAS} y={1270} tamanho={78} />
 
       {/* narração */}
       <Html5Audio src={staticFile("narracao/cacadores.mp3")} volume={1} />

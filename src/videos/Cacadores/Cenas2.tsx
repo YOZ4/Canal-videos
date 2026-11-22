@@ -1,13 +1,14 @@
 import { AbsoluteFill, interpolate, random, useCurrentFrame } from "remotion";
 import { AURA_DIEGO, AURA_LUCAS, AuraForte, CorrentesAura, PunhoBrilhando } from "../../estilo2d/Aura";
 import { Boneco2D, ROSTO_BASE, posCabeca } from "../../estilo2d/Boneco2D";
-import { Arena, CHAO_Y, Cozinha, Praca } from "../../estilo2d/Cenario2D";
+import { Arena, CHAO_Y, Cozinha } from "../../estilo2d/Cenario2D";
 import { Brilhos, Gota, Impacto, LinhasFoco, Poeira, Simbolo, Veia } from "../../estilo2d/Efeitos2D";
 import { CorteArco, Faiscas, Fumaca, OndaChoque, Onomatopeia, Rastro } from "../../estilo2d/EfeitosLuta";
 import { Copo, Coracao, Espada, Pulmoes } from "../../estilo2d/Objetos";
 import { Placar, Rotulo2, Selo } from "../../estilo2d/UI";
 import { CURVA, k, kPose, respira, tremor } from "../../estilo2d/anim";
 import { AVO, CANDIDATOS, DIEGO, LUCAS } from "../../estilo2d/personagens";
+import { Fundo, ObjetosFisica, RuaLonga } from "../../estilo2d/Acabamento";
 import { ESC, Grade, Lembranca, Palco, ROSTO_AVO, ROSTO_DIEGO, Som, frente, perfil, vivo } from "./comum";
 import { T, TF } from "./tempo";
 
@@ -20,7 +21,7 @@ export const S19: React.FC<P> = () => {
   return (
     <>
       <Palco cam={{ x: 600, y: 1000, zoom: k(f, [[0, 0.85], [70, 0.95]]) }}>
-        <Cozinha />
+        <Fundo saturacao={0.6}><Cozinha /></Fundo>
         <Boneco2D id="s19l" d={LUCAS} pose={frente(330, { vira: 0.3 })} rosto={vivo({ ...ROSTO_BASE, olhar: [0.6, 0.6] }, f, "s19l")} />
         <Boneco2D id="s19d" d={DIEGO} pose={frente(880, { vira: -0.3, cruzado: 1 })} rosto={vivo(ROSTO_DIEGO, f, "s19d")} />
         {[330, 880].map((x) => (
@@ -186,11 +187,22 @@ export const S24: React.FC<P> = () => {
   return (
     <>
       <CopoClose f={f} maos={1} aura={k(f, [[0, 0.85], [56, 1]])} domo={1} transborda={k(f, [[30, 0], [70, 1, CURVA.suave]])} />
-      <Onomatopeia texto="SPLASH!" x={540} y={560} f={f} de={56} dur={24} cor="#9fd8ff" />
+      <AbsoluteFill>
+        <svg width={1080} height={1920}>
+          <ObjetosFisica x={540} y={660} f={f} de={52} n={26} chao={1190} velocidade={30} angulo={[-160, -20]} gravidade={1.6} semente="s24" desenho={(i) => <path d="M 0 -18 Q 12 0 0 12 Q -12 0 0 -18 Z" fill={i % 2 ? "#6cc4ff" : "#9fd8ff"} />} />
+        </svg>
+      </AbsoluteFill>
+      <Onomatopeia2 f={f} />
       <Som src="aura" de={52} volume={0.4} />
     </>
   );
 };
+
+const Onomatopeia2: React.FC<{ f: number }> = ({ f }) => (
+  <svg width={1080} height={1920} style={{ position: "absolute" }}>
+    <Onomatopeia texto="SPLASH!" x={540} y={520} f={f} de={56} dur={24} cor="#9fd8ff" />
+  </svg>
+);
 
 // S25 — Tipo Reforço (muque + aura forte)
 export const S25: React.FC<P> = () => {
@@ -258,7 +270,7 @@ export const S29: React.FC<P> = () => {
   return (
     <>
       <Palco cam={{ x: 1100, y: 1040, zoom: k(f, [[0, 0.7], [48, 0.8]]) }}>
-        <Arena camX={1100} />
+        <Fundo saturacao={0.6}><Arena camX={1100} /></Fundo>
         <AuraForte x={1400} chao={CHAO_Y} altura={ALT} f={f} forca={0.55} caos={0.1} cor={AURA_DIEGO.cor} clara={AURA_DIEGO.clara} id="s29d" />
         <Boneco2D id="s29l" d={LUCAS} pose={perfil(800, { agacha: 26, peE: { dx: -70, dy: 0 }, peD: { dx: 80, dy: 0 }, bracoE: { ombro: 40, cotovelo: 80 }, bracoD: { ombro: 50, cotovelo: 90 }, maoE: "punho", maoD: "punho" })} rosto={vivo({ ...ROSTO_BASE, sobrancelha: 12 }, f, "s29l")} />
         <Boneco2D id="s29d" d={DIEGO} pose={perfil(1400, { lado: -1, agacha: 20, peE: { dx: -70, dy: 0 }, peD: { dx: 70, dy: 0 }, bracoD: { ombro: 30, cotovelo: 20 } })} rosto={vivo(ROSTO_DIEGO, f, "s29d")} naMao={<Espada escala={0.9} />} naMaoGira />
@@ -284,7 +296,7 @@ export const S30: React.FC<P> = ({ t0 }) => {
   return (
     <AbsoluteFill style={{ filter: cinza ? "grayscale(0.85) contrast(1.15)" : undefined }}>
       <Palco cam={{ x: 960 + sh.x, y: 1000 + sh.y, zoom: 1.15 }}>
-        <Arena camX={1000} />
+        <Fundo saturacao={0.6}><Arena camX={1000} /></Fundo>
         <AuraForte x={dx} chao={CHAO_Y} altura={ALT} f={f} forca={0.7} caos={0.3} cor={AURA_DIEGO.cor} clara={AURA_DIEGO.clara} id="s30d" particulas={false} />
         <Rastro x={dx} y={CHAO_Y} dir={-1} forca={f < 11 ? 1 : 0} f={f} cor="#d4ffe6" />
         <Boneco2D id="s30l" d={LUCAS} pose={perfil(760, { inclina: -8, cabeca: -6, bracoE: { ombro: 10, cotovelo: 10 }, bracoD: { ombro: 14, cotovelo: 10 } })} rosto={{ ...ROSTO_BASE, olhos: 1.3, sobrancelha: -14, sobrancelhaY: 16, boca: 0.3, sorriso: -0.4 }} />
@@ -342,13 +354,14 @@ export const S32: React.FC<P> = ({ t0 }) => {
   return (
     <AbsoluteFill style={{ filter: pisca ? "brightness(1.35) saturate(1.3)" : undefined }}>
       <Palco cam={{ x: 1000 + sh.x, y: 980 + sh.y, zoom: k(f, [[0, 1.0], [some, 1.2], [some + 20, 1.05]]) }}>
-        <Arena camX={1000} tensao={1} />
+        <Fundo saturacao={0.6}><Arena camX={1000} tensao={1} /></Fundo>
         <rect x={-2000} y={-1000} width={6000} height={4000} fill="#2fc6ff" opacity={f < some ? 0.12 : 0} />
         <AuraForte x={1000} chao={CHAO_Y} altura={ALT} f={f} forca={forca} caos={f < some ? 1 : 0.4} id="s32" />
         {f < some
           ? [0, 1, 2].map((i) => <Faiscas key={i} x={1000 + (random(`fx${i}`) - 0.5) * 400} y={CHAO_Y - 500 - i * 120} f={(f + i * 5) % 12} de={0} dur={12} cor="#c9f4ff" n={10} alcance={500} />)
           : null}
         {f < some ? <OndaChoque x={1000} y={CHAO_Y} f={f % 10} de={0} dur={10} raio={700} achatado={0.2} cor="#c9f4ff" /> : null}
+        <ObjetosFisica x={1000} y={CHAO_Y - 20} f={f} de={2} n={18} chao={CHAO_Y + 40} velocidade={30} angulo={[-170, -10]} gravidade={1.2} semente="s32" desenho={(i) => <path d={`M -${10 + (i % 3) * 6} 0 L -4 -${12 + (i % 4) * 4} L ${12 + (i % 2) * 6} -4 L 6 ${10 + (i % 3) * 3} Z`} fill={i % 2 ? "#8b8177" : "#a39889"} />} />
         <Fumaca x={1000} y={CHAO_Y} f={f} de={some} dur={36} tamanho={0.8} cor="#c9e9f5" />
         <Boneco2D id="s32" d={LUCAS} pose={pose} rosto={vivo({ ...ROSTO_BASE, olhos: 1.25, sobrancelha: -16, sobrancelhaY: 14, boca: 0.7, sorriso: -0.3 }, f, "s32")} />
       </Palco>
@@ -367,7 +380,7 @@ export const S33: React.FC<P> = () => {
   return (
     <>
       <Palco cam={{ x: 1100, y: 1060, zoom: 0.95 }}>
-        <Arena camX={1100} />
+        <Fundo saturacao={0.6}><Arena camX={1100} /></Fundo>
         <Poeira x={1000} y={CHAO_Y} f={f} de={6} />
         <Boneco2D id="s33l" d={LUCAS} pose={pose} rosto={vivo({ ...ROSTO_BASE, olhos: 0.6, sobrancelha: -14, sorriso: -0.6 }, f, "s33l")} />
         <Boneco2D id="s33d" d={DIEGO} pose={perfil(1450, { lado: -1, bracoD: { ombro: 10, cotovelo: 10 } })} rosto={vivo({ ...ROSTO_DIEGO, olhar: [1, 0.5] }, f, "s33d")} naMao={<Espada escala={0.9} />} naMaoGira />
@@ -385,7 +398,7 @@ export const S34: React.FC<P> = ({ t0 }) => {
   const falaAte = TF("ganhar assim") - t0;
   return (
     <Palco cam={{ x: 1300, y: 760, zoom: 1.7 }}>
-      <Arena camX={1300} />
+      <Fundo saturacao={0.6}><Arena camX={1300} /></Fundo>
       <Boneco2D id="s34d" d={DIEGO} pose={frente(1350, { vira: -0.5, bracoD: { ombro: 10, cotovelo: 10 } })} rosto={vivo({ ...ROSTO_DIEGO, olhos: 0.7, canto: 0, sorriso: -0.1, sobrancelha: 14, olhar: [-1, 0.7] }, f, "s34d", falaDe, falaAte)} naMao={<Espada escala={0.9} />} naMaoGira />
     </Palco>
   );
@@ -397,7 +410,7 @@ export const S35: React.FC<P> = () => {
   return (
     <Lembranca>
       <Palco cam={{ x: 560, y: 820, zoom: k(f, [[0, 1.6], [44, 1.75]]) }}>
-        <Praca camX={600} />
+        <Fundo><RuaLonga camX={600} /></Fundo>
         <Boneco2D id="s35" d={AVO} pose={frente(560, { vira: -0.2, bracoD: { ombro: 120, cotovelo: -40 }, maoD: "aponta", estica: 1 + respira(f) * 0.008 })} rosto={vivo({ ...ROSTO_AVO, sorriso: 0.7 }, f, "s35")} />
       </Palco>
     </Lembranca>
@@ -477,7 +490,7 @@ export const S38: React.FC<P> = ({ t0 }) => {
   return (
     <>
       <Palco cam={{ x: k(f, [[0, 1000], [punho, 1040]]), y: k(f, [[0, 1000], [punho, 880]]), zoom: k(f, [[0, 1.05], [punho + 10, 1.55, CURVA.suave]]) }}>
-        <Arena camX={1000} tensao={0} />
+        <Fundo saturacao={0.6}><Arena camX={1000} tensao={0} /></Fundo>
         {/* primeiro a aura vaza, instável; depois fica calma e vai pro punho */}
         <AuraForte x={1000} chao={CHAO_Y} altura={ALT} f={f} forca={k(f, [[0, 1], [30, 0.9], [punho, 0.15]])} caos={k(f, [[0, 0.7], [30, 0.1]])} id="s38" />
         <CorrentesAura x={1000} chao={CHAO_Y} altura={ALT} alvoX={mx} alvoY={my} f={f} prog={k(f, [[30, 0], [50, 1], [punho + 10, 1], [punho + 20, 0]])} id="s38c" />
@@ -497,7 +510,7 @@ export const S39: React.FC<P> = () => {
   const punhoX = 800 + 160;
   return (
     <Palco cam={{ x: 1100, y: 1040, zoom: 0.85 }}>
-      <Arena camX={1100} />
+      <Fundo saturacao={0.6}><Arena camX={1100} /></Fundo>
       <AuraForte x={1400} chao={CHAO_Y} altura={ALT} f={f} forca={0.6} caos={0.15} cor={AURA_DIEGO.cor} clara={AURA_DIEGO.clara} id="s39d" particulas={false} />
       <Boneco2D id="s39l" d={LUCAS} pose={perfil(800, { agacha: 30, peE: { dx: -70, dy: 0 }, peD: { dx: 80, dy: 0 }, bracoD: { ombro: 40, cotovelo: 90 }, maoD: "punho", bracoE: { ombro: -20, cotovelo: 30 } })} rosto={vivo({ ...ROSTO_BASE, sobrancelha: 14, olhos: 0.8 }, f, "s39l")} />
       <PunhoBrilhando x={punhoX} y={CHAO_Y - 600 * ESC} f={f} forca={0.7} id="s39p" />
@@ -516,7 +529,7 @@ export const S40: React.FC<P> = ({ t0 }) => {
     const [hx, hy] = posCabeca(pose);
     return (
       <Palco cam={{ x: hx + 60, y: hy - 6, zoom: k(f, [[0, 4.6], [n2, 5.0]]) }}>
-        <Arena camX={1100} />
+        <Fundo saturacao={0.6}><Arena camX={1100} /></Fundo>
         <AuraForte x={800} chao={CHAO_Y} altura={ALT} f={f} forca={0.5} caos={0} id="s40l" particulas={false} />
         <Boneco2D id="s40l" d={LUCAS} pose={pose} rosto={vivo({ ...ROSTO_BASE, sobrancelha: 18, olhos: 0.75 }, f, "s40l")} />
       </Palco>
@@ -527,7 +540,7 @@ export const S40: React.FC<P> = ({ t0 }) => {
     const [hx, hy] = posCabeca(pose);
     return (
       <Palco cam={{ x: hx - 60, y: hy - 6, zoom: k(f, [[n2, 4.6], [n1, 5.0]]) }}>
-        <Arena camX={1100} />
+        <Fundo saturacao={0.6}><Arena camX={1100} /></Fundo>
         <AuraForte x={1400} chao={CHAO_Y} altura={ALT} f={f} forca={0.5} caos={0} cor={AURA_DIEGO.cor} clara={AURA_DIEGO.clara} id="s40d" particulas={false} />
         <Boneco2D id="s40d" d={DIEGO} pose={pose} rosto={vivo({ ...ROSTO_DIEGO, sobrancelha: 20, olhos: 0.45, canto: 0 }, f, "s40d")} />
       </Palco>
@@ -555,7 +568,7 @@ export const S41: React.FC<P> = () => {
   return (
     <AbsoluteFill style={{ filter: inv ? "invert(1) contrast(1.4)" : undefined }}>
       <Palco cam={{ x: 1250 + sh.x, y: 960 + sh.y, zoom: k(f, [[0, 1.2], [HIT, 1.55, CURVA.sai], [HIT + 14, 1.35]]) }}>
-        <Arena camX={1250} />
+        <Fundo saturacao={0.6}><Arena camX={1250} /></Fundo>
         <AuraForte x={x} chao={CHAO_Y} altura={ALT} f={f} forca={f < HIT + 6 ? 0.9 : 0.4} caos={0.3} id="s41l" particulas={false} />
         <Rastro x={x} y={CHAO_Y} dir={1} forca={f < HIT + 1 ? 1 : 0} f={f} cor="#c9f4ff" />
         <Boneco2D id="s41d" d={DIEGO} pose={perfil(1440, { lado: -1, agacha: 30, inclina: f > HIT ? -24 : 0, bracoD: { ombro: 64, cotovelo: 64 } })} rosto={{ ...ROSTO_DIEGO, olhos: f > HIT ? 1.3 : 0.6, boca: f > HIT ? 0.8 : 0 }} naMao={<Espada escala={0.9} />} naMaoGira />
@@ -583,10 +596,11 @@ export const S42: React.FC<P> = () => {
   return (
     <>
       <Palco cam={{ x: k(f, [[0, 1500], [40, 2300, CURVA.suave]]), y: 1000, zoom: 0.8 }}>
-        <Arena camX={1800} />
+        <Fundo saturacao={0.6}><Arena camX={1800} /></Fundo>
         <Rastro x={x} y={y} dir={1} forca={aterrissou ? 0 : 0.8} f={f} />
         <Boneco2D id="s42d" d={DIEGO} pose={perfil(aterrissou ? 2600 : x, { lado: -1, y: aterrissou ? CHAO_Y : y, gira: aterrissou ? 0 : -f * 18, agacha: aterrissou ? 340 : 40, peE: aterrissou ? { dx: 240, dy: 0 } : { dx: -60, dy: -120 }, peD: aterrissou ? { dx: 290, dy: 0 } : { dx: 60, dy: -140 }, bracoE: { ombro: 120, cotovelo: 30 }, bracoD: { ombro: 140, cotovelo: 20 } })} rosto={{ ...ROSTO_DIEGO, olhos: 1.2, boca: 0.6, sobrancelhaY: 16 }} />
         <Poeira x={2600} y={CHAO_Y} f={f} de={40} largura={1.4} />
+        <ObjetosFisica x={2600} y={CHAO_Y - 30} f={f} de={40} n={16} chao={CHAO_Y + 40} velocidade={24} angulo={[-165, -15]} gravidade={1.3} semente="s42" desenho={(i) => <path d={`M -${10 + (i % 3) * 6} 0 L -4 -${12 + (i % 4) * 4} L ${12 + (i % 2) * 6} -4 L 6 ${10 + (i % 3) * 3} Z`} fill={i % 2 ? "#8b8177" : "#a39889"} />} />
         {aterrissou ? <Simbolo texto="!" x={2600} y={CHAO_Y - 600} f={f} de={44} cor="#ffffff" /> : null}
       </Palco>
       {aterrissou ? <Rotulo2 texto="FORA!" x={540} y={460} de={42} tamanho={150} /> : null}
@@ -634,7 +648,7 @@ export const S44: React.FC<P> = ({ t0 }) => {
   const dpe = perfil(1340, { lado: -1, bracoD: { ombro: 80, cotovelo: 0 } });
   return (
     <Palco cam={{ x: 1250, y: 1000, zoom: 1.1 }}>
-      <Arena camX={1800} />
+      <Fundo saturacao={0.6}><Arena camX={1800} /></Fundo>
       <Boneco2D id="s44l" d={LUCAS} pose={perfil(1020, { inclina: 12 * (1 - levanta), bracoD: { ombro: k(f, [[0, 10], [12, 80, CURVA.exagera]]), cotovelo: 0 }, maoD: "aberta" })} rosto={vivo({ ...ROSTO_BASE, sorriso: 0.7 }, f, "s44l")} />
       <Boneco2D id="s44d" d={DIEGO} pose={levanta > 0 ? kPose(f, [[aceita, dsentado], [aceita + 18, dpe, CURVA.exagera]]) : dsentado} rosto={vivo({ ...ROSTO_DIEGO, olhos: 0.55, canto: 0, sorriso: 0, olhar: [0, 0.4] }, f, "s44d")} />
     </Palco>
@@ -649,7 +663,7 @@ export const S45: React.FC<P> = ({ t0 }) => {
   return (
     <>
       <Palco cam={{ x: 1340, y: 760, zoom: 1.75 }}>
-        <Arena camX={1800} />
+        <Fundo saturacao={0.6}><Arena camX={1800} /></Fundo>
         <Boneco2D id="s45d" d={DIEGO} pose={frente(1340, { vira: -0.4, cruzado: k(f, [[falaDe - 6, 0], [falaDe + 4, 1, CURVA.exagera]]), cabeca: 8 })} rosto={vivo({ ...ROSTO_DIEGO, olhos: 0.5, olhar: [1, -0.4], canto: 0.6, sobrancelhaY: 4 }, f, "s45d", falaDe, falaAte)} />
       </Palco>
       <Selo texto="2 SEGUNDOS DEPOIS..." de={0} ate={falaDe - 2} cor="#4a4458" />
@@ -664,7 +678,7 @@ export const S46: React.FC<P> = ({ t0 }) => {
   const falaAte = TF("Claro Topete") - t0;
   return (
     <Palco cam={{ x: 1020, y: 760, zoom: 1.75 }}>
-      <Arena camX={1400} />
+      <Fundo saturacao={0.6}><Arena camX={1400} /></Fundo>
       <Boneco2D id="s46l" d={LUCAS} pose={frente(1020, { vira: 0.5, cabeca: -4 })} rosto={vivo({ ...ROSTO_BASE, olhos: 0.45, canto: 1, sorriso: 0.4, olhar: [1, 0] }, f, "s46l", falaDe, falaAte)} />
     </Palco>
   );
@@ -677,7 +691,7 @@ export const S47: React.FC<P> = ({ t0 }) => {
   return (
     <>
       <Palco cam={{ x: 1100, y: 1000, zoom: k(f, [[0, 0.75], [140, 0.85]]) }}>
-        <Arena camX={1100} />
+        <Fundo saturacao={0.6}><Arena camX={1100} /></Fundo>
         <rect x={-2000} y={-1000} width={6000} height={4000} fill="#ff9b2f" opacity={0.25} />
         <AuraForte x={900} chao={CHAO_Y} altura={ALT} f={f} forca={0.45} caos={0} id="s47l" />
         <Boneco2D id="s47l" d={LUCAS} pose={frente(900, { vira: 0.3, bracoD: { ombro: 40, cotovelo: -20 } })} rosto={vivo({ ...ROSTO_BASE, sorriso: 0.7 }, f, "s47l")} />
@@ -687,7 +701,7 @@ export const S47: React.FC<P> = ({ t0 }) => {
         <AbsoluteFill style={{ opacity: interpolate(f, [avo, avo + 10], [0, 1], { extrapolateRight: "clamp" }) }}>
           <Lembranca>
             <Palco cam={{ x: 560, y: 820, zoom: 1.6 }}>
-              <Praca camX={600} />
+              <Fundo><RuaLonga camX={600} /></Fundo>
               <Boneco2D id="s47a" d={AVO} pose={frente(560, { vira: -0.2, bracoD: { ombro: 120, cotovelo: -40 }, maoD: "joia" })} rosto={vivo({ ...ROSTO_AVO, sorriso: 0.9 }, f, "s47a")} />
             </Palco>
           </Lembranca>

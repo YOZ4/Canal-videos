@@ -1,12 +1,13 @@
 import { AbsoluteFill, interpolate, random, useCurrentFrame } from "remotion";
 import { Boneco2D, ROSTO_BASE, posCabeca } from "../../estilo2d/Boneco2D";
-import { CHAO_Y, Carteira, Praca, Sala, Savana } from "../../estilo2d/Cenario2D";
+import { CHAO_Y, Carteira, Sala, Savana } from "../../estilo2d/Cenario2D";
 import { Brilhos, Gota, LinhasFoco, Poeira, Simbolo, Veia } from "../../estilo2d/Efeitos2D";
 import { Faiscas, Rastro } from "../../estilo2d/EfeitosLuta";
 import { Antilope, Garrafa } from "../../estilo2d/Objetos";
 import { Placar, Rotulo2, Selo } from "../../estilo2d/UI";
 import { CURVA, andarPerfil, giro, k, respira, tremor } from "../../estilo2d/anim";
 import { AVO, CANDIDATOS, DIEGO, EXAMINADOR, LUCAS } from "../../estilo2d/personagens";
+import { Cachorro, Fundo, ObjetosFisica, RuaLonga } from "../../estilo2d/Acabamento";
 import { ESC, Grade, Lembranca, Palco, ROSTO_AVO, ROSTO_DIEGO, Som, frente, perfil, vivo } from "./comum";
 import { T, TF } from "./tempo";
 
@@ -42,7 +43,7 @@ export const S01: React.FC<P> = () => {
   return (
     <>
       <Palco cam={cam}>
-        <Sala />
+        <Fundo saturacao={0.6}><Sala /></Fundo>
         <Boneco2D id="s1" d={LUCAS} pose={pose} rosto={rosto} />
         <Carteira x={560} />
         <Gota x={hx + 140} y={hy - 90} f={f} de={18} />
@@ -68,7 +69,7 @@ export const S02: React.FC<P> = () => {
   return (
     <>
       <Palco cam={{ x: 560 + sh.x, y: 900 + sh.y, zoom: k(f, [[0, 1.6], [115, 1.9]]) }}>
-        <Sala />
+        <Fundo saturacao={0.6}><Sala /></Fundo>
         <rect x={-800} y={-600} width={3000} height={3000} fill="#5a0a14" opacity={0.55} />
         {/* sombra gigante do examinador surgindo atrás */}
         <g opacity={k(f, [[10, 0], [40, 0.95]])} transform={`translate(0 ${k(f, [[10, 120], [50, 0, CURVA.sai]])})`}>
@@ -94,7 +95,7 @@ export const S03: React.FC<P> = () => {
   return (
     <>
       <Palco cam={{ x: 1100, y: k(f, [[0, 760], [120, 1000]]), zoom: k(f, [[0, 0.62], [120, 0.85]]) }}>
-        <Praca camX={1100} />
+        <Fundo><RuaLonga camX={1100} /></Fundo>
         {/* portão da prova */}
         <g transform={`translate(1100 ${CHAO_Y})`}>
           <rect x={-520} y={-1150} width={110} height={1150} fill="#6d6377" stroke="#1d1424" strokeWidth={8} />
@@ -127,7 +128,7 @@ export const S04: React.FC<P> = ({ t0 }) => {
     <>
       <Lembranca>
         <Palco cam={{ x: 560, y: 850, zoom: k(f, [[0, 1.35], [124, 1.55]]) }}>
-          <Praca camX={600} />
+          <Fundo><RuaLonga camX={600} /></Fundo>
           <Boneco2D id="avo" d={AVO} pose={pose} rosto={rosto} />
         </Palco>
       </Lembranca>
@@ -142,11 +143,12 @@ export const S05: React.FC<P> = () => {
   const x = k(f, [[0, 500], [44, 1700, CURVA.suave]]);
   return (
     <Palco cam={{ x, y: 1000, zoom: 0.9 }}>
-      <Praca camX={x} />
+      <Fundo><RuaLonga camX={x} /></Fundo>
       {CANDIDATOS.map((d, i) => (
         <Boneco2D key={i} id={`s5c${i}`} d={d} pose={perfil(300 + i * 260, { estica: 1 + respira(f, i * 9) * 0.008 })} rosto={vivo(ROSTO_BASE, f, `s5c${i}`)} />
       ))}
       <Boneco2D id="s5d" d={DIEGO} pose={frente(1750, { cruzado: 1, cabeca: 6 })} rosto={{ ...ROSTO_DIEGO, olhos: 0 }} />
+      <Cachorro x={2080} y={CHAO_Y + 30} escala={0.9} />
     </Palco>
   );
 };
@@ -160,7 +162,8 @@ export const S06: React.FC<P> = () => {
   return (
     <>
       <Palco cam={{ x: 560, y: 900, zoom: k(f, [[0, 1.2], [100, 1.4]]) }}>
-        <Praca camX={1700} />
+        <Fundo><RuaLonga camX={1700} /></Fundo>
+        <Cachorro x={860} y={CHAO_Y + 20} escala={0.85} />
         <Boneco2D id="s6" d={DIEGO} pose={pose} rosto={{ ...ROSTO_DIEGO, olhos: 0, sorriso: 0.1, canto: 0.3 }} />
         {[0, 1, 2].map((i) => {
           const t = ((f + i * 18) % 54) / 54;
@@ -188,7 +191,7 @@ export const S07: React.FC<P> = ({ t0 }) => {
   const [hx, hy] = posCabeca(lpose);
   return (
     <Palco cam={{ x: 1250, y: 1000, zoom: 1.05 }}>
-      <Praca camX={1250} />
+      <Fundo><RuaLonga camX={1250} /></Fundo>
       <Boneco2D id="s7l" d={LUCAS} pose={lpose} rosto={lrosto} />
       <Boneco2D id="s7" d={DIEGO} pose={pose} rosto={rosto} />
       <Veia x={hx + 80} y={hy - 90} f={f} de={falaAte - 4} escala={0.8} />
@@ -210,7 +213,7 @@ export const S08: React.FC<P> = ({ t0 }) => {
   return (
     <>
       <Palco cam={{ x: 1200, y: 760, zoom: k(f, [[0, 1.3], [48, 1.5]]) }}>
-        <Praca camX={1250} />
+        <Fundo><RuaLonga camX={1250} /></Fundo>
         <Boneco2D id="s8l" d={LUCAS} pose={lpose} rosto={lrosto} />
         <Boneco2D id="s8d" d={DIEGO} pose={dpose} rosto={drosto} />
         {f > falaAte - 6 ? (
@@ -239,7 +242,7 @@ export const S09: React.FC<P> = () => {
   return (
     <>
       <Palco cam={{ x: camX, y: 1000, zoom: 0.8 }}>
-        <Praca camX={camX} />
+        <Fundo><RuaLonga camX={camX} /></Fundo>
         <Boneco2D id="s9e" d={EXAMINADOR} pose={run(0, 1500, { inclina: 4 })} rosto={vivo({ ...ROSTO_BASE, olhos: 0.4, sorriso: 0.2 }, f, "ex")} />
         {CANDIDATOS.slice(0, 3).map((d, i) => (
           <Boneco2D key={i} id={`s9c${i}`} d={d} pose={run(i * 5, 1050 - i * 230)} rosto={vivo({ ...ROSTO_BASE, boca: 0.3 }, f, `s9c${i}`)} />
@@ -260,7 +263,7 @@ export const S10: React.FC<P> = () => {
   return (
     <>
       <Palco cam={{ x: camX, y: 1050, zoom: 0.62 }}>
-        <Praca camX={camX} />
+        <Fundo><RuaLonga camX={camX} /></Fundo>
         {[...CANDIDATOS, LUCAS, DIEGO, ...CANDIDATOS].map((d, i) => {
           const w = andarPerfil(f + i * 3, 1.1, 7);
           return <Boneco2D key={i} id={`s10_${i}`} d={d} pose={perfil(500 + i * 160 + f * 16, { y: CHAO_Y - w.bob + (i % 2) * 30, peE: w.peE, peD: w.peD, bracoE: w.bracoE, bracoD: w.bracoD, inclina: 10 })} rosto={vivo({ ...ROSTO_BASE, boca: 0.25 }, f, `s10${i}`)} />;
@@ -281,11 +284,12 @@ export const S11: React.FC<P> = () => {
   return (
     <>
       <Palco cam={{ x: camX, y: 1000, zoom: 0.95 }}>
-        <Praca camX={camX} />
+        <Fundo><RuaLonga camX={camX} /></Fundo>
         <Rastro x={dx} y={CHAO_Y} dir={1} forca={f > 14 ? 1 : 0} f={f} />
         <Boneco2D id="s11d" d={DIEGO} pose={perfil(dx, { y: CHAO_Y - wd.bob, peE: wd.peE, peD: wd.peD, bracoE: { ombro: -60, cotovelo: 30 }, bracoD: { ombro: -60, cotovelo: 30 }, inclina: 22 })} rosto={vivo({ ...ROSTO_DIEGO, olhos: 0.45, canto: 0.4 }, f, "s11d")} />
         <Boneco2D id="s11l" d={LUCAS} pose={perfil(950 + f * 14, { y: CHAO_Y - wl.bob, peE: wl.peE, peD: wl.peD, bracoE: wl.bracoE, bracoD: wl.bracoD, inclina: 9 })} rosto={vivo({ ...ROSTO_BASE, olhos: k(f, [[12, 1], [18, 1.25, CURVA.exagera]]), boca: 0.35, sobrancelhaY: 12 }, f, "s11l")} />
         <Poeira x={760 + 14 * 14} y={CHAO_Y} f={f} de={14} />
+        <ObjetosFisica x={760 + 14 * 14} y={CHAO_Y - 40} f={f} de={14} n={12} chao={CHAO_Y + 30} velocidade={22} angulo={[-160, -110]} gravidade={0.6} semente="s11" desenho={(i) => <ellipse rx={14} ry={6} fill={["#a86a3a", "#c48a4a", "#8a5a30"][i % 3]} />} />
       </Palco>
       <Som src="whoosh" de={14} volume={0.5} />
     </>
@@ -301,7 +305,7 @@ export const S12: React.FC<P> = ({ t0 }) => {
   if (f < troca) {
     return (
       <Palco cam={{ x: camX + 60, y: 900, zoom: 1.3 }}>
-        <Praca camX={camX} />
+        <Fundo><RuaLonga camX={camX} /></Fundo>
         <Boneco2D id="s12" d={LUCAS} pose={perfil(1000 + f * 12, { y: CHAO_Y - w.bob, peE: w.peE, peD: w.peD, bracoE: w.bracoE, bracoD: w.bracoD, inclina: 7 })} rosto={vivo({ ...ROSTO_BASE, sorriso: 0.7, canto: 0.6 }, f, "s12")} />
       </Palco>
     );
@@ -406,7 +410,7 @@ export const S13: React.FC<P> = ({ t0 }) => {
   const [hx, hy] = posCabeca(pose);
   return (
     <Palco cam={{ x: camX + 60, y: 900, zoom: 1.3 }}>
-      <Praca camX={camX} />
+      <Fundo><RuaLonga camX={camX} /></Fundo>
       <Boneco2D id="s13" d={LUCAS} pose={pose} rosto={vivo({ ...ROSTO_BASE, sorriso: 0.5, olhos: 0.8 }, g, "s13")} />
       <Gota x={hx - 120} y={hy - 60} f={g} de={2} escala={0.7} />
       {[0, 1, 2, 3].map((i) => {
@@ -434,7 +438,7 @@ export const S14: React.FC<P> = () => {
   return (
     <>
       <Palco cam={{ x: camX + 260, y: 1080, zoom: 1.0 }}>
-        <Savana camX={camX - 1000} />
+        <Fundo saturacao={0.92} nevoa={0.04} cor="#ffd9a8"><Savana camX={camX - 1000} /></Fundo>
         {/* ondas de calor */}
         {[0, 1, 2, 3, 4].map((i) => (
           <path key={i} d={`M ${camX - 300 + i * 260} ${CHAO_Y - 200 - ((f * 3 + i * 40) % 300)} q 30 -30 0 -60 q -30 -30 0 -60`} stroke="#fff1b8" strokeWidth={8} fill="none" opacity={0.35} strokeLinecap="round" />
@@ -460,7 +464,7 @@ export const S15: React.FC<P> = () => {
   return (
     <>
       <Palco cam={{ x: 1080, y: 1060, zoom: 1.1 }}>
-        <Praca camX={1300} />
+        <Fundo><RuaLonga camX={1300} /></Fundo>
         <Boneco2D id="s15c" d={CANDIDATOS[2]} pose={cpose} rosto={vivo({ ...ROSTO_BASE, olhos: k(f, [[0, 0.45], [50, 1]]), sorriso: k(f, [[0, -0.6], [50, 0.8]]), sobrancelha: -12 }, f, "s15c")} />
         <Boneco2D id="s15l" d={LUCAS} pose={lpose} rosto={vivo({ ...ROSTO_BASE, sorriso: 0.8 }, f, "s15l")} naMao={<Garrafa escala={0.9} />} />
         <Gota x={1300} y={980} f={f} de={0} escala={0.7} />
@@ -481,7 +485,7 @@ export const S16: React.FC<P> = ({ t0 }) => {
   return (
     <>
       <Palco cam={{ x: 1100, y: 1000, zoom: 0.92 }}>
-        <Praca camX={1100} />
+        <Fundo><RuaLonga camX={1100} /></Fundo>
         {/* placa de chegada */}
         <g transform={`translate(1650 ${CHAO_Y})`}>
           <rect x={-10} y={-620} width={20} height={620} fill="#6e4b3a" />
@@ -509,7 +513,7 @@ export const S17: React.FC<P> = ({ t0 }) => {
   const [hx, hy] = posCabeca(pose);
   return (
     <Palco cam={{ x: 1000, y: 800, zoom: 1.6 }}>
-      <Praca camX={1100} />
+      <Fundo><RuaLonga camX={1100} /></Fundo>
       <Boneco2D id="s17" d={DIEGO} pose={pose} rosto={vivo({ ...ROSTO_DIEGO, olhos: 0.5, olhar: [0.8, -0.6], canto: 0.9 }, f, "s17", falaDe, falaAte)} />
       <Gota x={hx + 150} y={hy - 120} f={f} de={falaAte - 6} escala={0.9} />
     </Palco>
@@ -523,7 +527,7 @@ export const S18: React.FC<P> = () => {
   const w = andarPerfil(f, 1, 8);
   return (
     <Palco cam={{ x: camX + 60, y: 980, zoom: 1.15 }}>
-      <Praca camX={camX} />
+      <Fundo><RuaLonga camX={camX} /></Fundo>
       <Boneco2D id="s18" d={LUCAS} pose={perfil(1000 + f * 12, { y: CHAO_Y - w.bob, peE: w.peE, peD: w.peD, bracoE: w.bracoE, bracoD: { ombro: 150, cotovelo: 10 }, maoD: "punho", inclina: 6 })} rosto={vivo({ ...ROSTO_BASE, sorriso: 1, boca: 0.5 }, f, "s18")} />
       <Faiscas x={1000 + f * 12 + 40} y={CHAO_Y - 1000} f={f} de={2} cor="#ffd23f" />
     </Palco>

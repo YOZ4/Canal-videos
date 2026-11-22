@@ -28,7 +28,7 @@ export const frase = (texto: string, de: number, ate: number): Palavra[] => {
   });
 };
 
-export const LegendaPalavra: React.FC<{ palavras: Palavra[]; y?: number }> = ({ palavras, y = 1620 }) => {
+export const LegendaPalavra: React.FC<{ palavras: Palavra[]; y?: number; tamanho?: number }> = ({ palavras, y = 1620, tamanho = 104 }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const p = palavras.find((w) => f >= w.de && f < w.ate);
@@ -43,9 +43,9 @@ export const LegendaPalavra: React.FC<{ palavras: Palavra[]; y?: number }> = ({ 
         textAlign: "center",
         fontFamily: FONTE_ROTULO,
         fontWeight: 700,
-        fontSize: 104,
+        fontSize: tamanho,
         color: p.destaque ? LARANJA : "#ffffff",
-        WebkitTextStroke: `12px ${ESCURO}`,
+        WebkitTextStroke: `${Math.round(tamanho / 8.5)}px ${ESCURO}`,
         paintOrder: "stroke fill",
         textShadow: "0 8px 0 rgba(29,20,36,0.55)",
         transform: `translateY(-50%) scale(${0.7 + 0.3 * s})`,

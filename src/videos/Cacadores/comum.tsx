@@ -1,4 +1,4 @@
-import { AbsoluteFill, Html5Audio, Sequence, staticFile } from "remotion";
+import { AbsoluteFill, Html5Audio, Sequence, staticFile, useCurrentFrame } from "remotion";
 import { PERFIL_BASE, POSE_BASE, ROSTO_BASE, type Pose, type Rosto } from "../../estilo2d/Boneco2D";
 import { CHAO_Y } from "../../estilo2d/Cenario2D";
 import { fala, piscar } from "../../estilo2d/anim";
@@ -7,13 +7,20 @@ export const ESC = 0.72;
 export type Cam = { x: number; y: number; zoom: number; rot?: number };
 
 /** palco SVG com câmera */
-export const Palco: React.FC<{ cam: Cam; children: React.ReactNode; fundo?: string }> = ({ cam, children, fundo }) => (
-  <AbsoluteFill style={{ background: fundo }}>
-    <svg width={1080} height={1920}>
-      <g transform={`translate(540 960) rotate(${cam.rot ?? 0}) scale(${cam.zoom}) translate(${-cam.x} ${-cam.y})`}>{children}</g>
-    </svg>
-  </AbsoluteFill>
-);
+export const Palco: React.FC<{ cam: Cam; children: React.ReactNode; fundo?: string; parado?: boolean }> = ({ cam, children, fundo, parado }) => {
+  // câmera nunca 100% parada: push-in lento + leve deriva (estilo da referência)
+  const f = useCurrentFrame();
+  const zoom = cam.zoom * (parado ? 1 : 1 + Math.min(f, 240) * 0.00035);
+  const dx = parado ? 0 : Math.sin(f * 0.02) * 6;
+  const dy = parado ? 0 : Math.cos(f * 0.017) * 4;
+  return (
+    <AbsoluteFill style={{ background: fundo }}>
+      <svg width={1080} height={1920}>
+        <g transform={`translate(540 960) rotate(${cam.rot ?? 0}) scale(${zoom}) translate(${-cam.x - dx} ${-cam.y - dy})`}>{children}</g>
+      </svg>
+    </AbsoluteFill>
+  );
+};
 
 /** fundo azul quadriculado dos infográficos */
 export const Grade: React.FC<{ cor?: string }> = ({ cor = "#26476b" }) => (
