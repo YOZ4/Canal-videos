@@ -2,6 +2,9 @@
 
 Projeto Remotion de vídeos verticais (1080x1920, 30 fps) para o canal.
 
+**Para fazer um vídeo novo (narração + roteiro → MP4), use a skill `video-do-canal`**
+(`.claude/skills/video-do-canal/`). Esqueleto automático: `python3 scripts/novo_video.py <Nome> <audio> <roteiro>`.
+
 ## Estilo principal: 2D vetorial (`src/estilo2d/`)
 - Personagens oficiais em `personagens.ts`. Lucas (personalidade inspirada no Sanji): cacheado preto,
   camiseta AMARELA com o número 3. Diego (inspirado no Zoro): topete MARROM, camiseta VERDE, olhar "meio fechado"
