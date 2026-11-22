@@ -50,6 +50,8 @@ export type Pose = {
   vira: number;
   /** "muque": 0..1 incha o bíceps do braço direito da tela (frente) */
   biceps: number;
+  /** giro do corpo inteiro em graus, em torno do centro do corpo (mortal, queda) */
+  gira: number;
 };
 
 export type Rosto = {
@@ -90,6 +92,7 @@ export const POSE_BASE: Pose = {
   cabelo: 0,
   vira: 0,
   biceps: 0,
+  gira: 0,
 };
 
 /** pose base de perfil (em pé, olhando pra direita) */
@@ -136,6 +139,21 @@ export const posCabeca = (p: Pose): P => {
   const lx = Math.sin(a) * alt;
   const ly = quadril - Math.cos(a) * alt;
   return [p.x + lx * p.escala * p.lado * p.largura, p.y + ly * p.escala * p.estica];
+};
+
+/** posição (mundo) do pé. Perfil: "D" = pé da frente. Ignora `gira`. */
+export const posPe = (p: Pose, qual: "E" | "D"): P => {
+  const quadrilY = QUADRIL_Y + p.agacha;
+  const perfil = p.vista === "perfil";
+  const base = qual === "E" ? p.peE : p.peD;
+  const q: P = perfil ? [qual === "E" ? -6 : 8, quadrilY] : [qual === "E" ? -56 : 56, quadrilY];
+  const alvo: P = perfil ? [base.dx, TORNOZELO_Y + base.dy] : [(qual === "E" ? -70 : 70) + base.dx, TORNOZELO_Y + base.dy];
+  const dx = alvo[0] - q[0];
+  const dy = alvo[1] - q[1];
+  const dist = Math.hypot(dx, dy);
+  const max = COXA + CANELA - 0.5;
+  const t: P = dist > max ? [q[0] + (dx / dist) * max, q[1] + (dy / dist) * max] : alvo;
+  return [p.x + t[0] * p.escala * p.lado * p.largura / Math.sqrt(p.estica), p.y + t[1] * p.escala * p.estica];
 };
 
 // ---------- tubo com contorno ----------
@@ -267,7 +285,8 @@ const BracoDesenho: React.FC<{
   atras?: boolean;
   biceps?: number;
   objeto?: React.ReactNode;
-}> = ({ o, sentido, b, gesto, d, alonga = 1, atras, biceps = 0, objeto }) => {
+  objetoGira?: boolean;
+}> = ({ o, sentido, b, gesto, d, alonga = 1, atras, biceps = 0, objeto, objetoGira }) => {
   const { c, m, dir } = pontosBraco(o, sentido, b, alonga);
   // músculo: incha pro lado em que o antebraço dobra
   const meio: P = [o[0] + (c[0] - o[0]) * 0.66, o[1] + (c[1] - o[1]) * 0.66];
@@ -291,7 +310,13 @@ const BracoDesenho: React.FC<{
           <path d={`M ${bulge[0] - rb * 0.4} ${bulge[1] - rb * 0.3} Q ${bulge[0]} ${bulge[1] - rb * 0.75} ${bulge[0] + rb * 0.4} ${bulge[1] - rb * 0.3}`} stroke="#ffffff" strokeWidth={6} opacity={0.5} fill="none" strokeLinecap="round" />
         </>
       ) : null}
-      {objeto ? <g transform={`translate(${m[0] + dir[0] * 30} ${m[1] + dir[1] * 30})`}>{objeto}</g> : null}
+      {objeto ? (
+        objetoGira ? (
+          <g transform={`translate(${m[0]} ${m[1]}) rotate(${(Math.atan2(dir[1], dir[0]) * 180) / Math.PI - 90})`}>{objeto}</g>
+        ) : (
+          <g transform={`translate(${m[0] + dir[0] * 30} ${m[1] + dir[1] * 30})`}>{objeto}</g>
+        )
+      ) : null}
       <Mao p={m} dir={dir} gesto={gesto} d={d} espelho={sentido} cor={pele} />
       <Tubo pts={[o, mangaFim]} largura={98} cor={camisa} />
       <circle cx={punho[0]} cy={punho[1]} r={40} fill={atras ? d.camisaSombra : d.manga} opacity={0.85} />
@@ -630,7 +655,7 @@ const CabecaPerfil: React.FC<{ d: Design; r: Rosto; id: string; poder: number; b
 
 // ---------- corpo: vista de frente ----------
 
-const Frente: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder: number; objeto?: React.ReactNode }> = ({ d, pose, rosto, id, poder, objeto }) => {
+const Frente: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder: number; objeto?: React.ReactNode; objetoGira?: boolean }> = ({ d, pose, rosto, id, poder, objeto, objetoGira }) => {
   const quadrilY = QUADRIL_Y + pose.agacha;
   const ombroY = -TRONCO + 32;
   const tid = `camisa-${id}`;
@@ -681,7 +706,7 @@ const Frente: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
         ) : null}
         </g>
         <BracoDesenho o={[-OMBRO_X + 8, ombroY]} sentido={-1} b={bE} gesto={cruz > 0.5 ? "bola" : pose.maoE} d={d} alonga={alonga} />
-        <BracoDesenho o={[OMBRO_X - 8, ombroY]} sentido={1} b={bD} gesto={cruz > 0.5 ? "bola" : pose.maoD} d={d} alonga={alonga} biceps={pose.biceps} objeto={objeto} />
+        <BracoDesenho o={[OMBRO_X - 8, ombroY]} sentido={1} b={bD} gesto={cruz > 0.5 ? "bola" : pose.maoD} d={d} alonga={alonga} biceps={pose.biceps} objeto={objeto} objetoGira={objetoGira} />
         <g transform={`translate(0 ${-TRONCO - 60}) rotate(${pose.cabeca}) translate(0 ${-R_CABECA + 18})`}>
           <Cabeca d={d} r={rosto} id={id} poder={poder} balanco={pose.cabelo} vira={pose.vira} />
         </g>
@@ -692,7 +717,7 @@ const Frente: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
 
 // ---------- corpo: vista de perfil (olhando pra +x) ----------
 
-const Perfil: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder: number; objeto?: React.ReactNode }> = ({ d, pose, rosto, id, poder, objeto }) => {
+const Perfil: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder: number; objeto?: React.ReactNode; objetoGira?: boolean }> = ({ d, pose, rosto, id, poder, objeto, objetoGira }) => {
   const quadrilY = QUADRIL_Y + pose.agacha;
   const ombroY = -TRONCO + 40;
   const tid = `camisap-${id}`;
@@ -726,7 +751,7 @@ const Perfil: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
         <g transform={`translate(4 ${-TRONCO - 60}) rotate(${pose.cabeca}) translate(0 ${-R_CABECA + 18})`}>
           <CabecaPerfil d={d} r={rosto} id={id} poder={poder} balanco={pose.cabelo} />
         </g>
-        <BracoDesenho o={[8, ombroY]} sentido={1} b={pose.bracoD} gesto={pose.maoD} d={d} objeto={objeto} />
+        <BracoDesenho o={[8, ombroY]} sentido={1} b={pose.bracoD} gesto={pose.maoD} d={d} objeto={objeto} objetoGira={objetoGira} />
       </g>
     </g>
   );
@@ -743,6 +768,8 @@ export const Boneco2D: React.FC<{
   opacidade?: number;
   /** objeto segurado (frente: mão direita da tela; perfil: mão da frente) */
   naMao?: React.ReactNode;
+  /** objeto acompanha a direção do antebraço (espadas) */
+  naMaoGira?: boolean;
 }> = ({
   d,
   pose,
@@ -751,18 +778,19 @@ export const Boneco2D: React.FC<{
   poder = 0,
   opacidade = 1,
   naMao,
+  naMaoGira,
 }) => {
   const peMin = Math.min(pose.peE.dy, pose.peD.dy);
   return (
     <g
       opacity={opacidade}
-      transform={`translate(${pose.x} ${pose.y}) scale(${(pose.escala * pose.lado * pose.largura) / Math.sqrt(pose.estica)} ${pose.escala * pose.estica})`}
+      transform={`translate(${pose.x} ${pose.y}) rotate(${pose.gira * pose.lado} 0 ${-600 * pose.escala}) scale(${(pose.escala * pose.lado * pose.largura) / Math.sqrt(pose.estica)} ${pose.escala * pose.estica})`}
     >
       <ellipse cx={0} cy={2} rx={pose.vista === "perfil" ? 150 : 190} ry={22} fill="#000" opacity={0.18 * Math.max(0.2, 1 + peMin / 400)} />
       {pose.vista === "perfil" ? (
-        <Perfil d={d} pose={pose} rosto={rosto} id={id} poder={poder} objeto={naMao} />
+        <Perfil d={d} pose={pose} rosto={rosto} id={id} poder={poder} objeto={naMao} objetoGira={naMaoGira} />
       ) : (
-        <Frente d={d} pose={pose} rosto={rosto} id={id} poder={poder} objeto={naMao} />
+        <Frente d={d} pose={pose} rosto={rosto} id={id} poder={poder} objeto={naMao} objetoGira={naMaoGira} />
       )}
     </g>
   );

@@ -68,6 +68,7 @@ export const mixPose = (a: Pose, b: Pose, t: number): Pose => ({
   cabelo: mixN(a.cabelo, b.cabelo, t),
   vira: mixN(a.vira, b.vira, t),
   biceps: mixN(a.biceps, b.biceps, t),
+  gira: mixN(a.gira, b.gira, t),
   inclina: mixN(a.inclina, b.inclina, t),
   estica: mixN(a.estica, b.estica, t),
   agacha: mixN(a.agacha, b.agacha, t),

@@ -29,3 +29,29 @@ export const Coxinha: React.FC<{ escala?: number }> = ({ escala = 1 }) => (
     <path d="M -30 0 Q -20 -20 -8 -36" stroke="#f6c27a" strokeWidth={8} fill="none" strokeLinecap="round" />
   </g>
 );
+
+/** Espada (katana genérica). Cabo na mão (0,0); lâmina aponta pra +y. `brilho` 0..1 = lâmina energizada. */
+export const Espada: React.FC<{ escala?: number; brilho?: number; cor?: string }> = ({ escala = 1, brilho = 0, cor = "#7fd3ff" }) => (
+  <g transform={`scale(${escala})`}>
+    {brilho > 0 ? (
+      <>
+        <defs>
+          <filter id="espadaBrilho" x="-200%" y="-50%" width="500%" height="200%">
+            <feGaussianBlur stdDeviation="12" />
+          </filter>
+        </defs>
+        <path d="M -12 40 L 12 40 L 8 380 L 0 410 L -8 380 Z" fill={cor} opacity={0.9 * brilho} filter="url(#espadaBrilho)" transform="scale(1.6 1.02)" />
+      </>
+    ) : null}
+    {/* cabo */}
+    <rect x={-11} y={-60} width={22} height={86} rx={6} fill="#1f3b2c" stroke={CONTORNO} strokeWidth={5} />
+    {[-40, -20, 0].map((y) => (
+      <path key={y} d={`M -11 ${y} L 11 ${y + 12}`} stroke="#3d6e52" strokeWidth={4} />
+    ))}
+    {/* guarda */}
+    <ellipse cx={0} cy={32} rx={28} ry={10} fill="#c9a44a" stroke={CONTORNO} strokeWidth={5} />
+    {/* lâmina */}
+    <path d="M -10 40 L 10 40 L 8 380 L 0 410 L -8 380 Z" fill="#e8eef3" stroke={CONTORNO} strokeWidth={5} strokeLinejoin="round" />
+    <path d="M 3 50 L 3 380" stroke={brilho > 0 ? "#ffffff" : "#b6c3cc"} strokeWidth={4} />
+  </g>
+);

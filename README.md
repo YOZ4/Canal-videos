@@ -7,6 +7,7 @@ Vídeos do canal feitos com [Remotion](https://www.remotion.dev/) + 3D ([@remoti
 - `src/Root.tsx` – registra as composições
 - `src/estilo2d/` – **estilo principal 2D**: Lucas e Diego articulados, animação por keyframes, legendas, cenário (ver CLAUDE.md)
 - `src/videos/Saiyajin2D/` – "E se você virasse um Saiyajin?" em 2D (v1, v2 e **v3** — versão mais recente, com visual novo, transições, trilha e sons)
+- `src/videos/Luta/` – teste de luta Lucas × Diego (15 s)
 - `src/videos/TesteAnimacao/` – teste 2D de 15 s (Lucas e Diego)
 - `src/estilo/` – kit 3D (bonecos 3D, usado no TesteEstilo):
   - `Puppet.tsx` – personagem "boneco" articulado (poses + expressões) e o visual do Lucas

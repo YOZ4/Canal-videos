@@ -24,11 +24,17 @@ Projeto Remotion de vídeos verticais (1080x1920, 30 fps) para o canal.
 - `Cenario2D.tsx`: praça ao pôr do sol com parallax. Câmera = transform do SVG (x, y, zoom).
 - Chicote de câmera com `CameraMotionBlur` (@remotion/motion-blur) só nos frames do movimento.
 
+- Luta: `gira` (mortal), `posPe(pose)`, `naMaoGira` (espada acompanha o antebraço), `EfeitosLuta.tsx`
+  (CorteArco, Faiscas, OndaChoque, Chamas, Fumaca, Rastro, Onomatopeia), trilha `scripts/gerar_trilha_luta.py`.
+  Exemplo completo: `src/videos/Luta/LutaTeste.tsx` (cartão VS, close nos olhos, hit-stop, inversão de cor).
+
 ## Regras de animação (aprendidas das referências)
 - Corte/mudança de plano a cada ~1,5–2,5 s. Legenda 1 palavra por vez, palavra-chave em laranja.
 - Sempre: antecipação antes de ações, overshoot ao parar, cabeça atrasada em relação ao corpo,
   squash no impacto (+ poeira + tremor de câmera), personagens nunca 100% parados (respira/pisca).
 - Infográficos/medidas (réguas, placares, setas) reforçam o que a narração diz.
+- Luta: contraste calmo → explosivo; hit-stop de 4–8 frames no impacto; 1–2 frames com cor invertida;
+  silêncio antes do golpe final; cortes de 0,3–1 s nos momentos de tensão; close nos olhos antes do choque.
 - Não copiar personagens, marcas ou @ de outros canais.
 
 ## Renderizar neste ambiente (sem GPU / sem acesso ao download do Chrome)
