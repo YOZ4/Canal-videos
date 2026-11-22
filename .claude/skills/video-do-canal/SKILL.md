@@ -33,6 +33,31 @@ alinhamento"). Se uma frase estiver muito curta/estranha, é sinal de pausa junt
 ### 2. Planeje as cenas (antes de codar)
 Leia o roteiro e faça uma tabela: **trecho da fala → o que aparece → personagens/cenário → efeito/infográfico → som**.
 Regras de ritmo: plano novo a cada ~1,5–2,5 s; nos momentos de tensão, cortes de 0,3–1 s.
+**Escreva as "leituras" de cada cena** (o que o espectador precisa entender, em ordem, com início e fim em frames).
+O espectador vê uma vez só, na velocidade normal, sem saber o que vem: cada leitura precisa de tempo para o olho
+achar, entender e registrar antes da próxima. Exemplo:
+```
+Cena 7 (T("tomou um susto") → +75)
+  0–12   Lucas olha para a porta (o olhar dele leva o olho do espectador até lá)
+  12–30  a porta abre e aparece o Diego            ← causa
+  30–55  Lucas leva o susto (antecipação + reação)  ← reação só DEPOIS da causa, nunca junto
+  55–75  segura a cara assustada (tempo para entender)
+```
+- Uma leitura de cada vez. Duas coisas importantes ao mesmo tempo = o espectador só vê uma.
+- Ação rápida, significado lento: o movimento pode ser rápido se tiver antecipação; o que ele significa precisa de pausa.
+- Conduza o olho antes de cada leitura importante (alguém olha para lá, a câmera vai para lá, a coisa brilha/mexe primeiro).
+- Se as leituras não cabem no trecho da fala, corte uma leitura; não espreme.
+- Evite gêmeos: os dois personagens nunca reagem no mesmo frame nem com o mesmo gesto (desloque 4–8 frames, um faz menos).
+
+**Direção (som, ritmo e câmera):**
+- Toda ação visível tem um som (pouso, passo, porta, papel, pop). Ambiente + efeitos + trilha; trilha abaixa sob a voz.
+- Pelo menos **dois silêncios** (ou quase) antes da virada/clímax; o primeiro som depois do silêncio é dos mais importantes.
+- Use o som como transição pelo menos 2 vezes: o som da cena seguinte entra antes do corte, ou o da anterior continua depois.
+- Varie o ritmo: alterne rápido e lento, tenha uma aceleração clara e uma "respiração" (plano mais longo e calmo).
+- Pelo menos **4 movimentos de câmera diferentes** (aproximar, afastar, parallax, chicote, panorâmica) e **um plano assinatura**
+  que fique na memória. Nos momentos-chave, o personagem ocupa pelo menos 1/3 da altura da tela.
+- Legenda: nunca em cima do rosto ou da ação principal.
+
 Toda afirmação "científica" do roteiro ganha um **infográfico com o Lucas interagindo** (apontando, com lupa,
 órgão em raio-X no peito, medidor em cima da cabeça). Falas entre aspas = o personagem fala (boca mexendo).
 
@@ -44,6 +69,11 @@ Toda afirmação "científica" do roteiro ganha um **infográfico com o Lucas in
   (`Palco`, `Grade`, `frente`, `perfil`, `vivo`, `Som`, `Lembranca`, `ESC`).
 - Personagem SEMPRE vivo: `vivo(rosto, f, "id")` (pisca) e respira (`estica: 1 + respira(f) * 0.01`).
 - Falas: `vivo(rosto, f, "id", falaDe, falaAte)` mexe a boca só nesse intervalo.
+- Mudança de expressão: use `trocaRosto(f, [[frame, rosto, tamanho], ...])` (anim.ts) em vez de trocar a cara direto.
+  Ele aperta os olhos antes, troca a cara escondida e faz a reação com mola. Some `corpo.estica`/`corpo.agacha` na pose.
+- Acabamento à mão (`src/estilo2d/Pintura.tsx`, ver `referencias/acabamento.md`): envolva cenário e personagens em
+  `<Ferve>` (contorno fervendo; personagem com `ancora={[pose.x, pose.y]}`), use `<NoDois>` nas cenas de ação,
+  `<SombraCel>` em luta/aura, `<FilmeMudo>` para flashback antigo, `<Aquarela>` para lembrança e `<Luz>` para brilhos.
 
 ### 4. Sobreposições globais (arquivo principal)
 Legendas `LegendaPalavra` (+ palavras em laranja no `DESTAQUES` do tempo.ts), `Selo` de fase, `Conquista`
@@ -63,14 +93,22 @@ de algo importante, expressões erradas (medo que parece sorriso), textos/emoji 
 
 ### 5b. Revise o vídeo renderizado DUAS vezes (o usuário pede isso)
 - Revisão 1: `ffmpeg -i out/x.mp4 -vf "fps=1,scale=200:-1,drawtext=...,tile=11x3" folha_%02d.png` e olhe TODAS as folhas.
-- Revisão 2: mesma coisa deslocada 0,5 s (`-ss 0.5`) + tiras densas (3–4 fps) nas cenas de ação.
+- Revisão 2: mesma coisa deslocada 0,5 s (`-ss 0.5`) + tiras densas nas cenas de ação:
+  `sh scripts/tira.sh out/x.mp4 12.0 12.8 tira.jpg 30` (todos os quadros do trecho, com o tempo escrito).
+  Para seguir algo que se move (pé, mão, objeto) com recorte em tamanho real:
+  `sh scripts/tira.sh out/x.mp4 12.0 12.8 pe.jpg 30 400:300:300:1480:700:1480` (janela 400×300 indo de (300,1480) a (700,1480)).
+- Em cada tira, pergunte: onde o espectador está olhando agora e ele já entendeu? Conte os quadros de cada leitura
+  (30 = 1 s). Leitura que passa em poucos quadros ou divide quadros com outra vai ser perdida.
 - Corrija tudo que achar (sobreposição de corpos/braços, rótulo em cima da legenda, objeto cobrindo rosto) e re-renderize.
 
 ### 6. Render final (em background, ~4 min para 2 min de vídeo)
 ```bash
 npx remotion render <Nome> out/<slug>.mp4 --browser-executable=$B --log=error --concurrency=4
 ```
-Use `run_in_background`. Normalize o áudio como na referência: `ffmpeg -i bruto.mp4 -c:v copy -af loudnorm=I=-15:TP=-1.5:LRA=11 -c:a aac -b:a 192k out/x.mp4`. Depois: confira alguns frames do MP4, commit + push (código e vídeo em commits
+Use `run_in_background`. Renderize como `out/<slug>-bruto.mp4` e finalize com
+`sh scripts/finalizar.sh out/<slug>-bruto.mp4 out/<slug>.mp4 3` — granulado de filme (3; 0 = nenhum; menos em fundo
+claro) + áudio a −14 LUFS em duas passadas com limitador; ele imprime o volume e o pico medidos (pico abaixo de −1 dB).
+Não desenhe granulado animado nos quadros (deixa o render lento e o arquivo pesado). Não faça commit do `-bruto`. Depois: confira alguns frames do MP4, commit + push (código e vídeo em commits
 separados), envie o MP4 ao usuário com `SendUserFile` e o link `https://github.com/YOZ4/Canal-videos/raw/<branch>/out/<arquivo>.mp4`.
 
 ### 7. Entrega

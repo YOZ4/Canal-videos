@@ -193,3 +193,47 @@ export const balancoCabelo = (f: number, posX: (f: number) => number, inclina: (
   }
   return Math.max(-18, Math.min(18, acc));
 };
+
+// ---------- troca de expressão "atuada" ----------
+
+/**
+ * Troca de expressão como no desenho animado, em vez de pular de uma cara para outra:
+ *  1. antecipação: ~5 frames antes, aperta os olhos e o corpo encolhe um pouco;
+ *  2. a cara nova entra "escondida" atrás do aperto e se ajusta em 4 frames;
+ *  3. reação (take): olhos abrem além do normal e o corpo estica, depois assenta com mola.
+ * keys: [frame, rosto, tamanhoDaReação?] — tamanho 0 = troca suave, 1 = normal, 2 = susto grande.
+ * Some `corpo.estica` e `corpo.agacha` na pose do personagem (multiplique estica, some agacha).
+ */
+export const trocaRosto = (f: number, keys: [number, Rosto, number?][]): { rosto: Rosto; corpo: { estica: number; agacha: number } } => {
+  let i = 0;
+  while (i + 1 < keys.length && f >= keys[i + 1][0]) i++;
+  let rosto = keys[i][1];
+  let estica = 1;
+  let agacha = 0;
+  let aperto = 0;
+  let abre = 0;
+  if (i > 0) {
+    const d = f - keys[i][0];
+    const tam = keys[i][2] ?? 1;
+    if (d < 4) rosto = mixRosto(keys[i - 1][1], keys[i][1], CURVA.sai(d / 4));
+    aperto = Math.max(0, 1 - d / 3) * Math.min(1, tam);
+    const mola = Math.exp(-d / 6) * Math.cos(d * 0.5);
+    if (d >= 2) abre = Math.max(0, mola) * 0.28 * tam;
+    estica += 0.08 * tam * mola * (d >= 1 ? 1 : 0);
+    agacha -= 10 * tam * Math.max(0, mola);
+  }
+  if (i + 1 < keys.length) {
+    const d = keys[i + 1][0] - f;
+    const tam = keys[i + 1][2] ?? 1;
+    if (d <= 5) {
+      const a = CURVA.entra(1 - d / 5) * Math.min(1, tam);
+      aperto = Math.max(aperto, a);
+      estica -= 0.045 * a * tam;
+      agacha += 14 * a * tam;
+    }
+  }
+  return {
+    rosto: { ...rosto, olhos: rosto.olhos * (1 - 0.65 * aperto) * (1 + abre) },
+    corpo: { estica, agacha },
+  };
+};
