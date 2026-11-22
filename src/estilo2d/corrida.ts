@@ -185,7 +185,7 @@ export const poseCorrida = (fase: number, estilo: EstiloCorrida = "normal", inte
 };
 
 /** posição x do pé de apoio (local, antes da escala) para travar o pé no chão */
-const peApoioX = (fase: number, estilo: EstiloCorrida): number | null => {
+export const peApoioX = (fase: number, estilo: EstiloCorrida): number | null => {
   const apoio = APOIO[estilo];
   const p = ((fase % 1) + 1) % 1;
   const ch = PERNA[estilo];
