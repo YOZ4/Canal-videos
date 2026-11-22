@@ -26,8 +26,8 @@ const PERNA: Record<EstiloCorrida, Chave[]> = {
     [0.12, 8, 42], // apoio (absorve)
     [0.26, -18, 22], // passando
     [0.4, -42, 26], // impulso (perna de trás estendida)
-    [0.55, -28, 105], // calcanhar sobe atrás
-    [0.75, 32, 118], // joelho vem pra frente
+    [0.55, -22, 86], // calcanhar sobe atrás (sem exagero)
+    [0.75, 34, 104], // joelho vem pra frente
     [0.92, 46, 70], // estende pra pousar (pé ainda no ar)
   ],
   rapida: [
@@ -35,18 +35,18 @@ const PERNA: Record<EstiloCorrida, Chave[]> = {
     [0.1, 10, 40],
     [0.24, -20, 18],
     [0.38, -52, 20],
-    [0.55, -36, 130],
-    [0.74, 45, 132],
+    [0.55, -24, 92],
+    [0.74, 46, 112],
     [0.92, 58, 70],
   ],
   ninja: [
-    [0.0, 34, 14],
-    [0.12, 12, 46],
-    [0.26, -20, 24],
-    [0.4, -55, 22],
-    [0.56, -40, 120],
-    [0.76, 40, 125],
-    [0.92, 52, 68],
+    [0.0, 40, 22],
+    [0.12, 16, 58],
+    [0.26, -18, 40],
+    [0.4, -50, 28],
+    [0.56, -30, 78],
+    [0.76, 36, 96],
+    [0.92, 54, 70],
   ],
   panico: [
     [0.0, 20, 18],
@@ -62,7 +62,7 @@ const PERNA: Record<EstiloCorrida, Chave[]> = {
 const CONFIG: Record<EstiloCorrida, { inclina: number; voo: number; bracoAmp: number; bracoBase: number; cotovelo: number }> = {
   normal: { inclina: 16, voo: 40, bracoAmp: 1.0, bracoBase: 4, cotovelo: 82 },
   rapida: { inclina: 24, voo: 46, bracoAmp: 1.25, bracoBase: 6, cotovelo: 88 },
-  ninja: { inclina: 38, voo: 30, bracoAmp: 0, bracoBase: -72, cotovelo: 8 },
+  ninja: { inclina: 34, voo: 16, bracoAmp: 0, bracoBase: -78, cotovelo: 4 },
   panico: { inclina: -4, voo: 26, bracoAmp: 0, bracoBase: 118, cotovelo: -24 },
 };
 
@@ -149,21 +149,28 @@ export const poseCorrida = (fase: number, estilo: EstiloCorrida = "normal", inte
   const agacha = alcance - ayApoio - voo;
   const hipY = QUADRIL_Y + agacha;
   // pé que balança nunca encosta/afunda no chão (evita escorregar)
-  const pe = (hipX: number, fx: number, fy: number, emApoio: boolean): Pe => {
+  const pe = (hipX: number, fx: number, fy: number, emApoio: boolean, coxa: number, joelho: number): Pe => {
     const dy = hipY + fy - TORNOZELO_Y;
-    return { dx: hipX + fx, dy: emApoio ? Math.min(dy, 0) : Math.min(dy, -26) };
+    // canela (graus do vertical, + pra frente) → pé: calcanhar no contato (ponta sobe), ponta no impulso
+    const canela = coxa - joelho;
+    let rot = Math.max(-16, Math.min(48, -canela * 0.55));
+    if (emApoio && Math.abs(canela) < 25) rot *= 0.3; // apoiado: pé chato no chão
+    return { dx: hipX + fx, dy: emApoio ? Math.min(dy, 0) : Math.min(dy, -26), rot };
   };
   // braços: opostos à perna do mesmo lado do desenho
   const braco = (coxaOposta: number): Braco =>
     cfg.bracoAmp > 0
       ? { ombro: Math.max(-62, Math.min(52, cfg.bracoBase + coxaOposta * 1.15 * cfg.bracoAmp * k)), cotovelo: cfg.cotovelo * k + 6 }
-      : { ombro: cfg.bracoBase * k + (estilo === "panico" ? Math.sin(fase * Math.PI * 4 + coxaOposta * 0.05) * 28 : 0), cotovelo: cfg.cotovelo * k };
+      : {
+          ombro: cfg.bracoBase * k + (estilo === "panico" ? Math.sin(fase * Math.PI * 4 + coxaOposta * 0.05) * 28 : Math.sin(fase * Math.PI * 4 + coxaOposta * 0.03) * 4),
+          cotovelo: cfg.cotovelo * k + (estilo === "ninja" ? Math.sin(fase * Math.PI * 8) * 3 : 0),
+        };
   const descida = Math.max(0, agacha - 10);
   const contatoA = p < 0.03;
   const contatoB = Math.abs(p - 0.5) < 0.03;
   return {
-    peD: pe(8, axA, ayA, apoioA),
-    peE: pe(-6, axB, ayB, apoioB),
+    peD: pe(8, axA, ayA, apoioA, cA, jA),
+    peE: pe(-6, axB, ayB, apoioB, cB, jB),
     agacha,
     inclina: cfg.inclina * k + Math.sin(fase * Math.PI * 4) * 1.5 * k,
     estica: 1 - descida * 0.0009 + (voo > 5 ? 0.025 : 0),
@@ -243,4 +250,46 @@ export const contatos = (fase: (g: number) => number, de: number, ate: number): 
     if (b > a) out.push({ f: g, pe: b % 2 === 0 ? "D" : "E" });
   }
   return out;
+};
+
+/**
+ * Corrida vista de FRENTE ou de COSTAS (use com vista "frente"/"costas" e joelhoFrente: 1).
+ * O joelho vem na direção da câmera (perna "encurta"), braços balançam (mão sobe até o peito).
+ */
+export const poseCorridaFrente = (fase: number, estilo: EstiloCorrida = "normal", intensidade = 1, costas = false) => {
+  const k = intensidade;
+  const s = Math.sin(fase * Math.PI * 2);
+  const ninja = estilo === "ninja";
+  const panico = estilo === "panico";
+  const lift = (ninja ? 170 : estilo === "rapida" ? 250 : 215) * k;
+  const levE = Math.max(0, s);
+  const levD = Math.max(0, -s);
+  const apoio = 1 - Math.abs(s); // 1 = os dois pés passando (contato)
+  const curva = (v: number) => v * (0.55 + 0.45 * v);
+  // frente: braço que vai pra frente traz a mão até o peito
+  // costas: braço que vai pra TRÁS mostra o cotovelo subindo pra fora (o da frente some atrás do corpo)
+  const braco = (vaiFrente: number, vaiTras: number) =>
+    ninja
+      ? { ombro: 34 + vaiFrente * 4, cotovelo: 6 }
+      : panico
+        ? { ombro: 150 + Math.sin(fase * Math.PI * 4) * 25, cotovelo: -20 }
+        : costas
+          ? { ombro: 10 + 9 * vaiTras * k, cotovelo: 48 * vaiTras * k }
+          : { ombro: 12 + 14 * vaiFrente * k, cotovelo: -(40 + 85 * vaiFrente) * k };
+  return {
+    peE: { dx: 26 * levE, dy: -lift * curva(levE) },
+    peD: { dx: -26 * levD, dy: -lift * curva(levD) },
+    agacha: (16 + 40 * apoio + (ninja ? 60 : 0)) * k,
+    inclina: 4 * s * k,
+    cabeca: -2.5 * s * k,
+    estica: 1 - 0.04 * apoio * k + (ninja ? -0.05 : 0),
+    // braço oposto à perna que sobe
+    bracoD: braco(levE, levD),
+    bracoE: braco(levD, levE),
+    maoE: (ninja || panico ? "aberta" : "punho") as Gesto,
+    maoD: (ninja || panico ? "aberta" : "punho") as Gesto,
+    joelhoFrente: 1,
+    /** salto vertical (px de mundo, antes da escala) para somar ao y */
+    sobe: 30 * (1 - apoio) * k,
+  };
 };

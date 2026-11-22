@@ -246,3 +246,104 @@ export const ObjetosFisica: React.FC<{
     </g>
   );
 };
+
+/**
+ * Rua em PERSPECTIVA (vista de dentro da rua, olhando pro fundo).
+ * Convenção: um objeto na "profundidade" com escala s tem os pés em y = HORIZONTE + K_PERSP * s
+ * e o x de tela = 540 + X * s (X = posição lateral em px de mundo).
+ */
+export const HORIZONTE = 760;
+export const K_PERSP = 1190;
+export const yPerspectiva = (s: number) => HORIZONTE + K_PERSP * s;
+
+export const RuaPerspectiva: React.FC<{ placa?: string }> = ({ placa = "RUA SEGUNDA-FEIRA" }) => {
+  const f = useCurrentFrame();
+  const casas: { lado: number; s: number; cor: string; h: number; seed: string }[] = [];
+  const cores = ["#b9b2a7", "#a8adb6", "#bcb3a3", "#aeb4bb", "#c6bfb2", "#9fa6ae"];
+  for (let i = 0; i < 12; i++) {
+    const s = 0.05 * Math.pow(1.36, i);
+    for (const lado of [-1, 1]) casas.push({ lado, s, cor: cores[(i * 2 + (lado > 0 ? 1 : 0)) % cores.length], h: 1300 + random(`ph${i}${lado}`) * 700, seed: `pp${i}${lado}` });
+  }
+  casas.sort((a, b) => a.s - b.s);
+  const yy = yPerspectiva;
+  const larguraRua = 700; // metade (px de mundo)
+  return (
+    <g>
+      <defs>
+        <linearGradient id="ceuPersp" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stopColor="#b9c6d8" />
+          <stop offset="1" stopColor="#ecdcc6" />
+        </linearGradient>
+      </defs>
+      <rect x={-400} y={-400} width={1900} height={2800} fill="url(#ceuPersp)" />
+      {[[200, 260, 1.1], [760, 180, 0.9]].map(([x, y, s], i) => (
+        <g key={i} transform={`translate(${x + f * 0.25} ${y}) scale(${s})`} fill="#eeecef" opacity={0.75}>
+          <ellipse cx={0} cy={0} rx={170} ry={50} />
+          <circle cx={-60} cy={-30} r={62} />
+          <circle cx={45} cy={-52} r={78} />
+        </g>
+      ))}
+      {/* chão: calçadas e asfalto em trapézio */}
+      <path d={`M 540 ${HORIZONTE} L ${540 - 3000} ${yy(2.2)} L ${540 + 3000} ${yy(2.2)} Z`} fill="#b8b3ab" />
+      {new Array(14).fill(0).map((_, i) => {
+        const sj = 0.05 * Math.pow(1.3, i);
+        return <path key={`cj${i}`} d={`M ${540 - 3000 * sj / 2.2} ${yy(sj)} L ${540 + 3000 * sj / 2.2} ${yy(sj)}`} stroke="#a39d95" strokeWidth={Math.max(1, 4 * sj)} />;
+      })}
+      <path d={`M 540 ${HORIZONTE} L ${540 - larguraRua * 2.2} ${yy(2.2)} L ${540 + larguraRua * 2.2} ${yy(2.2)} Z`} fill="#8d9098" />
+      {[-1, 1].map((l) => (
+        <path key={l} d={`M 540 ${HORIZONTE} L ${540 + l * larguraRua * 2.2} ${yy(2.2)}`} stroke="#77737a" strokeWidth={10} />
+      ))}
+      {/* faixas no meio */}
+      {new Array(10).fill(0).map((_, i) => {
+        const s0 = 0.05 * Math.pow(1.45, i);
+        const s1 = s0 * 1.18;
+        return <path key={i} d={`M ${540 - 10 * s0} ${yy(s0)} L ${540 + 10 * s0} ${yy(s0)} L ${540 + 14 * s1} ${yy(s1)} L ${540 - 14 * s1} ${yy(s1)} Z`} fill="#e3d6a0" opacity={0.9} />;
+      })}
+      {/* casas dos dois lados */}
+      {casas.map((c) => {
+        const xFace = 540 + c.lado * (larguraRua + 120) * c.s;
+        const w = 1400 * c.s;
+        const h = c.h * c.s;
+        const base = yy(c.s);
+        const x = c.lado < 0 ? xFace - w : xFace;
+        return (
+          <g key={c.seed}>
+            <rect x={x} y={base - h} width={w} height={h} fill={c.cor} />
+            <rect x={x} y={base - h} width={w} height={Math.max(2, 26 * c.s)} fill="#9c958b" />
+            {[0, 1, 2].map((r) =>
+              [0, 1].map((q) => (
+                <rect key={`${r}${q}`} x={x + w * (0.15 + q * 0.45)} y={base - h + h * (0.15 + r * 0.26)} width={w * 0.25} height={h * 0.14} fill="#8b97a3" />
+              )),
+            )}
+          </g>
+        );
+      })}
+      {/* postes */}
+      {[0.22, 0.45, 0.9].map((s, i) => (
+        <g key={i}>
+          <rect x={540 + (larguraRua + 120) * s - 10 * s} y={yy(s) - 1100 * s} width={22 * s} height={1100 * s} fill="#8a8683" />
+          {i === 1 ? (
+            <g transform={`translate(${540 + (larguraRua + 120) * s} ${yy(s) - 880 * s}) scale(${s}) rotate(-4)`}>
+              <rect x={-200} y={0} width={420} height={110} rx={10} fill="#2f4f8f" />
+              <text x={10} y={46} textAnchor="middle" fontFamily="Georgia, serif" fontWeight={700} fontSize={26} fill="#e9eef5">
+                {placa.split(" ")[0]}
+              </text>
+              <text x={10} y={88} textAnchor="middle" fontFamily="Georgia, serif" fontWeight={700} fontSize={40} fill="#e9eef5">
+                {placa.split(" ").slice(1).join(" ")}
+              </text>
+            </g>
+          ) : null}
+        </g>
+      ))}
+      {[0.2, 0.45, 0.9].map((s, i) => (
+        <path key={`fio${i}`} d={`M ${540 + (larguraRua + 120) * s} ${yy(s) - 1090 * s} Q 540 ${HORIZONTE - 300} ${540 - (larguraRua + 120) * s} ${yy(s) - 1090 * s}`} stroke="#5d5858" strokeWidth={3} fill="none" opacity={0.6} />
+      ))}
+      {/* folhas no chão */}
+      {new Array(24).fill(0).map((_, i) => {
+        const s = 0.15 + random(`pf${i}`) * 1.3;
+        const x = 540 + (random(`px${i}`) - 0.5) * 1300 * s;
+        return <ellipse key={i} cx={x} cy={yy(s)} rx={12 * s} ry={5 * s} fill={["#a86a3a", "#c48a4a", "#8a5a30"][i % 3]} />;
+      })}
+    </g>
+  );
+};

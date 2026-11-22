@@ -10,7 +10,8 @@ import { CONTORNO, type Design } from "./personagens";
  */
 
 export type Braco = { ombro: number; cotovelo: number };
-export type Pe = { dx: number; dy: number };
+/** rot: inclinação do pé em graus (perfil: + = calcanhar sobe / ponta desce; - = ponta sobe). Na frente: ignora */
+export type Pe = { dx: number; dy: number; rot?: number };
 export type Gesto = "bola" | "aberta" | "punho" | "aponta" | "joia";
 export type Vista = "frente" | "perfil" | "costas";
 
@@ -52,6 +53,8 @@ export type Pose = {
   biceps: number;
   /** giro do corpo inteiro em graus, em torno do centro do corpo (mortal, queda) */
   gira: number;
+  /** vista de frente/costas: 0 = joelho dobra pro lado; 1 = joelho vem na direção da câmera (corrida de frente) */
+  joelhoFrente?: number;
 };
 
 export type Rosto = {
@@ -335,7 +338,7 @@ const BracoDesenho: React.FC<{
 // ---------- perna (IK de 2 ossos: pé fica plantado) ----------
 
 /** joelhoX: direção preferida do joelho (frente: pra fora; perfil: pra frente = +1) */
-const pontosPerna = (joelhoX: number, quadril: P, pe: P): { q: P; j: P; t: P } => {
+const pontosPerna = (joelhoX: number, quadril: P, pe: P, frontal = 0): { q: P; j: P; t: P } => {
   const dx = pe[0] - quadril[0];
   const dy = pe[1] - quadril[1];
   let dist = Math.hypot(dx, dy);
@@ -346,7 +349,7 @@ const pontosPerna = (joelhoX: number, quadril: P, pe: P): { q: P; j: P; t: P } =
     dist = max;
   }
   const meio: P = [(quadril[0] + t[0]) / 2, (quadril[1] + t[1]) / 2];
-  const h = Math.sqrt(Math.max(0, COXA * COXA - (dist / 2) * (dist / 2)));
+  const h = Math.sqrt(Math.max(0, COXA * COXA - (dist / 2) * (dist / 2))) * (1 - 0.88 * frontal);
   let px = -dy / dist;
   let py = dx / dist;
   if (px * joelhoX < 0) {
@@ -356,8 +359,8 @@ const pontosPerna = (joelhoX: number, quadril: P, pe: P): { q: P; j: P; t: P } =
   return { q: quadril, j: [meio[0] + px * h, meio[1] + py * h], t };
 };
 
-const Tenis: React.FC<{ p: P; lado: number; d: Design; perfil?: boolean }> = ({ p, lado, d, perfil }) => (
-  <g transform={`translate(${p[0] + (perfil ? 22 : 0)} ${p[1] + 2}) scale(${lado} 1)`}>
+const Tenis: React.FC<{ p: P; lado: number; d: Design; perfil?: boolean; rot?: number; perto?: number }> = ({ p, lado, d, perfil, rot = 0, perto = 0 }) => (
+  <g transform={`translate(${p[0]} ${p[1] + 2}) rotate(${perfil ? rot : 0}) translate(${perfil ? 22 : 0} 0) scale(${lado * (1 + perto * 0.22)} ${1 + perto * 0.5})`}>
     <path
       d="M -58 -6 L -58 -30 L 4 -30 Q 52 -20 72 6 Q 74 26 52 28 L -54 28 Q -64 26 -62 10 Z"
       fill={d.tenis}
@@ -370,7 +373,7 @@ const Tenis: React.FC<{ p: P; lado: number; d: Design; perfil?: boolean }> = ({ 
   </g>
 );
 
-const PernaDesenho: React.FC<{ joelhoX: number; quadril: P; pe: P; d: Design; ladoTenis: number; perfil?: boolean; atras?: boolean }> = ({
+const PernaDesenho: React.FC<{ joelhoX: number; quadril: P; pe: P; d: Design; ladoTenis: number; perfil?: boolean; atras?: boolean; rot?: number; frontal?: number }> = ({
   joelhoX,
   quadril,
   pe,
@@ -378,12 +381,16 @@ const PernaDesenho: React.FC<{ joelhoX: number; quadril: P; pe: P; d: Design; la
   ladoTenis,
   perfil,
   atras,
+  rot = 0,
+  frontal = 0,
 }) => {
-  const { q, j, t } = pontosPerna(joelhoX, quadril, pe);
+  const { q, j, t } = pontosPerna(joelhoX, quadril, pe, frontal);
+  // de frente, pé levantado = mais perto da câmera (aparece um pouco maior)
+  const perto = !perfil && frontal > 0 ? Math.max(0, Math.min(1, (TORNOZELO_Y - pe[1]) / 200)) * frontal : 0;
   return (
     <g>
       <Tubo pts={[q, j, t]} largura={104} cor={atras ? d.calcaSombra : d.calca} sombra={atras ? undefined : d.calcaSombra} cap="butt" />
-      <Tenis p={[t[0], t[1] + 4]} lado={ladoTenis} d={atras ? { ...d, tenis: "#dcdce4" } : d} perfil={perfil} />
+      <Tenis p={[t[0], t[1] + 4]} lado={ladoTenis} d={atras ? { ...d, tenis: "#dcdce4" } : d} perfil={perfil} rot={rot} perto={perto} />
     </g>
   );
 };
@@ -757,8 +764,8 @@ const Frente: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
           <stop offset="0.86" stopColor={d.camisaSombra} />
         </linearGradient>
       </defs>
-      <PernaDesenho joelhoX={-1} quadril={[-56, quadrilY]} pe={peE} d={d} ladoTenis={-1} />
-      <PernaDesenho joelhoX={1} quadril={[56, quadrilY]} pe={peD} d={d} ladoTenis={1} />
+      <PernaDesenho joelhoX={-1} quadril={[-56, quadrilY]} pe={peE} d={d} ladoTenis={-1} frontal={pose.joelhoFrente ?? 0} />
+      <PernaDesenho joelhoX={1} quadril={[56, quadrilY]} pe={peD} d={d} ladoTenis={1} frontal={pose.joelhoFrente ?? 0} />
       <g transform={`translate(0 ${quadrilY}) rotate(${pose.inclina})`}>
         <g transform={`scale(${1 - Math.abs(pose.vira) * 0.12} 1)`}>
         <rect x={-36} y={-TRONCO - 72} width={72} height={90} rx={10} fill={d.pele} stroke={CONTORNO} strokeWidth={LINHA} />
@@ -823,11 +830,11 @@ const Perfil: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
         </linearGradient>
       </defs>
       {/* perna e braço de trás */}
-      <PernaDesenho joelhoX={1} quadril={[-6, quadrilY]} pe={peTras} d={d} ladoTenis={1} perfil atras />
+      <PernaDesenho joelhoX={1} quadril={[-6, quadrilY]} pe={peTras} d={d} ladoTenis={1} perfil atras rot={pose.peE.rot ?? 0} />
       <g transform={`translate(0 ${quadrilY}) rotate(${pose.inclina})`}>
         <BracoDesenho o={[-6, ombroY]} sentido={1} b={pose.bracoE} gesto={pose.maoE} d={d} atras />
       </g>
-      <PernaDesenho joelhoX={1} quadril={[8, quadrilY]} pe={peFrente} d={d} ladoTenis={1} perfil />
+      <PernaDesenho joelhoX={1} quadril={[8, quadrilY]} pe={peFrente} d={d} ladoTenis={1} perfil rot={pose.peD.rot ?? 0} />
       <g transform={`translate(0 ${quadrilY}) rotate(${pose.inclina})`}>
         <rect x={-30} y={-TRONCO - 72} width={64} height={90} rx={10} fill={d.pele} stroke={CONTORNO} strokeWidth={LINHA} />
         <path

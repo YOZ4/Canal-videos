@@ -54,7 +54,7 @@ const mixB = (a: Braco, b: Braco, t: number): Braco => ({
   ombro: mixN(a.ombro, b.ombro, t),
   cotovelo: mixN(a.cotovelo, b.cotovelo, t),
 });
-const mixPe = (a: Pe, b: Pe, t: number): Pe => ({ dx: mixN(a.dx, b.dx, t), dy: mixN(a.dy, b.dy, t) });
+const mixPe = (a: Pe, b: Pe, t: number): Pe => ({ dx: mixN(a.dx, b.dx, t), dy: mixN(a.dy, b.dy, t), rot: mixN(a.rot ?? 0, b.rot ?? 0, t) });
 
 export const mixPose = (a: Pose, b: Pose, t: number): Pose => ({
   x: mixN(a.x, b.x, t),
@@ -69,6 +69,7 @@ export const mixPose = (a: Pose, b: Pose, t: number): Pose => ({
   vira: mixN(a.vira, b.vira, t),
   biceps: mixN(a.biceps, b.biceps, t),
   gira: mixN(a.gira, b.gira, t),
+  joelhoFrente: mixN(a.joelhoFrente ?? 0, b.joelhoFrente ?? 0, t),
   inclina: mixN(a.inclina, b.inclina, t),
   estica: mixN(a.estica, b.estica, t),
   agacha: mixN(a.agacha, b.agacha, t),

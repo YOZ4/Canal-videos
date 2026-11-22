@@ -44,6 +44,11 @@ dá o deslocamento que mantém o pé plantado. Ciclos: normal 20, rápida 13–1
 Poeira a cada passo: `contatos(fase, de, ate)` + `posPe`. Pulo: `pernasFK(...)` (ver `src/videos/Corrida/TesteCorrida.tsx`:
 antecipa 4 frames → voo parabólico com joelhos encolhidos → pouso com squash). Câmera acompanha a altura do pulo.
 
+## Corrida de FRENTE / COSTAS / 3/4 (rua em perspectiva)
+`poseCorridaFrente(fase, estilo, intensidade, costas?)` + `vista: "frente"|"costas"` (joelho vem pra câmera, `joelhoFrente: 1`).
+Cenário `RuaPerspectiva` (Acabamento.tsx); profundidade s: pés em `yPerspectiva(s)`, escala `ESC * s` (use s ≥ 0.3 pra ficar legível).
+3/4: vista frente + `vira: 0.55` andando na diagonal. Pés rolam sozinhos no perfil (`Pe.rot`). Exemplo: `src/videos/Corrida/TesteCorrida2.tsx`.
+
 ## Correndo (câmera acompanha — versão antiga, simples)
 ```tsx
 const camX = 1000 + f * 12;
