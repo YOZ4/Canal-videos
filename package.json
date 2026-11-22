@@ -7,12 +7,14 @@
     "dev": "remotion studio",
     "render": "remotion render LucasSaiyajin out/lucas-saiyajin.mp4",
     "render:teste": "remotion render TesteEstilo out/teste-estilo.mp4",
+    "render:animacao": "remotion render TesteAnimacao out/teste-animacao.mp4",
     "upgrade": "remotion upgrade"
   },
   "dependencies": {
     "@react-three/fiber": "9.3.0",
     "@remotion/cli": "4.0.545",
     "@remotion/fonts": "4.0.545",
+    "@remotion/motion-blur": "4.0.545",
     "@remotion/three": "4.0.545",
     "react": "19.1.1",
     "react-dom": "19.1.1",

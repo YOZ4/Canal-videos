@@ -5,7 +5,9 @@ Vídeos do canal feitos com [Remotion](https://www.remotion.dev/) + 3D ([@remoti
 ## Estrutura
 
 - `src/Root.tsx` – registra as composições
-- `src/estilo/` – kit reutilizável do estilo do canal:
+- `src/estilo2d/` – **estilo principal 2D**: Lucas e Diego articulados, animação por keyframes, legendas, cenário (ver CLAUDE.md)
+- `src/videos/TesteAnimacao/` – teste 2D de 15 s (Lucas e Diego)
+- `src/estilo/` – kit 3D (bonecos 3D, usado no TesteEstilo):
   - `Puppet.tsx` – personagem "boneco" articulado (poses + expressões) e o visual do Lucas
   - `Cenario.tsx` – cena 3D com desfoque de fundo, árvores, chão, capim, luzes, câmera
   - `Overlays.tsx` – legendas com destaque amarelo (`*palavra*`), rótulos, flash, vinheta e granulado
@@ -21,6 +23,7 @@ Vídeos do canal feitos com [Remotion](https://www.remotion.dev/) + 3D ([@remoti
 ```bash
 npm install
 npm run dev       # abre o Remotion Studio para editar/pré-visualizar
+npm run render:animacao  # gera out/teste-animacao.mp4
 npm run render:teste  # gera out/teste-estilo.mp4
 npm run render        # gera out/lucas-saiyajin.mp4
 ```
