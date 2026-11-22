@@ -292,7 +292,7 @@ export const S11: React.FC<P> = () => {
   );
 };
 
-// S12 — vantagem real: corredores de longa distância
+// S12 — vantagem real: corredores de longa distância (Lucas aponta pro gráfico)
 export const S12: React.FC<P> = ({ t0 }) => {
   const f = useCurrentFrame();
   const troca = T("o ser humano") - t0;
@@ -314,57 +314,88 @@ export const S12: React.FC<P> = ({ t0 }) => {
     { nome: "Antílope", v: 0.42, cor: "#e39a3f" },
     { nome: "Guepardo", v: 0.12, cor: "#e8c24a" },
   ];
+  const joia = g > T("do planeta") - t0 - troca;
+  const aponta = k(g, [[4, 0], [14, 1, CURVA.exagera]]);
+  const pose = frente(860, {
+    y: 1580,
+    escala: 0.56,
+    vira: -0.45,
+    cabeca: -6,
+    bracoE: joia ? { ombro: 40, cotovelo: -110 } : { ombro: 14 + 136 * aponta, cotovelo: -8 + 8 * aponta },
+    maoE: joia ? "joia" : aponta > 0.5 ? "aponta" : "bola",
+    estica: 1 + Math.abs(Math.sin(g * 0.2)) * 0.02 * (joia ? 1 : 0),
+  });
   return (
     <AbsoluteFill>
       <svg width={1080} height={1920}>
         <Grade />
-        <text x={540} y={420} textAnchor="middle" fontFamily="Fredoka" fontWeight={700} fontSize={64} fill="#fff">
+        <text x={540} y={380} textAnchor="middle" fontFamily="Fredoka" fontWeight={700} fontSize={60} fill="#fff">
           RESISTÊNCIA EM CORRIDA LONGA
         </text>
         {barras.map((b, i) => {
           const cresce = interpolate(g - i * 4, [0, 18], [0, b.v], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: CURVA.exagera });
+          const destaque = i === 0 && g > 20;
           return (
-            <g key={b.nome} transform={`translate(80 ${560 + i * 170})`}>
-              <text x={0} y={60} fontFamily="Fredoka" fontWeight={700} fontSize={50} fill="#fff">
+            <g key={b.nome} transform={`translate(70 ${470 + i * 118})`}>
+              <text x={0} y={56} fontFamily="Fredoka" fontWeight={700} fontSize={46} fill="#fff">
                 {b.nome}
               </text>
-              <rect x={300} y={10} width={640 * cresce} height={70} rx={20} fill={b.cor} stroke="#1d1424" strokeWidth={6} />
+              <rect x={260} y={10} width={680 * cresce} height={64} rx={20} fill={b.cor} stroke={destaque ? "#ffffff" : "#1d1424"} strokeWidth={destaque ? 9 : 6} />
             </g>
           );
         })}
-        <Brilhos x={760} y={600} f={g} de={20} raio={120} />
+        <Boneco2D id="s12g" d={LUCAS} pose={pose} rosto={vivo({ ...ROSTO_BASE, sorriso: joia ? 1 : 0.6, canto: 0.8, olhar: [-1, -1] }, g, "s12g")} />
+        {joia ? <Brilhos x={860} y={1120} f={g} de={T("do planeta") - t0 - troca} raio={170} /> : null}
       </svg>
-      <Rotulo2 texto="TOP 1!" x={860} y={520} de={22} tamanho={70} />
+      <Rotulo2 texto="TOP 1!" x={880} y={470} de={22} tamanho={70} />
     </AbsoluteFill>
   );
 };
 
-// S13 — glândulas de suor
+// S13 — glândulas de suor (Lucas correndo no lugar, ligado ao corte da pele por uma lupa)
 export const S13: React.FC<P> = ({ t0 }) => {
   const f = useCurrentFrame();
   const troca = T("que resfriam") - t0;
   if (f < troca) {
+    const w = andarPerfil(f, 0.9, 8);
+    const lpose = perfil(230, { y: 1600, escala: 0.5, peE: w.peE, peD: w.peD, bracoE: w.bracoE, bracoD: w.bracoD, inclina: 6 });
+    const bracoX = 230 + 40 * 0.5;
+    const bracoY = 1600 - 640 * 0.5;
     return (
       <AbsoluteFill>
         <svg width={1080} height={1920}>
           <Grade />
-          {/* corte da pele */}
-          <rect x={0} y={760} width={1080} height={70} fill="#f2c39d" />
-          <rect x={0} y={830} width={1080} height={420} fill="#efa08f" />
-          <rect x={0} y={1250} width={1080} height={300} fill="#f6d77a" />
-          {[160, 380, 600, 820].map((x, i) => {
-            const sobe = ((f * 4 + i * 60) % 200) / 200;
-            return (
-              <g key={i}>
-                <path d={`M ${x} 830 L ${x} 1080`} stroke="#5aa0d8" strokeWidth={12} />
-                <path d={`M ${x} 1080 q -40 30 0 50 q 40 20 0 50 q -40 20 0 40`} stroke="#5aa0d8" strokeWidth={16} fill="none" strokeLinecap="round" />
-                <path d={`M ${x} ${760 - sobe * 160} q 18 22 0 34 q -18 -12 0 -34 Z`} fill="#9fd8ff" stroke="#1d1424" strokeWidth={4} opacity={1 - sobe} />
-              </g>
-            );
-          })}
+          {/* corte da pele (dentro de uma lupa) */}
+          <defs>
+            <clipPath id="lupaPele">
+              <circle cx={620} cy={820} r={360} />
+            </clipPath>
+          </defs>
+          <path d={`M ${bracoX + 30} ${bracoY - 10} L ${620 - 330} ${820 + 150} M ${bracoX + 40} ${bracoY + 20} L ${620 - 200} ${820 + 300}`} stroke="#fff" strokeWidth={5} strokeDasharray="14 12" opacity={0.7} />
+          <circle cx={620} cy={820} r={386} fill="#e9eef0" stroke="#1d1424" strokeWidth={8} />
+          <g clipPath="url(#lupaPele)">
+            <rect x={200} y={440} width={900} height={800} fill="#9fd8ff" />
+            <rect x={200} y={600} width={900} height={70} fill="#f2c39d" />
+            <rect x={200} y={670} width={900} height={330} fill="#efa08f" />
+            <rect x={200} y={1000} width={900} height={300} fill="#f6d77a" />
+            {[380, 560, 740, 920].map((x, i) => {
+              const sobe = ((f * 4 + i * 60) % 200) / 200;
+              return (
+                <g key={i}>
+                  <path d={`M ${x} 670 L ${x} 860`} stroke="#5aa0d8" strokeWidth={12} />
+                  <path d={`M ${x} 860 q -40 30 0 50 q 40 20 0 50 q -40 20 0 40`} stroke="#5aa0d8" strokeWidth={16} fill="none" strokeLinecap="round" />
+                  <path d={`M ${x} ${600 - sobe * 140} q 18 22 0 34 q -18 -12 0 -34 Z`} fill="#bfe8ff" stroke="#1d1424" strokeWidth={4} opacity={1 - sobe} />
+                </g>
+              );
+            })}
+          </g>
+          <circle cx={620} cy={820} r={360} fill="none" stroke="#1d1424" strokeWidth={8} />
+          <Boneco2D id="s13r" d={LUCAS} pose={lpose} rosto={vivo({ ...ROSTO_BASE, sorriso: 0.4, boca: 0.2 }, f, "s13r")} />
+          <circle cx={bracoX + 30} cy={bracoY} r={46} fill="none" stroke="#ffd23f" strokeWidth={7} />
+          <Gota x={230 + 100} y={1600 - 820 * 0.5} f={f} de={6} escala={0.6} />
         </svg>
-        <Rotulo2 texto="2 a 4 milhões" x={540} y={520} de={T("dois e quatro milhões") - t0} tamanho={120} />
-        <Rotulo2 texto="glândulas de suor" x={540} y={1340} de={T("glândulas") - t0} tamanho={64} cor="#ffffff" />
+        <Rotulo2 texto="2 a 4 milhões" x={620} y={330} de={T("dois e quatro milhões") - t0} tamanho={110} />
+        <Rotulo2 texto="glândulas de suor" x={640} y={1260} de={T("glândulas") - t0} tamanho={60} cor="#ffffff" />
       </AbsoluteFill>
     );
   }

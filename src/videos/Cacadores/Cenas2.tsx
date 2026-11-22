@@ -2,12 +2,12 @@ import { AbsoluteFill, interpolate, random, useCurrentFrame } from "remotion";
 import { AURA_DIEGO, AURA_LUCAS, AuraForte, CorrentesAura, PunhoBrilhando } from "../../estilo2d/Aura";
 import { Boneco2D, ROSTO_BASE, posCabeca } from "../../estilo2d/Boneco2D";
 import { Arena, CHAO_Y, Cozinha, Praca } from "../../estilo2d/Cenario2D";
-import { Brilhos, Impacto, LinhasFoco, Poeira, Simbolo } from "../../estilo2d/Efeitos2D";
+import { Brilhos, Gota, Impacto, LinhasFoco, Poeira, Simbolo, Veia } from "../../estilo2d/Efeitos2D";
 import { CorteArco, Faiscas, Fumaca, OndaChoque, Onomatopeia, Rastro } from "../../estilo2d/EfeitosLuta";
 import { Copo, Coracao, Espada, Pulmoes } from "../../estilo2d/Objetos";
 import { Placar, Rotulo2, Selo } from "../../estilo2d/UI";
 import { CURVA, k, kPose, respira, tremor } from "../../estilo2d/anim";
-import { AVO, DIEGO, LUCAS } from "../../estilo2d/personagens";
+import { AVO, CANDIDATOS, DIEGO, LUCAS } from "../../estilo2d/personagens";
 import { ESC, Grade, Lembranca, Palco, ROSTO_AVO, ROSTO_DIEGO, Som, frente, perfil, vivo } from "./comum";
 import { T, TF } from "./tempo";
 
@@ -116,13 +116,30 @@ export const S22: React.FC<P> = () => {
   );
 };
 
-// S23 — tensão superficial (moléculas de mãos dadas)
+// S23 — tensão superficial: o Lucas cutuca a película de moléculas e ela volta
 export const S23: React.FC<P> = ({ t0 }) => {
   const f = useCurrentFrame();
   const pelicula = T("como uma película") - t0;
   const n = 9;
   const arco = k(f, [[10, 0], [60, 1]]);
-  const yTopo = (i: number) => 900 - Math.sin((i / (n - 1)) * Math.PI) * 120 * arco;
+  // cutucada: desce, afunda a película, e ela empurra o dedo de volta (mola)
+  const cutuca = (de: number) => {
+    const t = f - de;
+    if (t < 0) return 0;
+    if (t < 8) return t / 8;
+    return Math.max(0, Math.cos((t - 8) * 0.5) * Math.exp(-(t - 8) * 0.12));
+  };
+  const c = Math.max(cutuca(40), cutuca(100));
+  const xDedo = 440;
+  const yTopo = (i: number, x: number) => 1060 - Math.sin((i / (n - 1)) * Math.PI) * 110 * arco + c * 70 * Math.exp(-((x - xDedo) ** 2) / 22000);
+  const pose = frente(170, {
+    y: 1700,
+    escala: 0.6,
+    vira: 0.5,
+    inclina: 6 * c,
+    bracoD: { ombro: 118 + 10 * c, cotovelo: 22 - 8 * c },
+    maoD: "aponta",
+  });
   return (
     <AbsoluteFill>
       <svg width={1080} height={1920}>
@@ -132,27 +149,37 @@ export const S23: React.FC<P> = ({ t0 }) => {
         </text>
         {[0, 1, 2, 3].map((linha) =>
           new Array(n).fill(0).map((_, i) => {
-            const x = 140 + i * 100 + (linha % 2) * 50;
-            const y = (linha === 0 ? yTopo(i) : 900 + linha * 120) + Math.sin(f * 0.2 + i + linha) * 6;
+            const x = 230 + i * 92 + (linha % 2) * 46;
+            const y = (linha === 0 ? yTopo(i, x) : 1060 + linha * 110) + Math.sin(f * 0.2 + i + linha) * 5;
+            const x2 = 230 + (i + 1) * 92;
             return (
               <g key={`${linha}-${i}`}>
                 {i < n - 1 ? (
-                  <line x1={x} y1={y} x2={x + 100} y2={linha === 0 ? yTopo(i + 1) : 900 + linha * 120} stroke={linha === 0 && f > pelicula ? "#ffd23f" : "#9fd8ff"} strokeWidth={linha === 0 ? 12 : 6} />
+                  <line x1={x} y1={y} x2={x2 + (linha % 2) * 46} y2={linha === 0 ? yTopo(i + 1, x2) : 1060 + linha * 110} stroke={linha === 0 && f > pelicula ? "#ffd23f" : "#9fd8ff"} strokeWidth={linha === 0 ? 12 : 6} />
                 ) : null}
-                <circle cx={x} cy={y} r={34} fill="#5aa0d8" stroke="#1d1424" strokeWidth={5} />
-                <circle cx={x - 22} cy={y - 24} r={14} fill="#fff" stroke="#1d1424" strokeWidth={4} />
-                <circle cx={x + 22} cy={y - 24} r={14} fill="#fff" stroke="#1d1424" strokeWidth={4} />
+                <circle cx={x} cy={y} r={31} fill="#5aa0d8" stroke="#1d1424" strokeWidth={5} />
+                <circle cx={x - 20} cy={y - 22} r={13} fill="#fff" stroke="#1d1424" strokeWidth={4} />
+                <circle cx={x + 20} cy={y - 22} r={13} fill="#fff" stroke="#1d1424" strokeWidth={4} />
               </g>
             );
           }),
         )}
-        {f > pelicula ? <Brilhos x={540} y={760} f={f} de={pelicula} raio={360} /> : null}
+        <Boneco2D id="s23l" d={LUCAS} pose={pose} rosto={vivo({ ...ROSTO_BASE, olhos: c > 0.3 ? 1.2 : 1, boca: c > 0.3 ? 0.4 : 0, sorriso: 0.6, olhar: [1, -0.6] }, f, "s23l")} />
+        {f > pelicula ? <Brilhos x={640} y={940} f={f} de={pelicula} raio={360} /> : null}
       </svg>
-      <Rotulo2 texto="moléculas se agarram" x={540} y={1500} de={T("as moléculas") - t0} tamanho={60} cor="#fff" />
-      <Rotulo2 texto="película" x={540} y={620} de={pelicula} tamanho={90} />
+      <Simbolo2 f={f} />
+      <Rotulo2 texto="moléculas se agarram" x={620} y={600} de={T("as moléculas") - t0} tamanho={60} cor="#fff" />
+      <Rotulo2 texto="película" x={640} y={790} de={pelicula} tamanho={90} />
     </AbsoluteFill>
   );
 };
+
+const Simbolo2: React.FC<{ f: number }> = ({ f }) =>
+  f > 46 && f < 70 ? (
+    <svg width={1080} height={1920} style={{ position: "absolute" }}>
+      <Simbolo texto="!" x={330} y={930} f={f} de={46} />
+    </svg>
+  ) : null;
 
 export const S24: React.FC<P> = () => {
   const f = useCurrentFrame();
@@ -271,19 +298,28 @@ export const S30: React.FC<P> = ({ t0 }) => {
   );
 };
 
-// S31 — coração dispara
+// S31 — coração dispara (Lucas travado, mão no peito)
 export const S31: React.FC<P> = () => {
   const f = useCurrentFrame();
   const bate = 1 + Math.max(0, Math.sin(f * 0.9)) * 0.22;
   const bpm = Math.round(k(f, [[0, 90], [40, 190, CURVA.sai]]));
+  const pose = frente(540, { y: 1720, escala: 0.62, cabeca: Math.sin(f * 1.7) * 2, bracoD: { ombro: 36, cotovelo: -120 }, maoD: "aberta", bracoE: { ombro: 12, cotovelo: -6 }, estica: 1 + Math.max(0, Math.sin(f * 0.9)) * 0.012 });
+  const [hx, hy] = posCabeca(pose);
   return (
     <AbsoluteFill>
       <svg width={1080} height={1920}>
         <Grade cor="#3a1424" />
-        <g transform={`translate(540 900) scale(${2.4 * bate})`}>
+        <path d={`M 0 640 ${new Array(24).fill(0).map((_, i) => `L ${i * 50} ${640 + ((i + Math.floor(f / 2)) % 6 === 0 ? -140 : (i + Math.floor(f / 2)) % 6 === 1 ? 80 : 0)}`).join(" ")}`} stroke="#ff6a7a" strokeWidth={10} fill="none" />
+        <Boneco2D id="s31l" d={LUCAS} pose={pose} rosto={{ ...ROSTO_BASE, olhos: 1.3, sobrancelha: -16, sobrancelhaY: 16, sorriso: -0.6, olhar: [0, 0.5] }} />
+        {/* coração aparecendo no peito, batendo */}
+        <g transform={`translate(560 ${1720 - 600 * 0.62}) scale(${0.75 * bate})`} opacity={0.95}>
           <Coracao />
         </g>
-        <path d={`M 0 1400 ${new Array(24).fill(0).map((_, i) => `L ${i * 50} ${1400 + ((i + Math.floor(f / 2)) % 6 === 0 ? -160 : (i + Math.floor(f / 2)) % 6 === 1 ? 90 : 0)}`).join(" ")}`} stroke="#ff6a7a" strokeWidth={10} fill="none" />
+        {[0, 1, 2].map((i) => {
+          const t = ((f + i * 7) % 20) / 20;
+          return <circle key={i} cx={560} cy={1720 - 600 * 0.62} r={60 + t * 220} fill="none" stroke="#ff6a7a" strokeWidth={8 * (1 - t)} opacity={1 - t} />;
+        })}
+        <Gota x={hx + 120} y={hy - 80} f={f} de={4} escala={0.8} />
       </svg>
       <Placar titulo="BATIMENTOS" valor={`${bpm} bpm`} x={540} y={420} de={2} />
       <Som src="coracao" de={0} volume={0.6} />
@@ -368,36 +404,48 @@ export const S35: React.FC<P> = () => {
   );
 };
 
-// S36 — respiração lenta: 6 vs 12-20 por minuto
+// S36 — respiração lenta: pulmões em "raio-X" no peito do Lucas vs. um candidato ofegante
 export const S36: React.FC<P> = ({ t0 }) => {
   const f = useCurrentFrame();
   const lento = (Math.sin((f / 300) * Math.PI * 2 * 1.5) + 1) / 2;
   const rapido = (Math.sin((f / 30) * Math.PI * 2 * 0.8) + 1) / 2;
   const mostraRapido = f > T("em vez das") - t0;
+  const lx = k(f, [[T("em vez das") - t0, 540], [T("em vez das") - t0 + 12, 300, CURVA.suave]]);
+  const esc = mostraRapido ? 0.55 : 0.7;
+  const lpose = frente(lx, { y: 1640, escala: esc, estica: 1 + lento * 0.03, cabeca: -3 + lento * 3, bracoE: { ombro: 16 + lento * 6, cotovelo: -8 }, bracoD: { ombro: 16 + lento * 6, cotovelo: -8 } });
+  const cpose = frente(800, { y: 1640, escala: 0.55, estica: 1 + rapido * 0.04, inclina: 6, bracoE: { ombro: 20, cotovelo: -40 }, bracoD: { ombro: 20, cotovelo: -40 } });
   return (
     <AbsoluteFill>
       <svg width={1080} height={1920}>
         <Grade />
-        <g transform={`translate(${mostraRapido ? 300 : 540} 980)`}>
-          <Pulmoes escala={mostraRapido ? 1.4 : 2} ar={lento} />
+        <Boneco2D id="s36l" d={LUCAS} pose={lpose} rosto={{ ...ROSTO_BASE, olhos: 0, sorriso: 0.4 }} />
+        <g transform={`translate(${lx} ${1640 - 610 * esc}) scale(${esc * 0.95})`} opacity={0.85}>
+          <Pulmoes escala={1} ar={lento} />
         </g>
         {mostraRapido ? (
-          <g transform="translate(800 980)">
-            <Pulmoes escala={1.4} ar={rapido} />
-          </g>
+          <>
+            <Boneco2D id="s36c" d={CANDIDATOS[2]} pose={cpose} rosto={vivo({ ...ROSTO_BASE, olhos: 0.9, boca: 0.5 + rapido * 0.3, sorriso: -0.3, sobrancelha: -10 }, f, "s36c")} />
+            <g transform={`translate(800 ${1640 - 610 * 0.55}) scale(${0.55 * 0.95})`} opacity={0.85}>
+              <Pulmoes escala={1} ar={rapido} />
+            </g>
+          </>
         ) : null}
       </svg>
-      <Rotulo2 texto="6 por minuto" x={mostraRapido ? 300 : 540} y={1420} de={T("umas seis") - t0} tamanho={66} />
-      {mostraRapido ? <Rotulo2 texto="12 a 20" x={800} y={1420} de={T("em vez das") - t0} tamanho={66} cor="#ff8a8a" /> : null}
-      <Rotulo2 texto="respira devagar" x={540} y={460} de={4} tamanho={80} cor="#fff" />
+      <Rotulo2 texto="6 por minuto" x={mostraRapido ? 300 : 540} y={mostraRapido ? 760 : 560} de={T("umas seis") - t0} tamanho={66} />
+      {mostraRapido ? <Rotulo2 texto="12 a 20" x={800} y={760} de={T("em vez das") - t0} tamanho={66} cor="#ff8a8a" /> : null}
+      <Rotulo2 texto="respira devagar" x={540} y={400} de={4} tamanho={80} cor="#fff" />
     </AbsoluteFill>
   );
 };
 
-// S37 — acalma o corpo, diminui o estresse
+// S37 — acalma o corpo, diminui o estresse (medidor em cima da cabeça do Lucas)
 export const S37: React.FC<P> = () => {
   const f = useCurrentFrame();
   const nivel = k(f, [[10, 0.92], [90, 0.22, CURVA.suave]]);
+  const calmo = 1 - (nivel - 0.22) / 0.7;
+  const pose = frente(540, { y: 1700, escala: 0.75, estica: 1 + respira(f) * 0.012, cabeca: -2, bracoE: { ombro: 16, cotovelo: -8 }, bracoD: { ombro: 16, cotovelo: -8 } });
+  const [hx, hy] = posCabeca(pose);
+  const rosto = { ...ROSTO_BASE, olhos: 1.1 - calmo * 0.5, sobrancelha: -14 + calmo * 14, sobrancelhaY: 12 - calmo * 12, sorriso: -0.6 + calmo * 1.2, olhar: [0, -0.6] as [number, number] };
   return (
     <AbsoluteFill>
       <svg width={1080} height={1920}>
@@ -405,11 +453,12 @@ export const S37: React.FC<P> = () => {
         <text x={540} y={560} textAnchor="middle" fontFamily="Fredoka" fontWeight={700} fontSize={70} fill="#fff">
           ESTRESSE
         </text>
-        <rect x={190} y={640} width={700} height={110} rx={50} fill="#1d1424" />
-        <rect x={205} y={655} width={670 * nivel} height={80} rx={40} fill={nivel > 0.6 ? "#e8343f" : nivel > 0.35 ? "#ff9b2f" : "#2e9b6a"} />
-        <g transform="translate(540 1200)">
-          <Coracao escala={1.6 * (1 + Math.max(0, Math.sin(f * (0.9 - 0.6 * (1 - nivel)))) * 0.12 * nivel)} cor="#ff6a7a" />
-        </g>
+        <rect x={190} y={620} width={700} height={110} rx={50} fill="#1d1424" />
+        <rect x={205} y={635} width={670 * nivel} height={80} rx={40} fill={nivel > 0.6 ? "#e8343f" : nivel > 0.35 ? "#ff9b2f" : "#2e9b6a"} />
+        <Boneco2D id="s37l" d={LUCAS} pose={pose} rosto={vivo(rosto, f, "s37l")} />
+        {nivel > 0.6 ? <Veia x={hx + 90} y={hy - 100} f={f} de={0} escala={0.9} /> : null}
+        {nivel > 0.6 ? <Gota x={hx - 130} y={hy - 60} f={f} de={0} escala={0.8} /> : null}
+        {nivel < 0.35 ? <Brilhos x={hx} y={hy} f={f} de={70} raio={220} cor="#bfffd9" /> : null}
       </svg>
       <Rotulo2 texto="vida real" x={540} y={400} de={2} tamanho={60} cor="#ffd23f" />
     </AbsoluteFill>
