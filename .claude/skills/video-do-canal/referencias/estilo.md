@@ -17,6 +17,14 @@
 - Mãos: bola | aberta | punho | aponta | joia. `biceps` incha o braço. `naMao` + `naMaoGira` (espada).
 - Legenda: 1 palavra por vez, Fredoka branca com contorno, palavras-chave em laranja.
 
+## Acabamento (aprendido do vídeo de referência "cidade dos dias da semana")
+- Estilo escolhido: **B** = personagens atuais + mundo "pintado". Cenários dentro de `<Fundo>` (Acabamento.tsx:
+  dessatura + névoa), rua detalhada `RuaLonga` (casas, postes, fios, pássaros, placa, rachaduras, folhas).
+- Câmera nunca parada (o `Palco` já faz push-in + deriva), sombras suaves, `PoeiraFlutuante` + `Textura` globais.
+- Legenda menor e no meio: `<LegendaPalavra y={1270} tamanho={78} />`.
+- Piadas visuais e objetos com física (`ObjetosFisica`: folhas, gotas, pedras, pratos), cachorro dormindo etc.
+- Protótipo do estilo A (chibi) fica em `src/estilo2d/chibi/` caso queiram no futuro.
+
 ## Ritmo e animação (o que faz o vídeo ficar bom)
 - Plano novo a cada 1,5–2,5 s; tensão = cortes de 0,3–1 s, close nos olhos, silêncio antes do golpe.
 - Antecipação antes de toda ação (`CURVA.antecipa`), overshoot ao parar (`CURVA.exagera`).

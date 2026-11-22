@@ -61,11 +61,16 @@ npx remotion still <Nome> /tmp/.../f300.png --frame=300 --browser-executable=$B 
 Procure: personagens se atravessando, coisas cobrindo rostos, enquadramento cortando cabeça, legenda em cima
 de algo importante, expressões erradas (medo que parece sorriso), textos/emoji quebrados (não use emoji).
 
+### 5b. Revise o vídeo renderizado DUAS vezes (o usuário pede isso)
+- Revisão 1: `ffmpeg -i out/x.mp4 -vf "fps=1,scale=200:-1,drawtext=...,tile=11x3" folha_%02d.png` e olhe TODAS as folhas.
+- Revisão 2: mesma coisa deslocada 0,5 s (`-ss 0.5`) + tiras densas (3–4 fps) nas cenas de ação.
+- Corrija tudo que achar (sobreposição de corpos/braços, rótulo em cima da legenda, objeto cobrindo rosto) e re-renderize.
+
 ### 6. Render final (em background, ~4 min para 2 min de vídeo)
 ```bash
 npx remotion render <Nome> out/<slug>.mp4 --browser-executable=$B --log=error --concurrency=4
 ```
-Use `run_in_background`. Depois: confira alguns frames do MP4, commit + push (código e vídeo em commits
+Use `run_in_background`. Normalize o áudio como na referência: `ffmpeg -i bruto.mp4 -c:v copy -af loudnorm=I=-15:TP=-1.5:LRA=11 -c:a aac -b:a 192k out/x.mp4`. Depois: confira alguns frames do MP4, commit + push (código e vídeo em commits
 separados), envie o MP4 ao usuário com `SendUserFile` e o link `https://github.com/YOZ4/Canal-videos/raw/<branch>/out/<arquivo>.mp4`.
 
 ### 7. Entrega
