@@ -2,6 +2,13 @@ import { Composition } from "remotion";
 import "./estilo/fontes";
 import { LucasSaiyajin } from "./videos/LucasSaiyajin";
 import { Folha } from "./videos/Folha/Folha";
+import { Broly, DURACAO as DUR_BROLY } from "./videos/Broly/Broly";
+import { FolhaFuria } from "./videos/Folha/FolhaFuria";
+import { FolhaAngulos } from "./videos/Folha/FolhaAngulos";
+import { TesteJJK, DURACAO as DUR_JJK } from "./videos/EstiloJJK/TesteJJK";
+import { TesteMovimento2, DURACAO as DUR_MOV2 } from "./videos/Movimento/TesteMovimento2";
+import { TesteMovimento, DURACAO as DUR_MOV } from "./videos/Movimento/TesteMovimento";
+import { TesteAcabamento, DURACAO as DUR_ACAB } from "./videos/TesteAcabamento/TesteAcabamento";
 import { TesteCorrida2, DURACAO as DUR_CORR2 } from "./videos/Corrida/TesteCorrida2";
 import { TesteCorrida, DURACAO as DUR_CORR } from "./videos/Corrida/TesteCorrida";
 import { FolhaCorrida } from "./videos/Folha/FolhaCorrida";
@@ -19,6 +26,13 @@ import { TesteEstilo, FIM } from "./videos/TesteEstilo/TesteEstilo";
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition id="Broly" component={Broly} durationInFrames={DUR_BROLY} fps={24} width={1080} height={1920} />
+      <Composition id="FolhaFuria" component={FolhaFuria} durationInFrames={4} fps={24} width={1080} height={1920} />
+      <Composition id="FolhaAngulos" component={FolhaAngulos} durationInFrames={7} fps={24} width={1080} height={1920} />
+      <Composition id="TesteJJK" component={TesteJJK} durationInFrames={DUR_JJK} fps={24} width={1080} height={1920} />
+      <Composition id="TesteMovimento2" component={TesteMovimento2} durationInFrames={DUR_MOV2} fps={30} width={1080} height={1920} />
+      <Composition id="TesteMovimento" component={TesteMovimento} durationInFrames={DUR_MOV} fps={30} width={1080} height={1920} />
+      <Composition id="TesteAcabamento" component={TesteAcabamento} durationInFrames={DUR_ACAB} fps={30} width={1080} height={1920} />
       <Composition id="TesteCorrida2" component={TesteCorrida2} durationInFrames={DUR_CORR2} fps={30} width={1080} height={1920} />
       <Composition id="TesteCorrida" component={TesteCorrida} durationInFrames={DUR_CORR} fps={30} width={1080} height={1920} />
       <Composition id="FolhaCorrida" component={FolhaCorrida} durationInFrames={1} fps={30} width={3200} height={3000} />
