@@ -2,6 +2,12 @@
 
 Projeto Remotion de vídeos verticais (1080x1920, 30 fps) para o canal.
 
+**LEIA `MEMORIA.md` NO INÍCIO DE TODA SESSÃO** (quem é o usuário, o que ele aprovou/rejeitou, histórico de todos os
+vídeos, pendências). Ao terminar cada pedido, atualize o `MEMORIA.md` e faça commit + push junto.
+
+**Equipe de agentes** (`.claude/agents/`): roteiro-visual → direcao-visual → animador-remotion → revisor-qualidade,
+trocando arquivos em `producao/<episodio>/` (guia em `producao/README.md`). Use a esteira em episódios novos.
+
 **Para fazer um vídeo novo (narração + roteiro → MP4), use a skill `video-do-canal`**
 (`.claude/skills/video-do-canal/`). Esqueleto automático: `python3 scripts/novo_video.py <Nome> <audio> <roteiro>`.
 
@@ -27,6 +33,29 @@ Projeto Remotion de vídeos verticais (1080x1920, 30 fps) para o canal.
 - `UI.tsx`: legenda palavra-por-palavra (`frase("texto *destaque*", de, ate)`), `Selo` (tópico no topo),
   `Etiqueta` (nome sobre o personagem), `Placar` (contador).
 - `Cenario2D.tsx`: praça ao pôr do sol com parallax. Câmera = transform do SVG (x, y, zoom).
+- Acabamento (`Pintura.tsx`) — só o `FilmeMudo` (flashback) foi aprovado; o resto só se o usuário pedir: `Ferve` (contorno fervendo 12x/s), `NoDois`, `SombraCel` (anime 80), `Desencaixe`
+  (anos 50), `Aquarela`, `FilmeMudo` (flashback), `Luz` (aditiva). `trocaRosto()` em anim.ts = troca de expressão atuada.
+  Guia: `.claude/skills/video-do-canal/referencias/acabamento.md`. Exemplo: composição `TesteAcabamento`.
+- Final: `scripts/finalizar.sh bruto.mp4 final.mp4 [granulado]` (granulado no ffmpeg + áudio −14 LUFS). Revisão em
+  tiras: `scripts/tira.sh video t0 t1 saida.jpg [fps] [recorte que segue um ponto]`.
+- Movimento anti-robô (`movimento.ts`, skill `analise-movimento-remotion`): `fasePassadas` (passadas variadas), `faseRitmo` +
+  `RITMO_BRUTAL`/`RITMO_NINJA` (corridas que seguram a pose), `xPorFase` (pé plantado), `emCadeia` (atraso por parte),
+  `mola` (pesado/natural/solto), `pernasNoChao`, `seguir` (câmera com atraso). Estilo de corrida `ninja2` (corpo a 52°).
+  Exemplos: `TesteMovimento2` (pulo, brutal, ninja, luta com mortal/choque/cruzamento).
+- Estilo "JJK S2" em teste (`EstiloJJK.tsx`, composição `TesteJJK` a 24 qps, personagens de 2 em 2): `CelJJK` (sombra dura +
+  luz de recorte ciano + contorno variável), `GradeJJK` (grade escura azul-petróleo + borrão de chicote), `CenarioJJK`,
+  `tremorJJK`, `RiscosVelocidade`, `LinhasRadiais`, `EnergiaCiano`, `Particulas`, `QuadroImpacto`, `Racha`, `Desfoque`.
+  Finalizar com granulado 4.
+- Sombra por partes: `<Boneco2D cel={{ luz: -160, sombra: 34, recorte: 10 }} />` (sombra dura + luz de recorte em cada perna,
+  braço, tronco e cabeça, seguindo a direção da luz). Pesa ~25% no render.
+- Ângulos com bonecos 2D (`Camera2D.tsx`): **NÃO usar câmera em perspectiva (rotateX) nos personagens** — o usuário achou
+  estranho (boneco esticado como pôster). Use `camBaixa`/`camAlta` (ângulo pelo enquadramento: chão embaixo + personagem
+  enorme, ou chão no alto + personagem pequeno), `camDetalhe` (close de olhos/mão/pé, `posMao` em Boneco2D), `Camada`
+  (parallax por profundidade), `PrimeiroPlano` (pilar/pedras/poeira desfocados perto da câmera), `transformCam`.
+- Vista de cima (aprovada! `VistaCima.tsx`): `BonecoCima` (anima pela mesma pose de perfil: pés, pé levantado cresce, braços,
+  tronco inclinado põe a cabeça à frente, mortal `gira` achata, cabelo), `PlanoCima` (chão + câmera com giro), `RastroCima`,
+  `RachaCima`. Exemplos de tudo: composição `FolhaAngulos` (1 exemplo por frame).
+- Sons extras: `python3 scripts/gerar_sfx.py` (passo, pisada, racha, deslize, vento, lamina).
 - Chicote de câmera com `CameraMotionBlur` (@remotion/motion-blur) só nos frames do movimento.
 
 - Luta: `gira` (mortal), `posPe(pose)`, `naMaoGira` (espada acompanha o antebraço), `EfeitosLuta.tsx`
@@ -54,3 +83,13 @@ npx remotion render <Composicao> out/<arquivo>.mp4 --browser-executable=/opt/pw-
 4. Cada cena é um componente com `t0`; a lista `CENAS` em `<Nome>.tsx` diz em que trecho cada cena começa.
 5. Trilhas longas: `python3 scripts/gerar_trilha.py public/musica/x.wav 131` (volume ~0.1 por baixo da voz).
 6. Personagens extras: AVO, EXAMINADOR, CANDIDATOS (personagens.ts). Cenários: Sala, Arena, Savana.
+
+## Episódio no estilo JJK com dois personagens conversando (modelo: `src/videos/Broly`, "Fúria Verde")
+- 24 qps; roteiro `roteiros/<nome>.txt` no formato `D|fala` / `L|fala`; `tempo.ts` com `F(n)`/`FF(n)`, `falando()`, `LEGENDAS`.
+- Rosto por `trocaRosto` (listas RL/RD), poses por cena (`lucasPose`/`diegoPose`), lista `PLANOS` (corte a cada ~1,5–2,5 s,
+  `so: "L"|"D"` para close de um só, `cima: true` para vista de cima, `fundo` = desfoque), `IMPACTOS` para tremor.
+- `cena(f)` troca céu/destruição/tom da grade/cor da luz de recorte — é assim que os personagens "se adaptam ao ambiente".
+- Gestos nas falas: lista `GESTOS` + `comGesto()` (mola na entrada/saída, antebraço 2 quadros atrasado).
+- Lucas transformado: `LUCAS_FURIA` / `LUCAS_PODER` (cabelo verde espetado, olhos vazios, músculos, faixa). Cenário de rua: `RuaAnime`.
+- Sons de ambiente: `passaros.wav`, `transito.wav` (gerar_sfx.py). Silêncio da música antes do golpe/grito final.
+- Entrega: versão `-alta.mp4` só no chat; versão leve (< 100 MB) no git.

@@ -2,3 +2,5 @@ node_modules
 dist
 .DS_Store
 .env
+out/furia-verde-alta.mp4
+out/furia-verde-v2-alta.mp4

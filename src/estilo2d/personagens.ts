@@ -31,6 +31,14 @@ export type Design = {
   bigode?: boolean;
   oculos?: boolean;
   gravata?: string;
+  /** transformação (poder >= 0.5): cabelo espetado com estas cores; antes disso o cabelo normal vai mudando de cor */
+  cabeloPoder?: { cor: string; claro: string; escuro: string; brilho: string };
+  /** olhos brancos brilhantes sem pupila quando poder >= 0.75 */
+  olhosVazios?: boolean;
+  /** peito/abdômen definidos desenhados no tronco (sem camisa) */
+  musculos?: boolean;
+  /** faixa amarrada na cintura (ex.: camiseta rasgada) */
+  faixa?: { cor: string; sombra: string };
 };
 
 export const CONTORNO = "#1d1424";
@@ -56,6 +64,25 @@ export const LUCAS: Design = {
   numero: "3",
   corNumero: "#1d1424",
 };
+
+/** Lucas transformado (fúria verde): sem camisa, musculoso, camiseta amarela rasgada amarrada na cintura */
+export const LUCAS_FURIA: Design = {
+  ...LUCAS,
+  nome: "Lucas (fúria)",
+  pele: "#e8b48c",
+  peleSombra: "#c98a62",
+  camisa: "#e8b48c",
+  camisaSombra: "#c98a62",
+  manga: "#e8b48c",
+  numero: undefined,
+  cabeloPoder: { cor: "#7df23a", claro: "#d8ff8a", escuro: "#2f9e1a", brilho: "#b6ff4a" },
+  olhosVazios: true,
+  musculos: true,
+  faixa: { cor: "#f4c531", sombra: "#c99212" },
+};
+
+/** Lucas no começo da transformação: roupa normal, cabelo pode ficar verde e espetado (poder) */
+export const LUCAS_PODER: Design = { ...LUCAS, cabeloPoder: LUCAS_FURIA.cabeloPoder, olhosVazios: true };
 
 export const DIEGO: Design = {
   nome: "Diego",

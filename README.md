@@ -4,6 +4,10 @@ Vídeos do canal feitos com [Remotion](https://www.remotion.dev/) + 3D ([@remoti
 
 ## Estrutura
 
+- `MEMORIA.md` – **memória do projeto**: histórico, decisões aprovadas/rejeitadas, pendências
+- `src/videos/Broly/` – episódio "Fúria Verde" (estilo JJK, v1 e v2)
+- `src/videos/Cacadores/` – "Caçadores" parte 1 (v4)
+
 - `src/Root.tsx` – registra as composições
 - `src/estilo2d/` – **estilo principal 2D**: Lucas e Diego articulados, animação por keyframes, legendas, cenário (ver CLAUDE.md)
 - `src/videos/Saiyajin2D/` – "E se você virasse um Saiyajin?" em 2D (v1, v2 e **v3** — versão mais recente, com visual novo, transições, trilha e sons)
