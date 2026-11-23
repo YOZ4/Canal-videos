@@ -108,6 +108,12 @@ pendente) e faça commit + push junto com o trabalho.
     ganharam `semSelo`. Aguardando opinião dele para virar skill (a missão fala em personagens feitos de IMAGENS por
     partes; os nossos são vetoriais — o rig já existe no Boneco2D).
 
+17. **Evolução do sistema (ele decidiu manter o VETORIAL)** — prioridades dele: câmera cinematográfica com câmera lenta
+    de verdade, biblioteca grande de movimentos, naturalidade, atuação, reutilização, estética anime. Etapa 1 feita
+    (`producao/sistema/etapa1.md`): `tempo.tsx` (câmera lenta por remapeamento de tempo), `golpes.ts` (14 movimentos
+    relativos + `combate()`), prévias `FolhaGolpes` e `DemoGolpes` (`out/demo-golpes.mp4`). Próximas: rolamento no chão
+    (ponto de giro), atuação/reações, mais golpes, caminhada/corrida dentro do `combate()`.
+
 ## Pendências / ideias que ele ainda pode pedir
 - Testar a esteira de 4 agentes no próximo episódio e ajustar os arquivos dos agentes com o que ele achar.
 - Gesto de "mão na cabeça" no Lucas gigante (o braço atual não alcança a cabeça; virou punho tremendo).
