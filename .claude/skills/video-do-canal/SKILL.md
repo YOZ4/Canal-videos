@@ -14,6 +14,8 @@ Leia também, quando precisar:
 - `referencias/receitas.md` — trechos de código prontos para cada tipo de cena (copie e adapte).
 
 ## Antes de começar
+- Leia `MEMORIA.md` (preferências e decisões do usuário). Para episódio no estilo JJK, copie a estrutura de `src/videos/Broly`.
+- Ao entregar, atualize `MEMORIA.md` (histórico + pendências) e faça commit + push.
 1. Diga ao usuário uma **estimativa de tempo** (ele sempre quer saber). Referência: vídeo de ~2 min ≈ 1h30–2h de
    trabalho + ~4 min de render. Ajustes em vídeo existente ≈ 30–60 min.
 2. Confirme que tem: **áudio da narração** (mp3/wav) e **roteiro com o texto exato** da fala. Sem roteiro, peça;

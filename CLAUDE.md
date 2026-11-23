@@ -2,6 +2,9 @@
 
 Projeto Remotion de vídeos verticais (1080x1920, 30 fps) para o canal.
 
+**LEIA `MEMORIA.md` NO INÍCIO DE TODA SESSÃO** (quem é o usuário, o que ele aprovou/rejeitou, histórico de todos os
+vídeos, pendências). Ao terminar cada pedido, atualize o `MEMORIA.md` e faça commit + push junto.
+
 **Para fazer um vídeo novo (narração + roteiro → MP4), use a skill `video-do-canal`**
 (`.claude/skills/video-do-canal/`). Esqueleto automático: `python3 scripts/novo_video.py <Nome> <audio> <roteiro>`.
 
@@ -77,3 +80,13 @@ npx remotion render <Composicao> out/<arquivo>.mp4 --browser-executable=/opt/pw-
 4. Cada cena é um componente com `t0`; a lista `CENAS` em `<Nome>.tsx` diz em que trecho cada cena começa.
 5. Trilhas longas: `python3 scripts/gerar_trilha.py public/musica/x.wav 131` (volume ~0.1 por baixo da voz).
 6. Personagens extras: AVO, EXAMINADOR, CANDIDATOS (personagens.ts). Cenários: Sala, Arena, Savana.
+
+## Episódio no estilo JJK com dois personagens conversando (modelo: `src/videos/Broly`, "Fúria Verde")
+- 24 qps; roteiro `roteiros/<nome>.txt` no formato `D|fala` / `L|fala`; `tempo.ts` com `F(n)`/`FF(n)`, `falando()`, `LEGENDAS`.
+- Rosto por `trocaRosto` (listas RL/RD), poses por cena (`lucasPose`/`diegoPose`), lista `PLANOS` (corte a cada ~1,5–2,5 s,
+  `so: "L"|"D"` para close de um só, `cima: true` para vista de cima, `fundo` = desfoque), `IMPACTOS` para tremor.
+- `cena(f)` troca céu/destruição/tom da grade/cor da luz de recorte — é assim que os personagens "se adaptam ao ambiente".
+- Gestos nas falas: lista `GESTOS` + `comGesto()` (mola na entrada/saída, antebraço 2 quadros atrasado).
+- Lucas transformado: `LUCAS_FURIA` / `LUCAS_PODER` (cabelo verde espetado, olhos vazios, músculos, faixa). Cenário de rua: `RuaAnime`.
+- Sons de ambiente: `passaros.wav`, `transito.wav` (gerar_sfx.py). Silêncio da música antes do golpe/grito final.
+- Entrega: versão `-alta.mp4` só no chat; versão leve (< 100 MB) no git.
