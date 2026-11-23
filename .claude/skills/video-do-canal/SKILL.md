@@ -14,6 +14,7 @@ Leia também, quando precisar:
 - `referencias/receitas.md` — trechos de código prontos para cada tipo de cena (copie e adapte).
 
 ## Antes de começar
+- Episódio novo: rode a esteira de agentes (`producao/README.md`): roteiro-visual → direcao-visual → animador-remotion → revisor-qualidade.
 - Leia `MEMORIA.md` (preferências e decisões do usuário). Para episódio no estilo JJK, copie a estrutura de `src/videos/Broly`.
 - Ao entregar, atualize `MEMORIA.md` (histórico + pendências) e faça commit + push.
 1. Diga ao usuário uma **estimativa de tempo** (ele sempre quer saber). Referência: vídeo de ~2 min ≈ 1h30–2h de

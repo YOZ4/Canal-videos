@@ -5,6 +5,9 @@ Projeto Remotion de vídeos verticais (1080x1920, 30 fps) para o canal.
 **LEIA `MEMORIA.md` NO INÍCIO DE TODA SESSÃO** (quem é o usuário, o que ele aprovou/rejeitou, histórico de todos os
 vídeos, pendências). Ao terminar cada pedido, atualize o `MEMORIA.md` e faça commit + push junto.
 
+**Equipe de agentes** (`.claude/agents/`): roteiro-visual → direcao-visual → animador-remotion → revisor-qualidade,
+trocando arquivos em `producao/<episodio>/` (guia em `producao/README.md`). Use a esteira em episódios novos.
+
 **Para fazer um vídeo novo (narração + roteiro → MP4), use a skill `video-do-canal`**
 (`.claude/skills/video-do-canal/`). Esqueleto automático: `python3 scripts/novo_video.py <Nome> <audio> <roteiro>`.
 

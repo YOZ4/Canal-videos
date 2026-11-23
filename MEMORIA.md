@@ -59,8 +59,17 @@ pendente) e faça commit + push junto com o trabalho.
       com energia sendo puxada (CorrentesAura), sons de rua de dia (`passaros.wav`, `transito.wav`) e silêncio da
       música antes do "DIEGO!". Render final: ~66 min em resolução total.
     - PR #2 aberto para juntar tudo na main.
+11. **Memória do projeto**: criado este `MEMORIA.md` (ele pediu para guardar todo o progresso no repositório).
+12. **Equipe de 4 agentes** (pedido e desenhado pelo usuário), em `.claude/agents/`, rodando em esteira com arquivos em
+    `producao/<episodio>/` (guia: `producao/README.md`):
+    1. `roteiro-visual` — roteiro por cenas (ação, emoção, ritmo, cenário exato) + kit de imagens de referência ligado a cada momento.
+    2. `direcao-visual` — paleta, sombra dura, luz de recorte, planos/câmera, expressões e movimento em fases (2 em 2, holds, smears, tremor).
+    3. `animador-remotion` — código Remotion anti-robótico (modelo: src/videos/Broly) e aplica os ajustes do revisor.
+    4. `revisor-qualidade` — revisões 1 e 2 com ajustes cirúrgicos (não edita código).
+    Ainda não foram usados num episódio: o próximo vídeo é o primeiro teste da esteira.
 
 ## Pendências / ideias que ele ainda pode pedir
+- Testar a esteira de 4 agentes no próximo episódio e ajustar os arquivos dos agentes com o que ele achar.
 - Gesto de "mão na cabeça" no Lucas gigante (o braço atual não alcança a cabeça; virou punho tremendo).
 - Fuga do Diego com corrida de pânico (braços se debatendo, olhando para trás) — hoje usa a corrida comum.
 - Mais episódios no estilo JJK reaproveitando `src/videos/Broly` como modelo.
