@@ -23,11 +23,22 @@ import { SaiyajinV3, DURACAO as DUR_SAI3 } from "./videos/Saiyajin2D/SaiyajinV3"
 import { TesteAnimacao, DURACAO as DUR_ANIM } from "./videos/TesteAnimacao/TesteAnimacao";
 import { TesteFerramentas, DURACAO as DUR_FERR } from "./videos/Ferramentas/TesteFerramentas";
 import { FichaLucas, FichaDiego, FICHA_W, FICHA_H } from "./videos/Folha/FichaPersonagem";
+import { FichaEgito } from "./videos/Egito/FichaEgito";
+import { Egito, DURACAO as DUR_EGITO } from "./videos/Egito/Egito";
+import { TesteCameraAcrobacia, TesteCameraLuta, DURACAO_CAM } from "./videos/TesteCamera/TesteCamera";
+import { FolhaGolpes, FOLHA_G_W, FOLHA_G_H } from "./videos/Folha/FolhaGolpes";
+import { DemoGolpes, DURACAO_DEMO } from "./videos/TesteCamera/DemoGolpes";
 import { TesteEstilo, FIM } from "./videos/TesteEstilo/TesteEstilo";
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition id="DemoGolpes" component={DemoGolpes} durationInFrames={DURACAO_DEMO} fps={30} width={1080} height={1920} />
+      <Composition id="FolhaGolpes" component={FolhaGolpes} durationInFrames={1} fps={30} width={FOLHA_G_W} height={FOLHA_G_H} />
+      <Composition id="TesteCameraAcrobacia" component={TesteCameraAcrobacia} durationInFrames={DURACAO_CAM} fps={30} width={1080} height={1920} />
+      <Composition id="TesteCameraLuta" component={TesteCameraLuta} durationInFrames={DURACAO_CAM} fps={30} width={1080} height={1920} />
+      <Composition id="Egito" component={Egito} durationInFrames={DUR_EGITO} fps={60} width={1080} height={1920} />
+      <Composition id="FichaEgito" component={FichaEgito} durationInFrames={1} fps={60} width={2400} height={1500} />
       <Composition id="FichaLucas" component={FichaLucas} durationInFrames={1} fps={30} width={FICHA_W} height={FICHA_H} />
       <Composition id="FichaDiego" component={FichaDiego} durationInFrames={1} fps={30} width={FICHA_W} height={FICHA_H} />
       <Composition id="TesteFerramentas" component={TesteFerramentas} durationInFrames={DUR_FERR} fps={30} width={1080} height={1920} />

@@ -67,6 +67,13 @@ trocando arquivos em `producao/<episodio>/` (guia em `producao/README.md`). Use 
 - `desenho-a-mao` → `Desenho.tsx`: `Desenho` (traços com caneta), `TextoMao` (fonte Patrick Hand), `eixos`, `curvaGrafico`, `seta`, `circulado`, `Papel`.
 - `cena-3d` → `Objeto3D.tsx`: `Camada3D`, `Solido3D` (toon + contorno), `EsferaEnergia3D`, `Planeta3D`, `orbita`. Render com `--gl=swangle`.
 
+## Ação reutilizável (etapa 1 da evolução — ver `producao/sistema/etapa1.md`)
+- `golpes.ts`: GOLPES (jab, direto, chuteAlto, esquivaTras/Baixa, defesa, levaGolpe, queda, cambalhota, salto, mortalTras,
+  voadora, avanca, recua) relativos a uma base; `combate(f, base, passos)` encadeia; `contatoDe(passo)` = quadro do impacto.
+  Exemplo: `src/videos/TesteCamera/DemoGolpes.tsx`. Folha: composição `FolhaGolpes`.
+- `tempo.tsx`: `<CameraLenta trechos>` = câmera lenta verdadeira (tempo remapeado). Efeitos do Diretor e sons ficam fora.
+- `Diretor.tsx`: planos (zoom/foco/holandês) + crash, treme, chicote, flash, inverte, faixas, velocidade.
+
 ## Regras de animação (aprendidas das referências)
 - Corte/mudança de plano a cada ~1,5–2,5 s. Legenda 1 palavra por vez, palavra-chave em laranja.
 - Sempre: antecipação antes de ações, overshoot ao parar, cabeça atrasada em relação ao corpo,
@@ -98,3 +105,10 @@ npx remotion render <Composicao> out/<arquivo>.mp4 --browser-executable=/opt/pw-
 - Lucas transformado: `LUCAS_FURIA` / `LUCAS_PODER` (cabelo verde espetado, olhos vazios, músculos, faixa). Cenário de rua: `RuaAnime`.
 - Sons de ambiente: `passaros.wav`, `transito.wav` (gerar_sfx.py). Silêncio da música antes do golpe/grito final.
 - Entrega: versão `-alta.mp4` só no chat; versão leve (< 100 MB) no git.
+
+## Episódio de época / história real (modelo: `src/videos/Egito`, "Egito: a areia molhada", 60 qps)
+- Figurino egípcio: campo `egito` no Design (`Boneco2D`): saiote, cinto na cor do personagem, colar, braceletes, sandálias, `khat`.
+  Elenco pronto em `src/videos/Egito/elenco.ts`. Para outra época, siga o mesmo padrão (peça de roupa = opção do Design).
+- 60 qps: funções do `anim.ts` (afinadas a 30) recebem `fa/2`; `mola(..., fps=60)`. Mundo contínuo entre cenas em `mundo.ts`.
+- `Equipe` (atores.tsx): fila de puxadores com atraso/variação por pessoa e corda pelas mãos. HUD com fonte Anton (`FONTE_HUD`).
+- Áudio sintetizado do episódio: `python3 scripts/gerar_egito_audio.py`. Plano e revisões: `producao/egito/`.

@@ -89,6 +89,31 @@ pendente) e faça commit + push junto com o trabalho.
     juntos; a orelha antes ficava "descolada" fora da cabeça), nariz ganha lateral, ombro/braço de longe vai para
     trás do tronco, quadril e pés acompanham. Afeta todos os vídeos que usam `vira` (para melhor). Os valores de cada expressão estão na lista `EXPR` do arquivo — reaproveitar nos episódios.
 
+15. **Episódio "Egito: a areia molhada"** (`src/videos/Egito`, composição `Egito`, 60 qps, 75,55 s, 1ª história real
+    narrada em 3ª pessoa). Roteiro de produção dele (Roteiro 1) + áudio; o pacote zip com imagens/JSONs NÃO veio → feito
+    pelo texto + `alinhar.py`. Feito com a skill `roteiro-imagens-remotion` (plano e revisões em `producao/egito/`).
+    - Figurino egípcio novo no Boneco2D (`Design.egito`: saiote, cinto na cor, colar usekh, braceletes, sandálias, `khat`
+      do chefe). Elenco em `Egito/elenco.ts` (LUCAS_EG, DIEGO_EG, CHEFE, 4 TRABALHADORES).
+    - `Equipe` (puxadores defasados, corda passando pelas mãos, metade indo embora), estátua/trenó/jarro/balde/água/lama,
+      céu com sol descendo, diagrama em corte, pôr do sol com templo, parede de tumba, HUD (fonte Anton), loop no final.
+    - Trilha e efeitos sintetizados: `scripts/gerar_egito_audio.py` (música "hijaz" + drone; água, splash, glub...).
+    - Render: ~3 min em meia resolução (60 qps, sem estilo JJK).
+
+16. **Missão "sistema profissional de animação 2D"** (texto dele, ainda não virou skill). Primeiro teste pedido: 2 vídeos
+    de 15 s com muito jogo de câmera, reaproveitando movimentos aprovados. Criado `src/estilo2d/Diretor.tsx` (câmera em
+    espaço de tela por cima da cena: planos com zoom/foco/holandês, crash zoom com mola, tremida, chicote com borrão,
+    flash, inversão, faixas de cinema, linhas de velocidade; zoom mínimo automático para nunca mostrar borda).
+    Composições `TesteCameraAcrobacia` (pulo + ninja + brutal) e `TesteCameraLuta` (luta do TesteMovimento2 + trecho do
+    LutaTeste). Corrigido: `RuaLonga` acabava antes da freada da corrida brutal (fundo creme). Cenas do TesteMovimento2
+    ganharam `semSelo`. Aguardando opinião dele para virar skill (a missão fala em personagens feitos de IMAGENS por
+    partes; os nossos são vetoriais — o rig já existe no Boneco2D).
+
+17. **Evolução do sistema (ele decidiu manter o VETORIAL)** — prioridades dele: câmera cinematográfica com câmera lenta
+    de verdade, biblioteca grande de movimentos, naturalidade, atuação, reutilização, estética anime. Etapa 1 feita
+    (`producao/sistema/etapa1.md`): `tempo.tsx` (câmera lenta por remapeamento de tempo), `golpes.ts` (14 movimentos
+    relativos + `combate()`), prévias `FolhaGolpes` e `DemoGolpes` (`out/demo-golpes.mp4`). Próximas: rolamento no chão
+    (ponto de giro), atuação/reações, mais golpes, caminhada/corrida dentro do `combate()`.
+
 ## Pendências / ideias que ele ainda pode pedir
 - Testar a esteira de 4 agentes no próximo episódio e ajustar os arquivos dos agentes com o que ele achar.
 - Gesto de "mão na cabeça" no Lucas gigante (o braço atual não alcança a cabeça; virou punho tremendo).
