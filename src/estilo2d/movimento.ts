@@ -179,8 +179,8 @@ export const SENSACAO = {
 } as const;
 
 /** spring 0→1 que começa no frame `de` (antes disso = 0). Passa do ponto conforme a sensação. */
-export const mola = (f: number, de: number, sensacao: keyof typeof SENSACAO | { mass: number; stiffness: number; damping: number } = "natural") =>
-  f < de ? 0 : spring({ frame: f - de, fps: FPS, config: typeof sensacao === "string" ? SENSACAO[sensacao] : sensacao });
+export const mola = (f: number, de: number, sensacao: keyof typeof SENSACAO | { mass: number; stiffness: number; damping: number } = "natural", fps = FPS) =>
+  f < de ? 0 : spring({ frame: f - de, fps, config: typeof sensacao === "string" ? SENSACAO[sensacao] : sensacao });
 
 /** mistura entre a e b com a mola (aceita passar do ponto: t > 1) */
 export const entre = (a: number, b: number, t: number) => a + (b - a) * t;

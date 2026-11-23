@@ -36,6 +36,10 @@ Projeto Remotion de vídeos verticais (1080x1920, 30 fps) para o canal.
   `RITMO_BRUTAL`/`RITMO_NINJA` (corridas que seguram a pose), `xPorFase` (pé plantado), `emCadeia` (atraso por parte),
   `mola` (pesado/natural/solto), `pernasNoChao`, `seguir` (câmera com atraso). Estilo de corrida `ninja2` (corpo a 52°).
   Exemplos: `TesteMovimento2` (pulo, brutal, ninja, luta com mortal/choque/cruzamento).
+- Estilo "JJK S2" em teste (`EstiloJJK.tsx`, composição `TesteJJK` a 24 qps, personagens de 2 em 2): `CelJJK` (sombra dura +
+  luz de recorte ciano + contorno variável), `GradeJJK` (grade escura azul-petróleo + borrão de chicote), `CenarioJJK`,
+  `tremorJJK`, `RiscosVelocidade`, `LinhasRadiais`, `EnergiaCiano`, `Particulas`, `QuadroImpacto`, `Racha`, `Desfoque`.
+  Finalizar com granulado 4.
 - Sons extras: `python3 scripts/gerar_sfx.py` (passo, pisada, racha, deslize, vento, lamina).
 - Chicote de câmera com `CameraMotionBlur` (@remotion/motion-blur) só nos frames do movimento.
 
