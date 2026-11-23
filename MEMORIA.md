@@ -82,6 +82,11 @@ pendente) e faça commit + push junto com o trabalho.
 - Gesto de "mão na cabeça" no Lucas gigante (o braço atual não alcança a cabeça; virou punho tremendo).
 - Fuga do Diego com corrida de pânico (braços se debatendo, olhando para trás) — hoje usa a corrida comum.
 - Usar as 3 skills novas num episódio de verdade e ver o que ele acha (3D: medir tempo de render antes).
+- Referência analisada (vídeo de 60 s de lista "5 plugins", mascote no canto): ritmo = 1 elemento novo a cada 0,5–1 s
+  sincronizado com a palavra, fundo muda de cor a cada tópico (creme ↔ laranja) com listras diagonais andando,
+  título em "carimbo" inclinado, legenda em blocos de 3 palavras (cada palavra numa etiqueta), cartões de interface
+  (janela, barra de progresso, checklist, terminal digitando, diagrama em estrela, lixeira, funil), mascote reagindo
+  (linhas de susto, piscadinha, lupa). Proposta: kit `Infografico.tsx` + Lucas apresentador no canto. Aguardando ele decidir.
 - Som de caneta (`caneta.wav`) para o quadro branco ainda não foi sintetizado.
 - Mais episódios no estilo JJK reaproveitando `src/videos/Broly` como modelo.
 
