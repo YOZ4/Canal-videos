@@ -15,7 +15,7 @@ const COXA = 182;
 const CANELA = 182;
 const rad = (d: number) => (d * Math.PI) / 180;
 
-export type EstiloCorrida = "normal" | "rapida" | "ninja" | "panico";
+export type EstiloCorrida = "normal" | "rapida" | "ninja" | "panico" | "ninja2";
 
 type Chave = [number, number, number]; // fase, coxa(graus, + = pra frente), joelho(dobra)
 
@@ -48,6 +48,17 @@ const PERNA: Record<EstiloCorrida, Chave[]> = {
     [0.76, 36, 96],
     [0.92, 54, 70],
   ],
+  // ninja2 (medido na referência "Naruto run"): corpo quase deitado, perna de trás esticada e arrastando,
+  // perna da frente com a coxa à frente e a canela para baixo; pisa encolhendo bem os joelhos
+  ninja2: [
+    [0.0, 42, 64], // pisa
+    [0.1, 20, 80], // encolhe (joelhos embaixo do corpo)
+    [0.24, -38, 34], // empurra
+    [0.38, -74, 6], // esticada para trás (segura no planar)
+    [0.55, -66, 18],
+    [0.72, 2, 112], // volta baixa
+    [0.86, 64, 98], // coxa à frente, canela para baixo
+  ],
   panico: [
     [0.0, 20, 18],
     [0.14, 2, 40],
@@ -64,6 +75,7 @@ const CONFIG: Record<EstiloCorrida, { inclina: number; voo: number; bracoAmp: nu
   rapida: { inclina: 24, voo: 46, bracoAmp: 1.25, bracoBase: 6, cotovelo: 88 },
   ninja: { inclina: 34, voo: 16, bracoAmp: 0, bracoBase: -78, cotovelo: 4 },
   panico: { inclina: -4, voo: 26, bracoAmp: 0, bracoBase: 118, cotovelo: -24 },
+  ninja2: { inclina: 52, voo: 24, bracoAmp: 0, bracoBase: -60, cotovelo: 2 },
 };
 
 /** Catmull-Rom cíclico sobre chaves (fase em [0,1)) */
@@ -99,7 +111,7 @@ const fkPe = (coxa: number, joelho: number): [number, number] => {
 };
 
 /** fase em que cada perna está no chão (contato → impulso) */
-const APOIO: Record<EstiloCorrida, number> = { normal: 0.36, rapida: 0.36, ninja: 0.38, panico: 0.42 };
+const APOIO: Record<EstiloCorrida, number> = { normal: 0.36, rapida: 0.36, ninja: 0.38, panico: 0.42, ninja2: 0.3 };
 
 export type PoseCorrida = {
   peE: Pe;
@@ -163,7 +175,7 @@ export const poseCorrida = (fase: number, estilo: EstiloCorrida = "normal", inte
       ? { ombro: Math.max(-62, Math.min(52, cfg.bracoBase + coxaOposta * 1.15 * cfg.bracoAmp * k)), cotovelo: cfg.cotovelo * k + 6 }
       : {
           ombro: cfg.bracoBase * k + (estilo === "panico" ? Math.sin(fase * Math.PI * 4 + coxaOposta * 0.05) * 28 : Math.sin(fase * Math.PI * 4 + coxaOposta * 0.03) * 4),
-          cotovelo: cfg.cotovelo * k + (estilo === "ninja" ? Math.sin(fase * Math.PI * 8) * 3 : 0),
+          cotovelo: cfg.cotovelo * k + (estilo === "ninja" || estilo === "ninja2" ? Math.sin(fase * Math.PI * 8) * 3 : 0),
         };
   const descida = Math.max(0, agacha - 10);
   const contatoA = p < 0.03;
@@ -177,8 +189,8 @@ export const poseCorrida = (fase: number, estilo: EstiloCorrida = "normal", inte
     cabeca: -cfg.inclina * 0.55 * k,
     bracoD: braco(cB),
     bracoE: braco(cA),
-    maoE: estilo === "ninja" ? "aberta" : estilo === "panico" ? "aberta" : "punho",
-    maoD: estilo === "ninja" ? "aberta" : estilo === "panico" ? "aberta" : "punho",
+    maoE: estilo === "ninja" || estilo === "ninja2" ? "aberta" : estilo === "panico" ? "aberta" : "punho",
+    maoD: estilo === "ninja" || estilo === "ninja2" ? "aberta" : estilo === "panico" ? "aberta" : "punho",
     noAr: voo / Math.max(1, cfg.voo),
     contato: contatoA || contatoB,
   };
@@ -259,7 +271,7 @@ export const contatos = (fase: (g: number) => number, de: number, ate: number): 
 export const poseCorridaFrente = (fase: number, estilo: EstiloCorrida = "normal", intensidade = 1, costas = false) => {
   const k = intensidade;
   const s = Math.sin(fase * Math.PI * 2);
-  const ninja = estilo === "ninja";
+  const ninja = estilo === "ninja" || estilo === "ninja2";
   const panico = estilo === "panico";
   const lift = (ninja ? 170 : estilo === "rapida" ? 250 : 215) * k;
   const levE = Math.max(0, s);

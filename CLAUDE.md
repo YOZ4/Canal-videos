@@ -32,6 +32,11 @@ Projeto Remotion de vídeos verticais (1080x1920, 30 fps) para o canal.
   Guia: `.claude/skills/video-do-canal/referencias/acabamento.md`. Exemplo: composição `TesteAcabamento`.
 - Final: `scripts/finalizar.sh bruto.mp4 final.mp4 [granulado]` (granulado no ffmpeg + áudio −14 LUFS). Revisão em
   tiras: `scripts/tira.sh video t0 t1 saida.jpg [fps] [recorte que segue um ponto]`.
+- Movimento anti-robô (`movimento.ts`, skill `analise-movimento-remotion`): `fasePassadas` (passadas variadas), `faseRitmo` +
+  `RITMO_BRUTAL`/`RITMO_NINJA` (corridas que seguram a pose), `xPorFase` (pé plantado), `emCadeia` (atraso por parte),
+  `mola` (pesado/natural/solto), `pernasNoChao`, `seguir` (câmera com atraso). Estilo de corrida `ninja2` (corpo a 52°).
+  Exemplos: `TesteMovimento2` (pulo, brutal, ninja, luta com mortal/choque/cruzamento).
+- Sons extras: `python3 scripts/gerar_sfx.py` (passo, pisada, racha, deslize, vento, lamina).
 - Chicote de câmera com `CameraMotionBlur` (@remotion/motion-blur) só nos frames do movimento.
 
 - Luta: `gira` (mortal), `posPe(pose)`, `naMaoGira` (espada acompanha o antebraço), `EfeitosLuta.tsx`

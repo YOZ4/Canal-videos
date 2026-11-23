@@ -67,6 +67,49 @@ export const faseBrutal = (f: number, semente: string, passo = 14): number => {
   }
 };
 
+/**
+ * Ritmo genérico "segura a pose": cada passada (meio ciclo de fase) é dividida em trechos
+ * [duração em frames, fase inicial, fase final, curva]. Útil para corridas estilizadas (brutal, ninja).
+ * variacao = ±frames por passada.
+ */
+export type Trecho = [number, number, number, "sai" | "suave" | "linear" | "entra"];
+const CURVAS = {
+  sai: (u: number) => 1 - (1 - u) * (1 - u),
+  entra: (u: number) => u * u,
+  suave: (u: number) => u * u * (3 - 2 * u),
+  linear: (u: number) => u,
+};
+export const faseRitmo = (f: number, semente: string, trechos: Trecho[], variacao = 1): number => {
+  if (f <= 0) return 0;
+  const passo = trechos.reduce((a, t) => a + t[0], 0);
+  let t = 0;
+  let i = 0;
+  for (;;) {
+    const escala = (passo + vari(semente, i, variacao)) / passo;
+    for (const [d0, a, b, c] of trechos) {
+      const d = d0 * escala;
+      if (t + d > f) return i * 0.5 + a + (b - a) * CURVAS[c]((f - t) / d);
+      t += d;
+    }
+    i++;
+  }
+};
+
+/** corrida brutal v2: pisa fundo (2f) → explode (2f) → plana SEGURANDO a pose aberta no ar (7f) → estica para pisar (3f) */
+export const RITMO_BRUTAL: Trecho[] = [
+  [2, 0, 0.12, "sai"],
+  [2, 0.12, 0.4, "sai"],
+  [7, 0.4, 0.44, "linear"],
+  [3, 0.44, 0.5, "entra"],
+];
+/** ninja2 (referência "Naruto run", ~8 frames por passada): pisa/encolhe → empurra → plana esticado → estende */
+export const RITMO_NINJA: Trecho[] = [
+  [1.5, 0, 0.12, "sai"],
+  [1.5, 0.12, 0.3, "sai"],
+  [4, 0.3, 0.42, "linear"],
+  [1, 0.42, 0.5, "entra"],
+];
+
 /** deslocamento x (px de mundo) com o pé de apoio parado no chão, para qualquer fase(f). */
 const cacheX = new Map<string, number[]>();
 const cacheV = new Map<string, number>();
