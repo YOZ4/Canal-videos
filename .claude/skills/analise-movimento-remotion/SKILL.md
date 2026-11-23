@@ -142,6 +142,8 @@ identificado e o que foi ajustado** (com números quando houver: "pé deslizava 
 0 frames → 2"). Termine com o que ainda dá para melhorar e o tempo gasto (o usuário sempre quer saber).
 
 ## Cuidados
+- Ângulos extremos: nunca deforme o boneco com perspectiva (rotateX). Use `Camera2D.tsx` (camBaixa/camAlta/camDetalhe,
+  Camada, PrimeiroPlano) e a vista de cima (`VistaCima.tsx`).
 - Referência ensina o movimento, não o visual: nunca copie personagens, cenários ou marcas do vídeo enviado.
 - Não mude o desenho dos personagens (proporções, roupas, cores) sem autorização; mexa só no movimento.
 - Efeitos de `Pintura.tsx` (contorno fervendo, de dois em dois etc.) não entram, a não ser que o usuário peça.

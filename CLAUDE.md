@@ -40,6 +40,15 @@ Projeto Remotion de vídeos verticais (1080x1920, 30 fps) para o canal.
   luz de recorte ciano + contorno variável), `GradeJJK` (grade escura azul-petróleo + borrão de chicote), `CenarioJJK`,
   `tremorJJK`, `RiscosVelocidade`, `LinhasRadiais`, `EnergiaCiano`, `Particulas`, `QuadroImpacto`, `Racha`, `Desfoque`.
   Finalizar com granulado 4.
+- Sombra por partes: `<Boneco2D cel={{ luz: -160, sombra: 34, recorte: 10 }} />` (sombra dura + luz de recorte em cada perna,
+  braço, tronco e cabeça, seguindo a direção da luz). Pesa ~25% no render.
+- Ângulos com bonecos 2D (`Camera2D.tsx`): **NÃO usar câmera em perspectiva (rotateX) nos personagens** — o usuário achou
+  estranho (boneco esticado como pôster). Use `camBaixa`/`camAlta` (ângulo pelo enquadramento: chão embaixo + personagem
+  enorme, ou chão no alto + personagem pequeno), `camDetalhe` (close de olhos/mão/pé, `posMao` em Boneco2D), `Camada`
+  (parallax por profundidade), `PrimeiroPlano` (pilar/pedras/poeira desfocados perto da câmera), `transformCam`.
+- Vista de cima (aprovada! `VistaCima.tsx`): `BonecoCima` (anima pela mesma pose de perfil: pés, pé levantado cresce, braços,
+  tronco inclinado põe a cabeça à frente, mortal `gira` achata, cabelo), `PlanoCima` (chão + câmera com giro), `RastroCima`,
+  `RachaCima`. Exemplos de tudo: composição `FolhaAngulos` (1 exemplo por frame).
 - Sons extras: `python3 scripts/gerar_sfx.py` (passo, pisada, racha, deslize, vento, lamina).
 - Chicote de câmera com `CameraMotionBlur` (@remotion/motion-blur) só nos frames do movimento.
 

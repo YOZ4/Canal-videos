@@ -165,6 +165,19 @@ export const posCabeca = (p: Pose): P => {
   return [p.x + lx * p.escala * p.lado * p.largura, p.y + ly * p.escala * p.estica];
 };
 
+/** posição (mundo) da mão. Perfil: "D" = mão da frente. Ignora `gira` e o braço cruzado. Útil para close de detalhe. */
+export const posMao = (p: Pose, qual: "E" | "D"): P => {
+  const perfil = p.vista === "perfil";
+  const ombroY = perfil ? -TRONCO + 40 : -TRONCO + 32;
+  const o: P = perfil ? [qual === "E" ? -6 : 8, ombroY] : [qual === "E" ? -OMBRO_X + 8 : OMBRO_X - 8, ombroY];
+  const sentido = perfil ? 1 : qual === "E" ? -1 : 1;
+  const { m } = pontosBraco(o, sentido, qual === "E" ? p.bracoE : p.bracoD);
+  const a = rad(p.inclina);
+  const rx = m[0] * Math.cos(a) - m[1] * Math.sin(a);
+  const ry = m[0] * Math.sin(a) + m[1] * Math.cos(a) + QUADRIL_Y + p.agacha;
+  return [p.x + (rx * p.escala * p.lado * p.largura) / Math.sqrt(p.estica), p.y + ry * p.escala * p.estica];
+};
+
 /** posição (mundo) do pé. Perfil: "D" = pé da frente. Ignora `gira`. */
 export const posPe = (p: Pose, qual: "E" | "D"): P => {
   const quadrilY = QUADRIL_Y + p.agacha;

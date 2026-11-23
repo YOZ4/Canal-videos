@@ -5,6 +5,8 @@ import { CONTORNO, type Design } from "./personagens";
  * Personagem visto DE CIMA (planos aéreos / plongée total), derivado da pose de perfil:
  * pernas e pés pelo dx dos pés, braços pelo ângulo do ombro (projeção), altura do pulo afasta a sombra e aumenta o boneco.
  * Coordenadas: (x, z) no chão visto de cima; o personagem olha para +x (lado 1) ou −x (lado −1).
+ * Anima a partir da MESMA pose de perfil: pernas/pés (dx, pé levantado cresce), braços (ombro), tronco inclinado
+ * (cabeça vai à frente dos pés — corrida ninja/arrancada leem bem), mortal (gira encurta o corpo), cabelo (balanço).
  */
 export const BonecoCima: React.FC<{ d: Design; pose: Pose; z?: number; altura?: number; espada?: boolean; corEspada?: string; sombraLuz?: [number, number] }> = ({
   d,
@@ -15,66 +17,105 @@ export const BonecoCima: React.FC<{ d: Design; pose: Pose; z?: number; altura?: 
   corEspada = "#bff6ff",
   sombraLuz = [0.35, 0.2],
 }) => {
-  const e = pose.escala * (1 + altura / 1800);
+  const e = pose.escala * (1 + altura / 1800) * Math.sqrt(pose.estica);
   const L = pose.lado;
-  const proj = (graus: number) => Math.sin((graus * Math.PI) / 180); // quanto o braço vai para a frente visto de cima
+  const rad = (g: number) => (g * Math.PI) / 180;
+  // inclinação do tronco: visto de cima, a cabeça e os ombros vão PARA A FRENTE dos pés
+  const frenteTronco = Math.sin(rad(pose.inclina)) * 260;
+  const frenteCabeca = Math.sin(rad(pose.inclina + pose.cabeca * 0.5)) * 330;
+  // mortal (gira) visto de cima: o corpo "encurta" na direção do giro e a cabeça passa para o outro lado
+  const giro = Math.cos(rad(pose.gira));
+  const proj = (g: number) => Math.sin(rad(g));
   const braco = (lat: number, b: { ombro: number; cotovelo: number }) => {
     const frente = proj(b.ombro) * 170 + proj(b.ombro - b.cotovelo) * 150;
-    return { x: frente, y: lat * (150 + Math.abs(Math.cos((b.ombro * Math.PI) / 180)) * 30) };
+    return { x: frenteTronco + frente, y: lat * (150 + Math.abs(Math.cos(rad(b.ombro))) * 30) };
   };
   const bD = braco(1, pose.bracoD);
   const bE = braco(-1, pose.bracoE);
-  const peD = { x: pose.peD.dx * 0.9, y: 46 };
-  const peE = { x: pose.peE.dx * 0.9, y: -46 };
-  const cabelo = d.cabelo === "cacheado";
+  // pé levantado fica mais perto da câmera (maior)
+  const pe = (p: { dx: number; dy: number }, lat: number) => ({ x: p.dx * 0.9, y: lat * 46, perto: 1 + Math.max(0, -p.dy) / 500 });
+  const peD = pe(pose.peD, 1);
+  const peE = pe(pose.peE, -1);
+  const cacheado = d.cabelo === "cacheado";
   const sx = sombraLuz[0] * altura;
   const sz = sombraLuz[1] * altura;
   return (
     <g>
-      {/* sombra no chão (afasta quando está no ar) */}
+      {/* sombra no chão (afasta e clareia quando está no ar) */}
       <ellipse cx={pose.x + sx} cy={z + sz} rx={190 * pose.escala} ry={150 * pose.escala} fill="#000" opacity={Math.max(0.15, 0.45 - altura / 2500)} />
-      <g transform={`translate(${pose.x} ${z}) scale(${e * L} ${e}) rotate(${-pose.inclina * 0.15})`}>
+      <g transform={`translate(${pose.x} ${z}) scale(${e * L * (0.35 + 0.65 * Math.abs(giro))} ${e})`}>
         {/* pernas + tênis */}
         {[peE, peD].map((p, i) => (
           <g key={i}>
-            <path d={`M 0 ${p.y * 0.7} L ${p.x} ${p.y}`} stroke={CONTORNO} strokeWidth={70} strokeLinecap="round" />
-            <path d={`M 0 ${p.y * 0.7} L ${p.x} ${p.y}`} stroke={d.calca} strokeWidth={56} strokeLinecap="round" />
-            <ellipse cx={p.x + 30} cy={p.y} rx={54} ry={30} fill={d.tenis} stroke={CONTORNO} strokeWidth={7} />
+            <path d={`M ${frenteTronco * 0.3} ${p.y * 0.7} L ${p.x} ${p.y}`} stroke={CONTORNO} strokeWidth={70} strokeLinecap="round" />
+            <path d={`M ${frenteTronco * 0.3} ${p.y * 0.7} L ${p.x} ${p.y}`} stroke={d.calca} strokeWidth={56} strokeLinecap="round" />
+            <ellipse cx={p.x + 30} cy={p.y} rx={54 * p.perto} ry={30 * p.perto} fill={d.tenis} stroke={CONTORNO} strokeWidth={7} />
           </g>
         ))}
         {/* braços */}
         {[bE, bD].map((b, i) => (
           <g key={i}>
-            <path d={`M 0 ${b.y * 0.85} Q ${b.x * 0.5} ${b.y * 1.05} ${b.x} ${b.y}`} stroke={CONTORNO} strokeWidth={60} fill="none" strokeLinecap="round" />
-            <path d={`M 0 ${b.y * 0.85} Q ${b.x * 0.5} ${b.y * 1.05} ${b.x} ${b.y}`} stroke={d.pele} strokeWidth={46} fill="none" strokeLinecap="round" />
+            <path d={`M ${frenteTronco} ${b.y * 0.85} Q ${(frenteTronco + b.x) * 0.5} ${b.y * 1.05} ${b.x} ${b.y}`} stroke={CONTORNO} strokeWidth={60} fill="none" strokeLinecap="round" />
+            <path d={`M ${frenteTronco} ${b.y * 0.85} Q ${(frenteTronco + b.x) * 0.5} ${b.y * 1.05} ${b.x} ${b.y}`} stroke={d.pele} strokeWidth={46} fill="none" strokeLinecap="round" />
             <circle cx={b.x} cy={b.y} r={30} fill={d.pele} stroke={CONTORNO} strokeWidth={7} />
           </g>
         ))}
-        {espada ? <path d={`M ${bD.x} ${bD.y} L ${bD.x + 420} ${bD.y - 40}`} stroke={corEspada} strokeWidth={16} strokeLinecap="round" /> : null}
+        {espada ? <path d={`M ${bD.x} ${bD.y} L ${bD.x + 420 * Math.cos(rad(pose.bracoD.ombro - 90))} ${bD.y - 40}`} stroke={corEspada} strokeWidth={16} strokeLinecap="round" /> : null}
         {/* ombros (camisa) */}
-        <ellipse cx={0} cy={0} rx={78} ry={160} fill={d.camisa} stroke={CONTORNO} strokeWidth={8} />
-        <ellipse cx={-22} cy={0} rx={50} ry={140} fill={d.camisaSombra} opacity={0.55} />
-        {/* cabeça: cabelo visto de cima */}
-        {cabelo ? (
-          <g>
-            {new Array(11).fill(0).map((_, i) => {
-              const a = (i / 11) * Math.PI * 2;
-              return <circle key={i} cx={Math.cos(a) * 70} cy={Math.sin(a) * 70} r={44} fill="#17121a" stroke={CONTORNO} strokeWidth={6} />;
-            })}
-            <circle cx={0} cy={0} r={84} fill="#17121a" />
-            <circle cx={-18} cy={-20} r={30} fill="#2c2433" />
-          </g>
-        ) : (
-          <g>
-            <circle cx={0} cy={0} r={96} fill={d.pele} stroke={CONTORNO} strokeWidth={8} />
-            <path d="M -96 0 Q -80 -96 20 -92 Q 150 -70 160 0 Q 150 70 20 92 Q -80 96 -96 0 Z" fill="#8a5a33" stroke={CONTORNO} strokeWidth={8} />
-            <path d="M 10 -60 Q 90 -40 150 0 Q 90 40 10 60" fill="none" stroke="#5e3b20" strokeWidth={7} />
-          </g>
-        )}
+        <ellipse cx={frenteTronco} cy={0} rx={78} ry={160} fill={d.camisa} stroke={CONTORNO} strokeWidth={8} />
+        <ellipse cx={frenteTronco - 22} cy={0} rx={50} ry={140} fill={d.camisaSombra} opacity={0.55} />
+        {/* cabeça: cabelo visto de cima (balança com pose.cabelo) */}
+        <g transform={`translate(${frenteCabeca * (giro >= 0 ? 1 : -1)} 0) rotate(${pose.cabelo * 1.5})`}>
+          {cacheado ? (
+            <g>
+              {new Array(11).fill(0).map((_, i) => {
+                const a = (i / 11) * Math.PI * 2;
+                return <circle key={i} cx={Math.cos(a) * 70} cy={Math.sin(a) * 70} r={44} fill="#17121a" stroke={CONTORNO} strokeWidth={6} />;
+              })}
+              <circle cx={0} cy={0} r={84} fill="#17121a" />
+              <circle cx={-18} cy={-20} r={30} fill="#2c2433" />
+            </g>
+          ) : (
+            <g>
+              <circle cx={0} cy={0} r={96} fill={d.pele} stroke={CONTORNO} strokeWidth={8} />
+              <path d="M -96 0 Q -80 -96 20 -92 Q 150 -70 160 0 Q 150 70 20 92 Q -80 96 -96 0 Z" fill="#8a5a33" stroke={CONTORNO} strokeWidth={8} />
+              <path d="M 10 -60 Q 90 -40 150 0 Q 90 40 10 60" fill="none" stroke="#5e3b20" strokeWidth={7} />
+            </g>
+          )}
+        </g>
       </g>
     </g>
   );
 };
+
+/** rastro de velocidade visto de cima (riscos atrás do personagem, no sentido do movimento) */
+export const RastroCima: React.FC<{ x: number; z: number; dir: 1 | -1; forca: number; f: number; cor?: string }> = ({ x, z, dir, forca, f, cor = "#dff7ff" }) => {
+  if (forca <= 0.01) return null;
+  const q = Math.floor(f / 2);
+  return (
+    <g opacity={forca} stroke={cor} strokeLinecap="round">
+      {new Array(9).fill(0).map((_, i) => {
+        const lat = -170 + i * 42 + (((i * 37 + q * 13) % 20) - 10);
+        const ini = x - dir * (120 + ((i * 53 + q * 29) % 90));
+        const len = 260 + ((i * 71 + q * 41) % 360);
+        return <line key={i} x1={ini} y1={z + lat} x2={ini - dir * len} y2={z + lat} strokeWidth={6 + (i % 3) * 4} />;
+      })}
+    </g>
+  );
+};
+
+/**
+ * Plano aéreo pronto: chão de cima + câmera (x, z, zoom, rot). Gire devagar o `rot` num plano de abertura,
+ * ou acompanhe uma arrancada com `x`. Os filhos são desenhados em coordenadas (x, z) do chão.
+ */
+export const PlanoCima: React.FC<{ x: number; z?: number; zoom: number; rot: number; children: React.ReactNode }> = ({ x, z = 0, zoom, rot, children }) => (
+  <svg width={1080} height={1920}>
+    <g transform={`translate(540 960) rotate(${rot}) scale(${zoom}) translate(${-x} ${-z})`}>
+      <ChaoCima cx={x} cz={z} />
+      {children}
+    </g>
+  </svg>
+);
 
 /** chão visto de cima (lajotas) */
 export const ChaoCima: React.FC<{ cx: number; cz: number }> = ({ cx, cz }) => (
