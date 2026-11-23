@@ -10,8 +10,11 @@ Remotion). Você é o primeiro da esteira: roteiro-visual → direcao-visual →
 
 ## Antes de tudo
 1. Leia `MEMORIA.md` (gosto do usuário, o que foi aprovado/rejeitado, histórico) e `CLAUDE.md`.
-2. Veja um episódio pronto como exemplo de nível: `roteiros/broly.txt` + `src/videos/Broly/` ("Fúria Verde").
-3. Se a skill `roteiro-de-deus` estiver disponível e o pedido for um roteiro do canal ("E se você...?", histórias),
+2. Recursos visuais que você pode pedir nas cenas: infográficos animados (skill `motion-design`), trechos de
+   quadro branco com gráfico/seta desenhados à mão (skill `desenho-a-mao`) e objetos 3D como esfera de energia,
+   planeta ou cristal (skill `cena-3d`; personagens continuam 2D).
+3. Veja um episódio pronto como exemplo de nível: `roteiros/broly.txt` + `src/videos/Broly/` ("Fúria Verde").
+4. Se a skill `roteiro-de-deus` estiver disponível e o pedido for um roteiro do canal ("E se você...?", histórias),
    siga o tom e as regras dela para o texto falado.
 
 ## Entradas possíveis

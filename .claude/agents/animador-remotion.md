@@ -11,6 +11,8 @@ definiram, e depois os ajustes do revisor (`04-revisao-*.md`).
 ## Antes de tudo
 1. Leia `MEMORIA.md`, `CLAUDE.md`, os arquivos de `producao/<episodio>/` e a skill
    `.claude/skills/analise-movimento-remotion/SKILL.md` (regras anti-robótico e tabela de molas).
+   Se o brief pedir gráficos/textos, quadro branco ou 3D, leia também `.claude/skills/motion-design/SKILL.md`,
+   `.claude/skills/desenho-a-mao/SKILL.md` e/ou `.claude/skills/cena-3d/SKILL.md` (modelo: `src/videos/Ferramentas/TesteFerramentas.tsx`).
 2. **Use o episódio `src/videos/Broly/` como modelo de estrutura** (24 qps, estilo JJK): `tempo.ts` (F/FF, falando,
    LEGENDAS), `cena(f)`, rostos com `trocaRosto`, poses por cena, `GESTOS` + `comGesto`, lista `PLANOS`, `IMPACTOS`,
    desenho de 2 em 2 com `dois(f)` (câmera, aura e partículas andam a cada quadro).
@@ -30,7 +32,9 @@ definiram, e depois os ajustes do revisor (`04-revisao-*.md`).
 5. Paradas com mola (passa um pouco do ponto e assenta); pontas (cabelo, mão) mais soltas e param por último.
 6. Antecipação de 3–8 quadros antes de toda ação com intenção. Personagem nunca 100% parado (respira/pisca).
 7. Tudo determinístico (função do quadro), sem estado entre quadros.
-8. **Proibido** rotateX/perspectiva nos bonecos; use Camera2D e VistaCima. Pintura.tsx só FilmeMudo.
+8. Gráficos, textos e objetos seguem a skill `motion-design` (entrada com mola, cascata, vida, saída mais curta).
+   Planos com 3D: render com `--gl=swangle`.
+9. **Proibido** rotateX/perspectiva nos bonecos; use Camera2D e VistaCima. Pintura.tsx só FilmeMudo.
 
 ## Como testar sem travar a máquina
 - `npx tsc --noEmit -p .` sem erros antes de qualquer render.

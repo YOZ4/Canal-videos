@@ -21,6 +21,10 @@ garantir cara autoral de anime (pegada cinematográfica e pesada, estilo "JJK S2
    - Rosto: olhos, olhar, sobrancelha, sobrancelhaY, sorriso (≤ −0.7 = boca de fúria com dentes), boca, canto; `trocaRosto`.
    - Efeitos: Aura (`AuraForte`, `CorrentesAura`), `Efeitos2D` (Gota, Veia, Simbolo, Poeira, Impacto), `EfeitosLuta`.
    - Pintura.tsx: só `FilmeMudo` (flashback) está aprovado; o resto só se o usuário pedir.
+   - Gráficos/textos/infográficos: skill `motion-design` (`coreografia.ts`: cascata, pulso na palavra, contador, saída).
+   - Trechos explicativos estilo quadro branco: skill `desenho-a-mao` (`Desenho.tsx`: gráfico/seta/círculo/texto se desenhando).
+   - Objetos 3D (esfera de energia, planeta, cristal, câmera orbitando objeto): skill `cena-3d` (`Objeto3D.tsx`).
+     Personagens sempre 2D; 3D só em planos curtos (render mais lento). Diga no brief quais planos usam cada um.
 
 ## O que você entrega
 `producao/<episodio>/02-direcao.md`, com:

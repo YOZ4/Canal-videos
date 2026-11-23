@@ -17,3 +17,13 @@ loadFont({
   weight: "700",
   format: "woff2",
 });
+
+/** letra de mão (quadro branco / desenho à mão) — Patrick Hand, licença OFL */
+export const FONTE_MAO = "Patrick Hand";
+
+loadFont({
+  family: FONTE_MAO,
+  url: staticFile("fonts/PatrickHand-Regular.woff2"),
+  weight: "400",
+  format: "woff2",
+});

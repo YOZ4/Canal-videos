@@ -68,10 +68,21 @@ pendente) e faça commit + push junto com o trabalho.
     4. `revisor-qualidade` — revisões 1 e 2 com ajustes cirúrgicos (não edita código).
     Ainda não foram usados num episódio: o próximo vídeo é o primeiro teste da esteira.
 
+13. **3 skills próprias a partir de prints de skills de terceiros** (ele mandou 11 prints; não tinha os links).
+    Análise: valiam motion design, 3D (Three.js) e desenho à mão; descartadas Animation Designer/Flutter (interface de app),
+    HyperFrames (faz o mesmo que o Remotion), Motion Skill (Nano Banana/Kling, IA paga externa), Manim, 77 estilos,
+    Huashu e JS animation (já temos trilha/SFX por código). Criadas, sem instalar nada de fora:
+    `motion-design` (`coreografia.ts`), `desenho-a-mao` (`Desenho.tsx` + fonte Patrick Hand OFL), `cena-3d` (`Objeto3D.tsx`,
+    toon + contorno, esfera de energia/planeta). Ligadas aos 4 agentes. Teste: composição `TesteFerramentas`
+    (`out/teste-ferramentas.mp4`, 17 s: infográfico em cascata → Lucas no quadro branco → esfera 3D nas mãos do Lucas).
+    Os agentes e esta memória estavam num branch que não tinha ido para a main; foram trazidos para o branch desta sessão.
+
 ## Pendências / ideias que ele ainda pode pedir
 - Testar a esteira de 4 agentes no próximo episódio e ajustar os arquivos dos agentes com o que ele achar.
 - Gesto de "mão na cabeça" no Lucas gigante (o braço atual não alcança a cabeça; virou punho tremendo).
 - Fuga do Diego com corrida de pânico (braços se debatendo, olhando para trás) — hoje usa a corrida comum.
+- Usar as 3 skills novas num episódio de verdade e ver o que ele acha (3D: medir tempo de render antes).
+- Som de caneta (`caneta.wav`) para o quadro branco ainda não foi sintetizado.
 - Mais episódios no estilo JJK reaproveitando `src/videos/Broly` como modelo.
 
 ## Lições técnicas (para não repetir erros)

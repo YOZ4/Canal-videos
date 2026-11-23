@@ -62,6 +62,11 @@ trocando arquivos em `producao/<episodio>/` (guia em `producao/README.md`). Use 
   (CorteArco, Faiscas, OndaChoque, Chamas, Fumaca, Rastro, Onomatopeia), trilha `scripts/gerar_trilha_luta.py`.
   Exemplo completo: `src/videos/Luta/LutaTeste.tsx` (cartão VS, close nos olhos, hit-stop, inversão de cor).
 
+## Ferramentas extras (skills próprias, exemplo em `src/videos/Ferramentas/TesteFerramentas.tsx`)
+- `motion-design` → `coreografia.ts`: entrada/saída/vida com mola, `escalonado` (cascata), `pulso`, `conta`, `TEMPO`.
+- `desenho-a-mao` → `Desenho.tsx`: `Desenho` (traços com caneta), `TextoMao` (fonte Patrick Hand), `eixos`, `curvaGrafico`, `seta`, `circulado`, `Papel`.
+- `cena-3d` → `Objeto3D.tsx`: `Camada3D`, `Solido3D` (toon + contorno), `EsferaEnergia3D`, `Planeta3D`, `orbita`. Render com `--gl=swangle`.
+
 ## Regras de animação (aprendidas das referências)
 - Corte/mudança de plano a cada ~1,5–2,5 s. Legenda 1 palavra por vez, palavra-chave em laranja.
 - Sempre: antecipação antes de ações, overshoot ao parar, cabeça atrasada em relação ao corpo,
