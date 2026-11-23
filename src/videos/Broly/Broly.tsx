@@ -1,7 +1,7 @@
 import { AbsoluteFill, Html5Audio, Sequence, interpolate, random, staticFile, useCurrentFrame } from "remotion";
 import { Boneco2D, PERFIL_BASE, POSE_BASE, ROSTO_BASE, posCabeca, posMao, type Pose, type Rosto } from "../../estilo2d/Boneco2D";
 import { CHAO_Y } from "../../estilo2d/Cenario2D";
-import { AuraForte } from "../../estilo2d/Aura";
+import { AuraForte, CorrentesAura } from "../../estilo2d/Aura";
 import { Poeira, Gota, Simbolo } from "../../estilo2d/Efeitos2D";
 import { OndaChoque, Faiscas } from "../../estilo2d/EfeitosLuta";
 import { CURVA, andarPerfil, balancoCabelo, fala, k, piscar, trocaRosto } from "../../estilo2d/anim";
@@ -14,7 +14,7 @@ import { transformCam, type Cam } from "../../estilo2d/Camera2D";
 import { DIEGO, LUCAS, LUCAS_FURIA, LUCAS_PODER, type Design } from "../../estilo2d/personagens";
 import { LegendaPalavra } from "../../estilo2d/UI";
 import { Som } from "../Cacadores/comum";
-import { DURACAO, F, FPS, LEGENDAS, falando } from "./tempo";
+import { DURACAO, F, FF, FPS, LEGENDAS, falando } from "./tempo";
 
 export { DURACAO };
 
@@ -109,6 +109,52 @@ const rostoLucas = (f: number) =>
     [2122, RL.raiva, 2],
   ]);
 
+// gestos do Lucas transformado enquanto fala (entra com mola, antebraço atrasa 2 quadros, sai depois da fala)
+type Braco = { ombro: number; cotovelo: number };
+type Gesto = { de: number; ate: number; E?: Braco; D?: Braco; mE?: Pose["maoE"]; mD?: Pose["maoD"]; balanca?: number };
+const GESTOS: Gesto[] = [
+  { de: F(16), ate: F(16) + 40, E: { ombro: 46, cotovelo: -40 }, D: { ombro: 50, cotovelo: -36 }, mE: "aberta", mD: "aberta", balanca: 1 }, // "calma..." (mãos abertas para baixo)
+  { de: F(16) + 44, ate: FF(16), D: { ombro: 62, cotovelo: -112 }, mD: "punho", balanca: 2 }, // "...mexendo com minha cabeça" (punho apertado tremendo)
+  { de: F(18) - 2, ate: FF(18) + 10, D: { ombro: 70, cotovelo: -100 }, mD: "joia" }, // "boa ideia"
+  { de: F(20) - 2, ate: FF(20) + 8, E: { ombro: 130, cotovelo: -140 }, mE: "aberta" }, // "Diego..." (mão na testa)
+  { de: F(22) - 2, ate: FF(22), E: { ombro: 60, cotovelo: -110 }, D: { ombro: 64, cotovelo: -106 }, mE: "punho", mD: "punho", balanca: 3 }, // fúria: punhos tremendo
+  { de: F(25), ate: FF(25), E: { ombro: 80, cotovelo: -20 }, mE: "aberta", balanca: 1 }, // "não é de propósito"
+  { de: F(29), ate: FF(29), E: { ombro: 40, cotovelo: -120 }, D: { ombro: 44, cotovelo: -116 }, mE: "aberta", mD: "aberta" }, // "férias" (dá de ombros)
+  { de: F(32) + 10, ate: FF(32), D: { ombro: 72, cotovelo: -124 }, mD: "punho" }, // "consigo controlar" (punho no peito)
+  { de: F(34) + 8, ate: FF(34), D: { ombro: 88, cotovelo: -6 }, mD: "aponta" }, // "não me provoca" (aponta o Diego)
+];
+const pesoGesto = (f: number, gs: Gesto) => Math.max(0, M(f, gs.de - 4, "natural") - M(f, gs.ate + 2, "firme"));
+const mixB = (a: Braco, b: Braco | undefined, t: number, tc: number): Braco => (b ? { ombro: entre(a.ombro, b.ombro, t), cotovelo: entre(a.cotovelo, b.cotovelo, tc) } : a);
+const comGesto = (p: Pose, f: number): Pose => {
+  let r = p;
+  for (const gs of GESTOS) {
+    if (f < gs.de - 4 || f > gs.ate + 30) continue;
+    const t = pesoGesto(f, gs);
+    const tc = pesoGesto(f - 2, gs);
+    const tr = (gs.balanca ?? 0) * Math.sin(f * 1.9) * 3 * t;
+    r = {
+      ...r,
+      bracoE: mixB(r.bracoE, gs.E && { ombro: gs.E.ombro + tr, cotovelo: gs.E.cotovelo }, t, tc),
+      bracoD: mixB(r.bracoD, gs.D && { ombro: gs.D.ombro - tr, cotovelo: gs.D.cotovelo }, t, tc),
+      maoE: gs.mE && t > 0.4 ? gs.mE : r.maoE,
+      maoD: gs.mD && t > 0.4 ? gs.mD : r.maoD,
+      cabeca: r.cabeca + (gs.E || gs.D ? 4 * t : 0),
+    };
+  }
+  return r;
+};
+// corrida pesada do gigante: ciclo lento (26 quadros), pisada a cada 13, corpo afunda e achata depois do contato
+export const T_CORRE = 2160;
+const CICLO_GIG = 26;
+export const PISADAS = [0, 1, 2, 3, 4, 5, 6].map((i) => T_CORRE + 4 + i * (CICLO_GIG / 2));
+const xGig = (f: number) => 200 + (f - T_CORRE) * 13;
+const impactoPisada = (f: number) => {
+  const ult = [...PISADAS].reverse().find((p) => f >= p);
+  if (ult === undefined) return 0;
+  const t = f - ult;
+  return t > 10 ? 0 : t < 2 ? t / 2 : Math.exp(-(t - 2) / 3);
+};
+
 const lucasPose = (f: number): Pose => {
   // C1: gigante em fúria, de frente, punhos fechados
   if (f < C2) {
@@ -165,30 +211,47 @@ const lucasPose = (f: number): Pose => {
   if (f < C5) {
     const resp = Math.sin(f * 0.09) * (f < 1336 ? 1 : 0.3);
     const raiva = f >= 1336 ? Math.sin(f * 2.1) * 3 : 0;
-    return { ...base, x: 270, estica: 1 + resp * 0.02, inclina: raiva, bracoE: { ombro: 24 + resp * 6, cotovelo: -40 }, bracoD: { ombro: 24 + resp * 6, cotovelo: -40 } };
+    return comGesto({ ...base, x: 270, estica: 1 + resp * 0.02, inclina: raiva, bracoE: { ombro: 24 + resp * 6, cotovelo: -40 }, bracoD: { ombro: 24 + resp * 6, cotovelo: -40 } }, f);
   }
   // C5: esfera na mão direita (sobe o braço) e lança para o céu
   if (f < C6) {
     const ergue = k(f, [[1440, 0], [1470, 1, CURVA.suave], [1600, 1], [1612, 1.6, CURVA.antecipa], [1618, 0.4, CURVA.sai], [1660, 0, CURVA.suave]]);
     const respira = f > 1705 ? Math.sin(f * 0.09) : 0;
-    return {
+    return comGesto({
       ...base,
       x: 330,
       estica: 1 + respira * 0.02,
       inclina: f >= 1579 && f < 1612 ? Math.sin(f * 2.1) * 3 : 0,
       bracoD: { ombro: 20 + 70 * Math.min(1, ergue) + 60 * Math.max(0, ergue - 1), cotovelo: -60 + 40 * Math.min(1, ergue) },
       maoD: ergue > 0.3 ? "aberta" : "punho",
-    };
+    }, f);
   }
   // C6: calmo; explode no fim e corre atrás do Diego
   if (f < 2160) {
     const respira = Math.sin(f * 0.08);
     const grita = f >= 2122 ? 1 : 0;
+    if (!grita) return comGesto({ ...base, x: 270, estica: 1 + respira * 0.02 }, f);
     return { ...base, x: 270, estica: 1 + respira * 0.02 + grita * 0.05, agacha: base.agacha + grita * 30, bracoE: grita ? { ombro: 40, cotovelo: -70 } : base.bracoE, bracoD: grita ? { ombro: 40, cotovelo: -70 } : base.bracoD, inclina: grita ? Math.sin(f * 2.5) * 4 : 0 };
   }
   // perseguição: corrida brutal de perfil, gigante
-  const fase = (f - 2160) / 22;
-  return { ...PERFIL_BASE, ...poseCorrida(fase, "rapida", 1), escala: ESC_FURIA * 1.15, largura: 1.3, biceps: 1, x: 200 + (f - 2160) * 14, y: CHAO_Y, inclina: 26, maoE: "punho", maoD: "punho" };
+  const fase = (f - T_CORRE) / CICLO_GIG;
+  const rc = poseCorrida(fase, "rapida", 0.85);
+  const imp = impactoPisada(f);
+  return {
+    ...PERFIL_BASE,
+    ...rc,
+    escala: ESC_FURIA * 1.15,
+    largura: 1.3,
+    biceps: 1,
+    x: xGig(f),
+    y: CHAO_Y,
+    agacha: rc.agacha + 34 * imp,
+    estica: rc.estica * (1 - 0.07 * imp),
+    inclina: 20 + 4 * imp,
+    cabeca: -8 + 6 * impactoPisada(f - 2), // cabeça atrasa o tranco
+    maoE: "punho",
+    maoD: "punho",
+  };
 };
 
 // ---------------- DIEGO ----------------
@@ -258,6 +321,15 @@ const diegoPose = (f: number): Pose => {
   return { ...PERFIL_BASE, ...poseCorrida(fase, "rapida", 1), escala: ESC, x: xd + sai * 22, y: CHAO_Y, lado: 1, inclina: 30, maoE: "aberta", maoD: "aberta" };
 };
 
+// medo do Diego depois da transformação: tremedeira + gotas de suor
+const MEDO: [number, number][] = [
+  [T_FLASH + 6, C4 - 4],
+  [F(22), F(23) + 10],
+  [C5, 1700],
+  [2116, 2124],
+];
+const medoDiego = (f: number) => MEDO.reduce((a, [de, ate]) => Math.max(a, f < de || f > ate ? 0 : Math.min(1, (f - de) / 6, (ate - f) / 6)), 0);
+const GOTAS = MEDO.flatMap(([de, ate]) => Array.from({ length: Math.max(1, Math.floor((ate - de) / 34)) }, (_, i) => de + 4 + i * 34));
 const cabeloDe = (pose: (g: number) => Pose, f: number, k2 = 0.18) => balancoCabelo(dois(f) - 2, (g) => pose(g).x * k2 * (pose(g).lado ?? 1), (g) => pose(g).inclina + pose(g).agacha * 0.05);
 
 // ---------------- PLANOS (cortes) ----------------
@@ -304,6 +376,7 @@ const PLANOS: Plano[] = [
   { de: F(25) - 3, cam: (_f, l) => { const m = posMao(l, "D"); return { x: m[0] - 20, y: m[1] + 20, zoom: 1.9, rot: 7 }; }, fundo: 6 },
   { de: F(26) - 3, cam: (_f, _l, d) => ({ x: rosto(d)[0] - 40, y: rosto(d)[1] + 120, zoom: 1.8, rot: -5 }), fundo: 6, so: "D" },
   { de: F(27) - 3, cam: (_f, l) => ({ x: l.x + 30, y: rosto(l)[1] + 420, zoom: 0.8, rot: 9 }) },
+  { de: 1594, cam: (f, l) => { const m = posMao(l, "D"); const r = rosto(l); return { x: (m[0] + r[0]) / 2, y: (m[1] + r[1]) / 2 + 330 - (f - 1594) * 4, zoom: 1.05 + (f - 1594) * 0.008, rot: -9 }; }, fundo: 7, so: "L" },
   { de: 1612, cam: (f) => ({ x: 560, y: entre(CHAO_Y - 1100, -1300, CURVA.sai(Math.min(1, (f - 1612) / 12))), zoom: 0.62, rot: -4 }) },
   { de: 1630, cam: (f) => ({ x: 560, y: 200, zoom: 0.34 + (f - 1630) * 0.0006, rot: 0 }) },
   { de: 1662, cam: (_f, _l, d) => ({ x: rosto(d)[0] - 40, y: rosto(d)[1] + 80, zoom: 2.0, rot: 0 }), fundo: 7, so: "D" },
@@ -331,10 +404,8 @@ const IMPACTOS: [number, number][] = [
   [1612, 16],
   [1630, 24],
   [2122, 28],
-  [2166, 10],
-  [2188, 10],
-  [2210, 12],
 ];
+IMPACTOS.push(...PISADAS.map((p, i) => [p, 9 + i] as [number, number]));
 
 export const Broly: React.FC = () => {
   const f = useCurrentFrame();
@@ -343,7 +414,8 @@ export const Broly: React.FC = () => {
   const pl0 = lucasPose(g);
   const pd0 = diegoPose(g);
   const pl: Pose = { ...pl0, cabelo: cabeloDe(lucasPose, f) + (auraLucas(f) > 0.2 ? Math.sin(f * 0.6) * 5 * auraLucas(f) : 0) };
-  const pd: Pose = { ...pd0, cabelo: cabeloDe(diegoPose, f) + (auraLucas(f) > 0.4 ? Math.sin(f * 0.5 + 1) * 4 : 0) };
+  const medo = medoDiego(g);
+  const pd: Pose = { ...pd0, x: pd0.x + Math.sin(f * 2.9) * 3 * medo, inclina: pd0.inclina + Math.sin(f * 3.7) * 1.6 * medo, cabelo: cabeloDe(diegoPose, f) + (auraLucas(f) > 0.4 ? Math.sin(f * 0.5 + 1) * 4 : 0) };
   const plano = planoAtual(f);
   const tr = tremorJJK(f, IMPACTOS);
   // tremor contínuo enquanto a aura está forte (cresce com a força)
@@ -372,7 +444,7 @@ export const Broly: React.FC = () => {
   const mao = posMao(pl, "D");
   const esferaY = f < 1612 ? mao[1] - esferaR * 0.6 : mao[1] - (f - 1612) * 220;
   const mostraEsfera = f >= 1440 && f < 1630;
-  const chaoCrateras = [2166, 2188, 2210, 2232];
+  const chaoCrateras = PISADAS;
   const mundo = (
     <svg width={1080} height={1920}>
       <g transform={transformCam(cam)}>
@@ -386,7 +458,10 @@ export const Broly: React.FC = () => {
         <Racha x={pl.x + 60} f={f} de={T_FLASH} tamanho={2.2} />
         <Racha x={pl.x + 120} f={f} de={1345} tamanho={1.1} />
         {chaoCrateras.map((d) => (
-          <Racha key={d} x={200 + (d - 2160) * 14} f={f} de={d} tamanho={2} />
+          <g key={d}>
+            <Racha x={xGig(d) + 60} f={f} de={d} tamanho={1.7} />
+            <Poeira x={xGig(d) + 60} y={CHAO_Y + 10} f={f} de={d} dur={16} largura={1.3} />
+          </g>
         ))}
         {/* pedras flutuando (transformação e fúria) */}
         {aura > 0.3 && f >= C3
@@ -410,10 +485,19 @@ export const Broly: React.FC = () => {
             {f >= 1612 ? <rect x={mao[0] - esferaR * 0.6} y={esferaY} width={esferaR * 1.2} height={(f - 1612) * 220} fill={AURA.cor} opacity={0.45} /> : null}
           </g>
         ) : null}
+        <CorrentesAura x={pl.x} chao={pl.y} altura={alturaL} alvoX={mao[0]} alvoY={esferaY} f={f} prog={f >= 1540 && f < 1612 ? k(f, [[1540, 0], [1594, 0.5], [1610, 1]]) : 0} cor={AURA.cor} clara={AURA.clara} id="crE" />
+        <LinhasRadiais f={f} x={mao[0]} y={esferaY} forca={f >= 1594 && f < 1612 ? 0.55 : 0} />
         <Faiscas x={mao[0]} y={mao[1]} f={f} de={1600} dur={14} n={16} alcance={360} cor="#e4ffb0" />
         {f >= C2 && f < C3 ? null : <Particulas f={f} area={[cam.x - 900, cam.y - 1300, 1800, 2400]} cor="#b6ff4a" forca={Math.min(1, 0.3 + aura * 0.6)} semente="pb" />}
         {/* reações cômicas */}
         {f < C2 ? <Gota x={rosto(pd)[0] - 90} y={rosto(pd)[1] - 60} f={f} de={F(4) + 20} escala={0.8} /> : null}
+        {plano.so !== "L"
+          ? GOTAS.filter((d) => f >= d && f < d + 30).map((d, i) => (
+              <g key={d} opacity={f - d > 22 ? (30 - (f - d)) / 8 : 1}>
+                <Gota x={rosto(pd)[0] + (i % 2 ? -110 : -70)} y={rosto(pd)[1] - 70} f={f} de={d} escala={0.7} />
+              </g>
+            ))
+          : null}
         <Simbolo texto="!" x={rosto(pd)[0]} y={rosto(pd)[1] - 220} f={f} de={672} ate={700} />
         <Simbolo texto="!!" x={rosto(pd)[0]} y={rosto(pd)[1] - 220} f={f} de={2122} ate={2150} />
         <Poeira x={pd.x} y={CHAO_Y + 6} f={f} de={2128} dur={18} largura={0.7} />
@@ -457,8 +541,16 @@ export const Broly: React.FC = () => {
         <Html5Audio src={staticFile("musica/trilha-luta.wav")} volume={0.05} />
       </Sequence>
       <Sequence from={C3} durationInFrames={DURACAO - C3}>
-        <Html5Audio src={staticFile("musica/trilha-luta.wav")} volume={(q) => interpolate(q, [0, 100, 200, 1400, 1460, 1500], [0.02, 0.04, 0.06, 0.06, 0.09, 0.08], { extrapolateRight: "clamp" })} />
+        <Html5Audio src={staticFile("musica/trilha-luta.wav")} volume={(q) => interpolate(q, [0, 100, 200, 1400, 2086 - C3, 2108 - C3, 2121 - C3, 2122 - C3, 2150 - C3], [0.02, 0.04, 0.06, 0.06, 0.08, 0, 0, 0.11, 0.09], { extrapolateRight: "clamp" })} />
       </Sequence>
+      {/* ambiente de dia (pássaros + carros) que some quando a aura aparece */}
+      <Sequence from={C2} durationInFrames={T_AURA - C2}>
+        <Html5Audio src={staticFile("sfx/passaros.wav")} volume={(q) => interpolate(q, [0, 10, T_AURA - C2 - 40, T_AURA - C2 - 10], [0, 0.22, 0.22, 0], { extrapolateRight: "clamp" })} loop />
+      </Sequence>
+      <Sequence from={C2 + 6} durationInFrames={C3 - C2 + 40}>
+        <Html5Audio src={staticFile("sfx/transito.wav")} volume={(q) => interpolate(q, [0, 10, C3 - C2, C3 - C2 + 40], [0, 0.18, 0.18, 0], { extrapolateRight: "clamp" })} loop />
+      </Sequence>
+      <Som src="carga" de={1594} volume={0.45} />
       <Som src="explosao" de={2} volume={0.35} />
       <Som src="aura" de={20} volume={0.25} />
       <Som src="impacto" de={F(4) + 18} volume={0.35} />

@@ -6,6 +6,8 @@
  deslize.wav    freada/derrapagem (ruído filtrado que some)
  vento.wav      deslocamento rápido (whoosh grave e longo)
  lamina.wav     lâmina cortando o ar (agudo metálico)
+ passaros.wav   pássaros cantando (6 s, ambiente de dia)
+ transito.wav   rua com carros passando (6 s, ambiente de dia)
 """
 import wave, numpy as np, os
 SR = 48000
@@ -49,4 +51,28 @@ salvar("vento", passa_baixa(r, 0.04 + 0.08 * e) * e)
 # lamina
 d = t(0.4); r = rng.standard_normal(len(d))
 salvar("lamina", (passa_baixa(r, 0.9) - passa_baixa(r, 0.3)) * np.sin(np.pi * np.minimum(1, d / 0.25)) * np.exp(-d * 6) + np.sin(2 * np.pi * 2400 * d) * np.exp(-d * 14) * 0.15)
+# passaros: piados curtos (varreduras agudas) em grupos, sem ritmo fixo
+d = t(6.0); x = np.zeros(len(d))
+tt = 0.1
+while tt < 5.7:
+    for j in range(int(2 + rng.random() * 4)):
+        n = int(SR * (0.05 + rng.random() * 0.06)); i = int(SR * tt)
+        if i + n >= len(x): break
+        q = np.arange(n) / SR
+        f0 = 2800 + rng.random() * 1800; f1 = f0 + (rng.random() - 0.3) * 2200
+        fq = f0 + (f1 - f0) * q / q[-1]
+        x[i:i + n] += np.sin(2 * np.pi * np.cumsum(fq) / SR) * np.sin(np.pi * q / q[-1]) ** 2 * (0.5 + rng.random() * 0.5)
+        tt += 0.07 + rng.random() * 0.08
+    tt += 0.3 + rng.random() * 0.9
+salvar("passaros", x * 0.8)
+# transito: zumbido distante + dois carros passando (sobe, passa, some)
+d = t(6.0); r = rng.standard_normal(len(d))
+fundo = passa_baixa(r, 0.02) * 0.6
+carro = np.zeros(len(d))
+for c0, dur in ((0.8, 2.4), (3.4, 2.2)):
+    e = np.clip(1 - np.abs((d - c0 - dur / 2) / (dur / 2)), 0, 1) ** 2
+    fq = 85 - 25 * np.tanh((d - c0 - dur / 2) * 3)
+    motor = np.sin(2 * np.pi * np.cumsum(fq) / SR)
+    carro += (passa_baixa(r, 0.03 + 0.1 * e) * 2 + motor * 0.4) * e
+salvar("transito", fundo + carro)
 print("ok")
