@@ -27,3 +27,9 @@ Cada episódio ganha uma pasta `producao/<episodio>/` (nome curto, minúsculo, s
 - Renderização usa toda a máquina: **um render por vez**; nunca dois agentes renderizando juntos.
 - Cada agente começa sem a conversa: tudo o que importa tem de estar nos arquivos desta pasta ou na `MEMORIA.md`.
 - Pedidos pequenos (ajustar um plano, trocar um som) não precisam da esteira inteira.
+
+## Skills de apoio da equipe
+- `analise-movimento-remotion` — movimento dos personagens (anti-robótico).
+- `motion-design` — gráficos, textos, infográficos, câmera (cascata, molas, tempos).
+- `desenho-a-mao` — trechos de quadro branco (gráfico/seta/texto se desenhando).
+- `cena-3d` — objetos 3D no visual do canal (esfera de energia, planeta, cristal). Personagens seguem 2D.

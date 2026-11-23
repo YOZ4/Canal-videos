@@ -68,10 +68,42 @@ pendente) e faça commit + push junto com o trabalho.
     4. `revisor-qualidade` — revisões 1 e 2 com ajustes cirúrgicos (não edita código).
     Ainda não foram usados num episódio: o próximo vídeo é o primeiro teste da esteira.
 
+13. **3 skills próprias a partir de prints de skills de terceiros** (ele mandou 11 prints; não tinha os links).
+    Análise: valiam motion design, 3D (Three.js) e desenho à mão; descartadas Animation Designer/Flutter (interface de app),
+    HyperFrames (faz o mesmo que o Remotion), Motion Skill (Nano Banana/Kling, IA paga externa), Manim, 77 estilos,
+    Huashu e JS animation (já temos trilha/SFX por código). Criadas, sem instalar nada de fora:
+    `motion-design` (`coreografia.ts`), `desenho-a-mao` (`Desenho.tsx` + fonte Patrick Hand OFL), `cena-3d` (`Objeto3D.tsx`,
+    toon + contorno, esfera de energia/planeta). Ligadas aos 4 agentes. Teste: composição `TesteFerramentas`
+    (`out/teste-ferramentas.mp4`, 17 s: infográfico em cascata → Lucas no quadro branco → esfera 3D nas mãos do Lucas).
+    Os agentes e esta memória estavam num branch que não tinha ido para a main; foram trazidos para o branch desta sessão.
+
+14. **Fichas dos personagens** (composições `FichaLucas`/`FichaDiego`, `src/videos/Folha/FichaPersonagem.tsx`,
+    PNG em `out/personagens/ficha-lucas.png` e `ficha-diego.png`): 6 vistas (frente, 3/4 esq/dir, lado dir/esq, costas)
+    + 14 expressões prontas (normal, feliz, rindo, falando, confiante, debochado, pensativo, sério, bravo, fúria, triste,
+    medo, surpreso, cansado + envergonhado, chorando, apaixonado, com nojo). Novos campos opcionais no Rosto:
+    `vergonha`, `lagrimas`, `coracao`, `nojo` (0..1; funcionam de frente e de perfil).
+    Depois: + pânico, fome, dormindo, chocado e exemplos de meia intensidade (corado, marejado, suando) = 25 rostos.
+    Mais campos: `espiral`, `suor`, `baba`, `dormindo` (bolha = valor; animar para encher/esvaziar), `palido`
+    (perde a cor e o queixo derrete), `pupila` (0.4 = choque). Boca aberta com sorriso ≤ −0.4 vira boca de cantos caídos.
+    **Vista 3/4 refeita** (ele achou errada): rosto gira como uma bola (olhos, nariz, boca, sobrancelhas e orelha
+    juntos; a orelha antes ficava "descolada" fora da cabeça), nariz ganha lateral, ombro/braço de longe vai para
+    trás do tronco, quadril e pés acompanham. Afeta todos os vídeos que usam `vira` (para melhor). Os valores de cada expressão estão na lista `EXPR` do arquivo — reaproveitar nos episódios.
+
 ## Pendências / ideias que ele ainda pode pedir
 - Testar a esteira de 4 agentes no próximo episódio e ajustar os arquivos dos agentes com o que ele achar.
 - Gesto de "mão na cabeça" no Lucas gigante (o braço atual não alcança a cabeça; virou punho tremendo).
 - Fuga do Diego com corrida de pânico (braços se debatendo, olhando para trás) — hoje usa a corrida comum.
+- Usar as 3 skills novas num episódio de verdade e ver o que ele acha (3D: medir tempo de render antes).
+- Referência analisada (vídeo de 60 s de lista "5 plugins", mascote no canto): ritmo = 1 elemento novo a cada 0,5–1 s
+  sincronizado com a palavra, fundo muda de cor a cada tópico (creme ↔ laranja) com listras diagonais andando,
+  título em "carimbo" inclinado, legenda em blocos de 3 palavras (cada palavra numa etiqueta), cartões de interface
+  (janela, barra de progresso, checklist, terminal digitando, diagrama em estrela, lixeira, funil), mascote reagindo
+  (linhas de susto, piscadinha, lupa). Proposta: kit `Infografico.tsx` + Lucas apresentador no canto. Aguardando ele decidir.
+  Ele queria na verdade o CONTEÚDO do vídeo (5 plugins do Claude Code: OmniRoute, Claude Mem, Headroom, Claude Setup,
+  Task Observer). Conclusão: nenhum vale instalar aqui (sessão na nuvem, container apagado no fim; memória já é a
+  MEMORIA.md no repo; roteador para outras IAs e compressor de tokens pioram qualidade/risco). Ideias aproveitáveis:
+  gancho de início de sessão (feito, ver Lições técnicas) e atualizar skills com as lições de cada episódio.
+- Som de caneta (`caneta.wav`) para o quadro branco ainda não foi sintetizado.
 - Mais episódios no estilo JJK reaproveitando `src/videos/Broly` como modelo.
 
 ## Lições técnicas (para não repetir erros)
@@ -79,7 +111,8 @@ pendente) e faça commit + push junto com o trabalho.
 - Para conferir quadros soltos: `npx remotion bundle --out-dir=<pasta>` uma vez e depois `npx remotion still <pasta> Broly x.png --frame=N --scale=0.25`
   **um por vez** (vários em paralelo estouram a memória).
 - `interpolate` exige entrada estritamente crescente: no volume de trilha dentro de `<Sequence from=X>`, o tempo é local (f − X).
-- Rodar `npm ci` se o tsc reclamar de dependências. Alinhamento: `alinhamento.json` é `{duracao, trechos, palavras}`.
+- Gancho de início de sessão (`.claude/hooks/session-start.sh`, registrado em `.claude/settings.json`) instala npm,
+  numpy e ffmpeg sozinho (só reinstala se package.json/lock mudar). Se o tsc reclamar de dependências: `npm install`. Alinhamento: `alinhamento.json` é `{duracao, trechos, palavras}`.
 - No estilo JJK, o desenho anda de 2 em 2 (`dois(f)`), mas câmera, aura e partículas andam a cada quadro.
 - Lado do braço no Boneco2D de frente: `bracoD` fica do lado direito da tela; ombro 90° = braço na horizontal.
 - Revisão rápida: folha de quadros `ffmpeg -vf "fps=0.5,scale=180:-1,tile=8x6"` + `scripts/tira.sh` nos momentos-chave.

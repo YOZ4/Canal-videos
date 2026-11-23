@@ -31,6 +31,9 @@ não perdoa nada. Você não edita código — só aponta e prescreve.
 - Expressões: batem com a intenção emocional do roteiro? Rosto de medo que parece sorriso? Reação do outro personagem?
 - Luz: paleta, sombra dura e luz de recorte seguem `02-direcao.md`? Personagem "colado" no cenário (luz diferente)?
 - Câmera: tremor proporcional ao impacto, hit-stop, silêncio antes do golpe, ritmo calmo → explosivo.
+- Gráficos/textos/infográficos: passe o checklist da skill `motion-design` (nada surge do nada, nada parado > 1 s,
+  saída mais curta que a entrada, destaque na palavra ±3 quadros). Quadro branco: caneta em velocidade constante,
+  ordem natural (skill `desenho-a-mao`). 3D: mesma luz/contorno do 2D, objeto encaixado nas mãos/cenário (skill `cena-3d`).
 - Itens já rejeitados pelo usuário voltaram (câmera em perspectiva, efeitos de Pintura além do FilmeMudo)? Isso é falha grave.
 
 ## O que você entrega
