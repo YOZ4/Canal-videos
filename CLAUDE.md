@@ -1,0 +1,56 @@
+# Canal-videos — guia para o Claude
+
+Projeto Remotion de vídeos verticais (1080x1920, 30 fps) para o canal.
+
+**Para fazer um vídeo novo (narração + roteiro → MP4), use a skill `video-do-canal`**
+(`.claude/skills/video-do-canal/`). Esqueleto automático: `python3 scripts/novo_video.py <Nome> <audio> <roteiro>`.
+
+## Estilo principal: 2D vetorial (`src/estilo2d/`)
+- Personagens oficiais em `personagens.ts`. Lucas (personalidade inspirada no Sanji): cacheado preto,
+  camiseta AMARELA com o número 3. Diego (inspirado no Zoro): topete MARROM, camiseta VERDE, olhar "meio fechado"
+  e sorriso de canto, pose padrão braços cruzados. Folhas renderizadas: composições `Folha` e `FolhaPoses`.
+- Visual: contorno escuro `#1d1424`, sombra suave no lado direito, olhos grandes com íris, braços "macarrão".
+- `Boneco2D.tsx`: pose (ombro/cotovelo em graus, pernas com IK — pés ficam plantados, `agacha`, `estica`
+  para squash & stretch, `cruzado`) e rosto (olhos, olhar, sobrancelha, sorriso, boca, canto).
+- `anim.ts`: keyframes com curva por trecho (`k`, `kPose`, `kRosto`), `CURVA.antecipa/exagera/...`,
+  automáticos `piscar`, `respira`, `fala`, `andar`, `tremor`.
+- Vista 3/4: `vira` (-1..1) na vista de frente. `biceps` (0..1) incha o braço. `naMao` segura objeto (`Objetos.tsx`).
+- Cenários: `Praca`, `Quarto`, `Cozinha`, `RuaNoite`. Transições (`Transicoes.tsx`): `Iris`, `Cortina`, `ZoomRapido`.
+- Trilha: `scripts/gerar_trilha.py` gera `public/musica/trilha-leve.wav` (abaixe o volume nos momentos de tensão).
+- Vistas: `vista: "frente" | "perfil" | "costas"` (folha de vistas: composição `FolhaVistas`, PNG em out/personagens/) (PERFIL_BASE; lado -1 = olha pra esquerda). `giro()` faz a virada cartoon.
+- Mãos: `maoE/maoD`: bola | aberta | punho | aponta | joia. Braços são curvos.
+- Aura (`Aura.tsx`): `AuraForte` (chamas em camadas; forca, caos, cor por personagem: AURA_LUCAS ciano, AURA_DIEGO verde),
+  `CorrentesAura` (energia indo até um ponto), `PunhoBrilhando`. Sons: aura.wav, coracao.wav.
+- `Efeitos2D.tsx`: LinhasFoco, LinhasMovimento, Gota, Veia, Brilhos, Simbolo (?/!), Impacto, Poeira.
+- Cabelo balança sozinho: `balancoCabelo()` (ver `comCabelo` em SaiyajinV2). `posCabeca(pose)` dá a posição da cabeça.
+- Sons sintetizados em `public/sfx/` (whoosh, pop, plim, impacto, brilho, rumble, carga, ronco) com `<Html5Audio>`.
+- `UI.tsx`: legenda palavra-por-palavra (`frase("texto *destaque*", de, ate)`), `Selo` (tópico no topo),
+  `Etiqueta` (nome sobre o personagem), `Placar` (contador).
+- `Cenario2D.tsx`: praça ao pôr do sol com parallax. Câmera = transform do SVG (x, y, zoom).
+- Chicote de câmera com `CameraMotionBlur` (@remotion/motion-blur) só nos frames do movimento.
+
+- Luta: `gira` (mortal), `posPe(pose)`, `naMaoGira` (espada acompanha o antebraço), `EfeitosLuta.tsx`
+  (CorteArco, Faiscas, OndaChoque, Chamas, Fumaca, Rastro, Onomatopeia), trilha `scripts/gerar_trilha_luta.py`.
+  Exemplo completo: `src/videos/Luta/LutaTeste.tsx` (cartão VS, close nos olhos, hit-stop, inversão de cor).
+
+## Regras de animação (aprendidas das referências)
+- Corte/mudança de plano a cada ~1,5–2,5 s. Legenda 1 palavra por vez, palavra-chave em laranja.
+- Sempre: antecipação antes de ações, overshoot ao parar, cabeça atrasada em relação ao corpo,
+  squash no impacto (+ poeira + tremor de câmera), personagens nunca 100% parados (respira/pisca).
+- Infográficos/medidas (réguas, placares, setas) reforçam o que a narração diz.
+- Luta: contraste calmo → explosivo; hit-stop de 4–8 frames no impacto; 1–2 frames com cor invertida;
+  silêncio antes do golpe final; cortes de 0,3–1 s nos momentos de tensão; close nos olhos antes do choque.
+- Não copiar personagens, marcas ou @ de outros canais.
+
+## Renderizar neste ambiente (sem GPU / sem acesso ao download do Chrome)
+npx remotion render <Composicao> out/<arquivo>.mp4 --browser-executable=/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell
+(3D com @remotion/three: adicionar --gl=swangle). Fontes ficam em public/fonts (sem internet no render).
+
+## Fluxo de um vídeo com narração (ex.: src/videos/Cacadores)
+1. Áudio em `public/narracao/<nome>.mp3`, roteiro em `roteiros/<nome>.txt` (texto exato da fala).
+2. `python3 scripts/alinhar.py public/narracao/<nome>.mp3 roteiros/<nome>.txt src/videos/<Pasta>/alinhamento.json`
+   (sem transcrição automática: divide as palavras do roteiro pelos trechos de fala; precisão ~0,2 s).
+3. `tempo.ts`: `T("trecho")` = frame em que o trecho começa; `TF()` = onde termina; `LEGENDAS` prontas.
+4. Cada cena é um componente com `t0`; a lista `CENAS` em `<Nome>.tsx` diz em que trecho cada cena começa.
+5. Trilhas longas: `python3 scripts/gerar_trilha.py public/musica/x.wav 131` (volume ~0.1 por baixo da voz).
+6. Personagens extras: AVO, EXAMINADOR, CANDIDATOS (personagens.ts). Cenários: Sala, Arena, Savana.
