@@ -144,7 +144,7 @@ const lucasPose = (f: number): Pose => {
   const maos = f >= 714 && f < 760; // olha para as próprias mãos
   const base: Pose = {
     ...POSE_BASE,
-    x: 360,
+    x: 300,
     y: CHAO_Y,
     escala,
     vira: 0.35,
@@ -165,7 +165,7 @@ const lucasPose = (f: number): Pose => {
   if (f < C5) {
     const resp = Math.sin(f * 0.09) * (f < 1336 ? 1 : 0.3);
     const raiva = f >= 1336 ? Math.sin(f * 2.1) * 3 : 0;
-    return { ...base, x: 330, estica: 1 + resp * 0.02, inclina: raiva, bracoE: { ombro: 24 + resp * 6, cotovelo: -40 }, bracoD: { ombro: 24 + resp * 6, cotovelo: -40 } };
+    return { ...base, x: 270, estica: 1 + resp * 0.02, inclina: raiva, bracoE: { ombro: 24 + resp * 6, cotovelo: -40 }, bracoD: { ombro: 24 + resp * 6, cotovelo: -40 } };
   }
   // C5: esfera na mão direita (sobe o braço) e lança para o céu
   if (f < C6) {
@@ -184,7 +184,7 @@ const lucasPose = (f: number): Pose => {
   if (f < 2160) {
     const respira = Math.sin(f * 0.08);
     const grita = f >= 2122 ? 1 : 0;
-    return { ...base, x: 330, estica: 1 + respira * 0.02 + grita * 0.05, agacha: base.agacha + grita * 30, bracoE: grita ? { ombro: 40, cotovelo: -70 } : base.bracoE, bracoD: grita ? { ombro: 40, cotovelo: -70 } : base.bracoD, inclina: grita ? Math.sin(f * 2.5) * 4 : 0 };
+    return { ...base, x: 270, estica: 1 + respira * 0.02 + grita * 0.05, agacha: base.agacha + grita * 30, bracoE: grita ? { ombro: 40, cotovelo: -70 } : base.bracoE, bracoD: grita ? { ombro: 40, cotovelo: -70 } : base.bracoD, inclina: grita ? Math.sin(f * 2.5) * 4 : 0 };
   }
   // perseguição: corrida brutal de perfil, gigante
   const fase = (f - 2160) / 22;
@@ -247,7 +247,7 @@ const diegoPose = (f: number): Pose => {
   }
   // C3+: Diego à direita, olhando o Lucas (perfil virado para a esquerda)
   const recua = f >= C4 + 340 ? M(f, F(23), "pesado") : 0; // passo para trás "sem perder a pose"
-  const xd = f < C4 ? 760 : f < C5 ? 780 + 90 * recua : 800;
+  const xd = f < C4 ? 860 : f < C5 ? 900 + 90 * recua : 920;
   const olhaCima = f >= T_FLASH && (f < C4 || (f >= 1612 && f < 1700));
   const p: Pose = { ...PERFIL_BASE, x: xd, y: CHAO_Y, escala: ESC, lado: -1, inclina: olhaCima ? -8 : 2, cabeca: olhaCima ? -18 : 0, cruzado: 0, bracoE: { ombro: -14, cotovelo: 120 }, bracoD: { ombro: -10, cotovelo: 124 } };
   if (f >= F(26) && f < F(27)) return { ...p, inclina: 10, bracoD: { ombro: 110, cotovelo: -20 }, maoD: "aberta" };
