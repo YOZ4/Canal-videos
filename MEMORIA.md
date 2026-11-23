@@ -99,6 +99,15 @@ pendente) e faça commit + push junto com o trabalho.
     - Trilha e efeitos sintetizados: `scripts/gerar_egito_audio.py` (música "hijaz" + drone; água, splash, glub...).
     - Render: ~3 min em meia resolução (60 qps, sem estilo JJK).
 
+16. **Missão "sistema profissional de animação 2D"** (texto dele, ainda não virou skill). Primeiro teste pedido: 2 vídeos
+    de 15 s com muito jogo de câmera, reaproveitando movimentos aprovados. Criado `src/estilo2d/Diretor.tsx` (câmera em
+    espaço de tela por cima da cena: planos com zoom/foco/holandês, crash zoom com mola, tremida, chicote com borrão,
+    flash, inversão, faixas de cinema, linhas de velocidade; zoom mínimo automático para nunca mostrar borda).
+    Composições `TesteCameraAcrobacia` (pulo + ninja + brutal) e `TesteCameraLuta` (luta do TesteMovimento2 + trecho do
+    LutaTeste). Corrigido: `RuaLonga` acabava antes da freada da corrida brutal (fundo creme). Cenas do TesteMovimento2
+    ganharam `semSelo`. Aguardando opinião dele para virar skill (a missão fala em personagens feitos de IMAGENS por
+    partes; os nossos são vetoriais — o rig já existe no Boneco2D).
+
 ## Pendências / ideias que ele ainda pode pedir
 - Testar a esteira de 4 agentes no próximo episódio e ajustar os arquivos dos agentes com o que ele achar.
 - Gesto de "mão na cabeça" no Lucas gigante (o braço atual não alcança a cabeça; virou punho tremendo).

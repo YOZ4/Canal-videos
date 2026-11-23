@@ -25,11 +25,14 @@ import { TesteFerramentas, DURACAO as DUR_FERR } from "./videos/Ferramentas/Test
 import { FichaLucas, FichaDiego, FICHA_W, FICHA_H } from "./videos/Folha/FichaPersonagem";
 import { FichaEgito } from "./videos/Egito/FichaEgito";
 import { Egito, DURACAO as DUR_EGITO } from "./videos/Egito/Egito";
+import { TesteCameraAcrobacia, TesteCameraLuta, DURACAO_CAM } from "./videos/TesteCamera/TesteCamera";
 import { TesteEstilo, FIM } from "./videos/TesteEstilo/TesteEstilo";
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition id="TesteCameraAcrobacia" component={TesteCameraAcrobacia} durationInFrames={DURACAO_CAM} fps={30} width={1080} height={1920} />
+      <Composition id="TesteCameraLuta" component={TesteCameraLuta} durationInFrames={DURACAO_CAM} fps={30} width={1080} height={1920} />
       <Composition id="Egito" component={Egito} durationInFrames={DUR_EGITO} fps={60} width={1080} height={1920} />
       <Composition id="FichaEgito" component={FichaEgito} durationInFrames={1} fps={60} width={2400} height={1500} />
       <Composition id="FichaLucas" component={FichaLucas} durationInFrames={1} fps={30} width={FICHA_W} height={FICHA_H} />

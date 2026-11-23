@@ -121,7 +121,7 @@ const poseA = (g: number): Pose => {
 };
 const CAIXA_X = xA(J0 + 21) + 10;
 
-const CenaPulo: React.FC = () => {
+export const CenaPulo: React.FC<{ semSelo?: boolean }> = ({ semSelo }) => {
   const f = useCurrentFrame();
   const p = comCabelo((g) => emCadeia(poseA, g), f);
   const j = f - J0;
@@ -157,7 +157,7 @@ const CenaPulo: React.FC = () => {
         ) : null}
         <Boneco2D id="lA2" d={LUCAS} pose={{ ...p, estica: p.estica * r.corpo.estica }} rosto={{ ...r.rosto, olhos: r.rosto.olhos * piscar(f, "lA2") }} />
       </Palco>
-      <Selo texto="PULO (MELHORADO)" de={4} ate={B0 - 6} cor="#2f6fb0" />
+      {semSelo ? null : <Selo texto="PULO (MELHORADO)" de={4} ate={B0 - 6} cor="#2f6fb0" />}
       <SonsPassos fase={faseA} de={1} ate={J0} />
       <SonsPassos fase={faseA} de={R_A + 2} ate={B0} />
       <Som src="vento" de={J0 + 8} volume={0.45} />
@@ -219,7 +219,7 @@ const poseB = (g: number): Pose => {
   return { ...p, x: xB(g) };
 };
 
-const CenaBrutal: React.FC = () => {
+export const CenaBrutal: React.FC<{ semSelo?: boolean }> = ({ semSelo }) => {
   const f = useCurrentFrame();
   const p = comCabelo((g) => emCadeia(poseB, g, { cabeca: 3, ombroD: 2, cotoveloD: 4, ombroE: 3, cotoveloE: 6 }), f);
   const camX = seguir((g) => xB(g), f, 4) + 200;
@@ -258,7 +258,7 @@ const CenaBrutal: React.FC = () => {
         <LinhasMovimento f={f} x={p.x} y={CHAO_Y - 200} dir={1} forca={planando ? 0.8 : 0} />
         <Boneco2D id="dB2" d={DIEGO} pose={{ ...p, estica: p.estica * r.corpo.estica }} rosto={{ ...r.rosto, olhos: r.rosto.olhos * piscar(f, "dB2") }} />
       </Palco>
-      <Selo texto="CORRIDA BRUTAL v2 + FREADA" de={4} ate={150 - 6} cor="#3d7a3a" />
+      {semSelo ? null : <Selo texto="CORRIDA BRUTAL v2 + FREADA" de={4} ate={150 - 6} cor="#3d7a3a" />}
       {pisadasB.map(({ f: g }) => (
         <Sequence key={g} from={g} layout="none">
           <Som src="pisada" de={0} volume={0.6} />
@@ -310,7 +310,7 @@ const poseC = (g: number): Pose => {
   return { ...p, x: xC(g) };
 };
 
-const CenaNinja: React.FC = () => {
+export const CenaNinja: React.FC<{ semSelo?: boolean }> = ({ semSelo }) => {
   const f = useCurrentFrame();
   const p = comCabelo((g) => emCadeia(poseC, g, { cabeca: 2, ombroD: 2, cotoveloD: 3, ombroE: 3, cotoveloE: 5 }), f, 0.22);
   const camX = seguir((g) => xC(g), f, 6) + 190;
@@ -331,7 +331,7 @@ const CenaNinja: React.FC = () => {
         <LinhasMovimento f={f} x={p.x + 60} y={CHAO_Y - 300} dir={1} forca={0.5 * vel} />
         <Boneco2D id="lC2" d={LUCAS} pose={{ ...p, estica: p.estica * r.corpo.estica }} rosto={{ ...r.rosto, olhos: r.rosto.olhos * piscar(f, "lC2") }} />
       </Palco>
-      <Selo texto="CORRIDA NINJA (NOVA)" de={4} ate={120 - 6} cor="#3d3463" />
+      {semSelo ? null : <Selo texto="CORRIDA NINJA (NOVA)" de={4} ate={120 - 6} cor="#3d3463" />}
       <SonsPassos fase={faseC} de={1} ate={S_C} vol={0.22} />
       <Som src="vento" de={2} volume={0.5} />
       <Som src="deslize" de={S_C} volume={0.55} />
@@ -477,7 +477,7 @@ const InverteImpacto: React.FC<{ ativo: boolean; children: React.ReactNode }> = 
   <AbsoluteFill style={ativo ? { filter: "invert(1) grayscale(1) contrast(3)" } : undefined}>{children}</AbsoluteFill>
 );
 
-const CenaLuta: React.FC = () => {
+export const CenaLuta: React.FC<{ semSelo?: boolean }> = ({ semSelo }) => {
   const f = useCurrentFrame();
   const t = tw(f);
   const pausa = f >= CHOQUE && f < CHOQUE + PAUSA;
@@ -542,7 +542,7 @@ const CenaLuta: React.FC = () => {
         </Palco>
       </InverteImpacto>
       {f === CHOQUE + 2 || t === 127 ? <AbsoluteFill style={{ background: "#fff", opacity: 0.6 }} /> : null}
-      <Selo texto="LUTA (VÍDEOS 5 E 6)" de={4} ate={DURACAO - D0 - 6} cor="#b0402f" />
+      {semSelo ? null : <Selo texto="LUTA (VÍDEOS 5 E 6)" de={4} ate={DURACAO - D0 - 6} cor="#b0402f" />}
       <Som src="lamina" de={28} volume={0.6} />
       <Som src="vento" de={29} volume={0.5} />
       <Som src="pisada" de={52} volume={0.35} />

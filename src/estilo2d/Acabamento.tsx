@@ -59,7 +59,7 @@ const Casa: React.FC<{ x: number; w: number; h: number; cor: string; telhado: st
 /** rua longa com parallax — use camX igual ao x da câmera */
 export const RuaLonga: React.FC<{ camX?: number; placa?: string; chao?: number }> = ({ camX = 1100, placa = "RUA SEGUNDA-FEIRA", chao = CHAO_Y }) => {
   const f = useCurrentFrame();
-  const tiles = [-1, 0, 1, 2, 3, 4];
+  const tiles = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   return (
     <g>
       <defs>
@@ -68,7 +68,7 @@ export const RuaLonga: React.FC<{ camX?: number; placa?: string; chao?: number }
           <stop offset="1" stopColor="#ecdcc6" />
         </linearGradient>
       </defs>
-      <rect x={-4000} y={-3000} width={12000} height={8000} fill="url(#ceuRua)" />
+      <rect x={-4000} y={-3000} width={30000} height={8000} fill="url(#ceuRua)" />
       {/* nuvens (quase paradas) */}
       <g transform={`translate(${camX * 0.85} 0)`}>
         {[[-500, 250, 1.3], [200, 160, 1], [700, 320, 0.8], [1300, 220, 1.1]].map(([x, y, s], i) => (
@@ -133,12 +133,12 @@ export const RuaLonga: React.FC<{ camX?: number; placa?: string; chao?: number }
         );
       })}
       {/* calçada, meio-fio, asfalto */}
-      <rect x={-4000} y={chao - 150} width={12000} height={160} fill="#b8b3ab" />
-      {new Array(60).fill(0).map((_, i) => (
+      <rect x={-4000} y={chao - 150} width={30000} height={160} fill="#b8b3ab" />
+      {new Array(150).fill(0).map((_, i) => (
         <rect key={i} x={-3000 + i * 200} y={chao - 150} width={4} height={160} fill="#a29c94" />
       ))}
-      <rect x={-4000} y={chao} width={12000} height={24} fill="#8b8680" />
-      <rect x={-4000} y={chao + 24} width={12000} height={1200} fill="#8d9098" />
+      <rect x={-4000} y={chao} width={30000} height={24} fill="#8b8680" />
+      <rect x={-4000} y={chao + 24} width={30000} height={1200} fill="#8d9098" />
       {new Array(18).fill(0).map((_, i) => {
         const x = -2500 + i * 520 + random(`ra${i}`) * 200;
         const y = chao + 80 + random(`ry${i}`) * 420;
