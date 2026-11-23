@@ -93,6 +93,14 @@ export type Rosto = {
   /** sorriso de canto: -1..1 */
   canto: number;
   bochecha: number;
+  /** 0..1 rosto vermelho com risquinhos (envergonhado) */
+  vergonha?: number;
+  /** 0..1 rios de lágrima descendo dos olhos (chorando) */
+  lagrimas?: number;
+  /** 0..1 olhos viram coração (apaixonado; > 0.5 troca o olho) */
+  coracao?: number;
+  /** 0..1 verde embaixo dos olhos, nariz franzido e boca ondulada com língua (nojo) */
+  nojo?: number;
 };
 
 export const POSE_BASE: Pose = {
@@ -484,11 +492,55 @@ const Olho: React.FC<{ cx: number; abre: number; olhar: [number, number]; cor: s
   );
 };
 
+/** olho de coração (apaixonado) */
+const OlhoCoracao: React.FC<{ cx: number; tam?: number }> = ({ cx, tam = 1 }) => (
+  <g transform={`translate(${cx} -8) scale(${tam})`}>
+    <path d="M 0 34 C -30 14 -50 -2 -46 -20 C -42 -40 -14 -42 0 -20 C 14 -42 42 -40 46 -20 C 50 -2 30 14 0 34 Z" fill="#ff3b5c" stroke={CONTORNO} strokeWidth={6} strokeLinejoin="round" />
+    <ellipse cx={-22} cy={-20} rx={10} ry={7} fill="#fff" opacity={0.85} transform="rotate(-30 -22 -20)" />
+  </g>
+);
+
+/** rio de lágrima saindo de baixo do olho (cx) até perto do queixo */
+const Lagrima: React.FC<{ cx: number; lado: number; forca: number; fim?: number }> = ({ cx, lado, forca, fim = 118 }) => {
+  if (forca <= 0) return null;
+  const y0 = 26;
+  const y1 = y0 + (fim - y0) * Math.min(1, forca);
+  const l = 13 + forca * 6;
+  const x0 = cx + lado * 8;
+  const x1 = cx + lado * 22;
+  return (
+    <g>
+      <path
+        d={`M ${x0 - l} ${y0} Q ${x0 - l - 6} ${(y0 + y1) / 2} ${x1 - l * 0.8} ${y1} Q ${x1} ${y1 + 16} ${x1 + l * 0.8} ${y1} Q ${x0 + l + 6} ${(y0 + y1) / 2} ${x0 + l} ${y0} Z`}
+        fill="#8fdcff"
+        stroke="#2f86c9"
+        strokeWidth={4}
+        strokeLinejoin="round"
+        opacity={0.92}
+      />
+      <path d={`M ${x0 - l * 0.3} ${y0 + 8} Q ${x0 - l * 0.4} ${(y0 + y1) / 2} ${x1 - l * 0.2} ${y1 - 8}`} stroke="#fff" strokeWidth={4} fill="none" strokeLinecap="round" opacity={0.8} />
+      {/* poça de água na pálpebra de baixo */}
+      <path d={`M ${cx - 34} ${y0 - 6} Q ${cx} ${y0 + 12} ${cx + 34} ${y0 - 6}`} stroke="#8fdcff" strokeWidth={9} fill="none" strokeLinecap="round" />
+    </g>
+  );
+};
+
 const Boca: React.FC<{ r: Rosto; x?: number; escalaX?: number }> = ({ r, x = 0, escalaX = 1 }) => {
   const y = 78;
   const w = 34;
   const ladoE = -r.sorriso * 6 + r.canto * 6;
   const ladoD = -r.sorriso * 6 - r.canto * 10;
+  if ((r.nojo ?? 0) > 0.5) {
+    // boca ondulada torta + língua pra fora
+    const pts = [-1, -0.66, -0.33, 0, 0.33, 0.66, 1].map((t, i) => `${t * w * 1.45} ${y + 2 + (i % 2 ? -10 : 7) + t * 8}`);
+    return (
+      <g transform={`translate(${x} 0) scale(${escalaX} 1)`}>
+        <path d={`M ${-10} ${y + 4} Q ${-12} ${y + 34} ${4} ${y + 36} Q ${18} ${y + 34} ${14} ${y + 2} Z`} fill="#e0697a" stroke={CONTORNO} strokeWidth={5} strokeLinejoin="round" />
+        <path d={`M 2 ${y + 10} L 3 ${y + 26}`} stroke="#b94a5a" strokeWidth={3} strokeLinecap="round" />
+        <path d={`M ${pts.join(" L ")}`} stroke={CONTORNO} strokeWidth={6} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      </g>
+    );
+  }
   // fúria (sorriso muito negativo): grito largo com as duas fileiras de dentes, ou dentes cerrados de boca fechada
   if (r.sorriso <= -0.7) {
     const abre = Math.max(0.12, r.boca);
@@ -504,6 +556,26 @@ const Boca: React.FC<{ r: Rosto; x?: number; escalaX?: number }> = ({ r, x = 0, 
         {[-0.5, 0, 0.5].map((q) => (
           <path key={q} d={`M ${q * lw} ${topo + 10} L ${q * lw} ${topo + 10 + dente} M ${q * lw * 0.8} ${fundo - 2} L ${q * lw * 0.8} ${fundo - 2 - dente}`} stroke="#9a8f86" strokeWidth={3} />
         ))}
+      </g>
+    );
+  }
+  if ((r.lagrimas ?? 0) > 0.5 && r.boca > 0.12) {
+    // berreiro: boca em arco pra cima (cantos caídos), língua no fundo, lábio tremendo
+    const abre = r.boca;
+    const lw = w * (1 + abre * 0.3);
+    const topo = y - 2 - abre * 8;
+    const fundo = y + 16 + abre * 40;
+    return (
+      <g transform={`translate(${x} 0) scale(${escalaX} 1)`}>
+        <path
+          d={`M ${-lw} ${fundo - 4} Q ${-lw * 0.9} ${topo} 0 ${topo} Q ${lw * 0.9} ${topo} ${lw} ${fundo - 4} Q ${lw * 0.5} ${fundo - 12} 0 ${fundo - 10} Q ${-lw * 0.5} ${fundo - 12} ${-lw} ${fundo - 4} Z`}
+          fill="#5b1d2b"
+          stroke={CONTORNO}
+          strokeWidth={6}
+          strokeLinejoin="round"
+        />
+        <path d={`M ${-lw * 0.55} ${topo + 8} Q 0 ${topo + 2} ${lw * 0.55} ${topo + 8} L ${lw * 0.45} ${topo + 14} Q 0 ${topo + 9} ${-lw * 0.45} ${topo + 14} Z`} fill="#ffffff" />
+        <ellipse cx={0} cy={fundo - 16} rx={lw * 0.42} ry={7 + abre * 4} fill="#e0697a" />
       </g>
     );
   }
@@ -691,6 +763,26 @@ const Cabeca: React.FC<{ d: Design; r: Rosto; id: string; poder: number; balanco
       {[-1, 1].map((s) => (
         <ellipse key={s} cx={s * 78 + vira * 40} cy={50} rx={30 * (1 - s * vira * 0.3)} ry={15} fill="#f2928f" opacity={0.45 * r.bochecha} />
       ))}
+      {(r.vergonha ?? 0) > 0
+        ? [-1, 1].map((s) => (
+            <g key={`v${s}`} opacity={r.vergonha} transform={`translate(${s * 72 + vira * 40} 48) scale(${1 - s * vira * 0.3} 1)`}>
+              <ellipse rx={48} ry={22} fill="#ff4f63" opacity={0.55} />
+              {[-1, 0, 1].map((q) => (
+                <path key={q} d={`M ${q * 16 - 6} 8 L ${q * 16 + 6} -8`} stroke="#c42640" strokeWidth={4} strokeLinecap="round" />
+              ))}
+            </g>
+          ))
+        : null}
+      {(r.nojo ?? 0) > 0 ? (
+        <g opacity={r.nojo} transform={`translate(${vira * 42} 0)`}>
+          <ellipse cx={0} cy={22} rx={112} ry={26} fill="#7fc35c" opacity={0.45} />
+          {[-1, 1].map((s) => [-22, 0, 22].map((q) => (
+            <path key={`${s}${q}`} d={`M ${s * 50 + q} 26 L ${s * 50 + q} ${46 + Math.abs(q) * -0.3}`} stroke="#4f8a3a" strokeWidth={4} strokeLinecap="round" />
+          )))}
+          {/* nariz franzido */}
+          <path d="M -16 24 Q -8 18 -2 24 M 2 24 Q 8 18 16 24" stroke={CONTORNO} strokeWidth={4} fill="none" strokeLinecap="round" />
+        </g>
+      ) : null}
       <g transform={`translate(${-vira * 22} 0)`}>
         <Cabelo d={d} poder={poder} id={id} balanco={balanco} />
       </g>
@@ -699,8 +791,19 @@ const Cabeca: React.FC<{ d: Design; r: Rosto; id: string; poder: number; balanco
           {d.sobrancelhaGrossa ? <rect x={-38} y={-10} width={76} height={20} rx={10} fill={d.sobrancelha} /> : <rect x={-30} y={-5} width={60} height={10} rx={5} fill={d.sobrancelha} />}
         </g>
       ))}
+      {(r.coracao ?? 0) > 0.5 ? (
+        <>
+          <OlhoCoracao cx={-50 * (1 + vira * 0.25) + vira * 42} tam={(0.95 + (r.coracao ?? 0) * 0.1) * (1 + vira * 0.2)} />
+          <OlhoCoracao cx={50 * (1 - vira * 0.25) + vira * 42} tam={(0.95 + (r.coracao ?? 0) * 0.1) * (1 - vira * 0.2)} />
+        </>
+      ) : (
+      <>
       <Olho cx={-50 * (1 + vira * 0.25) + vira * 42} abre={r.olhos} olhar={[r.olhar[0] + vira * 0.5, r.olhar[1]]} cor={corOlho} pele={d.pele} id={id} rx0={40 * (1 + vira * 0.22)} vazio={vazio} brilho={d.cabeloPoder?.brilho} />
       <Olho cx={50 * (1 - vira * 0.25) + vira * 42} abre={r.olhos} olhar={[r.olhar[0] + vira * 0.5, r.olhar[1]]} cor={corOlho} pele={d.pele} id={`${id}b`} rx0={40 * (1 - vira * 0.22)} vazio={vazio} brilho={d.cabeloPoder?.brilho} />
+      </>
+      )}
+      <Lagrima cx={-50 * (1 + vira * 0.25) + vira * 42} lado={-1} forca={r.lagrimas ?? 0} />
+      <Lagrima cx={50 * (1 - vira * 0.25) + vira * 42} lado={1} forca={r.lagrimas ?? 0} />
       <path d={`M ${-9 + vira * 70} 38 Q ${vira * 70} 48 ${9 + vira * 70} 38`} stroke={CONTORNO} strokeWidth={5} fill="none" strokeLinecap="round" />
       <Boca r={r} x={vira * 55} escalaX={1 - Math.abs(vira) * 0.2} />
       {d.bigode ? (
@@ -746,11 +849,23 @@ const CabecaPerfil: React.FC<{ d: Design; r: Rosto; id: string; poder: number; b
       <path d="M -24 -26 Q -64 -30 -62 6 Q -60 40 -24 36" fill={d.pele} stroke={CONTORNO} strokeWidth={6} strokeLinejoin="round" />
       <path d="M -32 -12 Q -50 -10 -48 6 Q -46 20 -34 20" stroke={d.peleSombra} strokeWidth={7} fill="none" strokeLinecap="round" />
       <ellipse cx={70} cy={50} rx={26} ry={14} fill="#f2928f" opacity={0.45 * r.bochecha} />
+      {(r.vergonha ?? 0) > 0 ? (
+        <g opacity={r.vergonha} transform="translate(66 48)">
+          <ellipse rx={44} ry={20} fill="#ff4f63" opacity={0.55} />
+          {[-1, 0, 1].map((q) => <path key={q} d={`M ${q * 14 - 5} 7 L ${q * 14 + 5} -7`} stroke="#c42640" strokeWidth={4} strokeLinecap="round" />)}
+        </g>
+      ) : null}
+      {(r.nojo ?? 0) > 0 ? <ellipse cx={80} cy={22} rx={56} ry={22} fill="#7fc35c" opacity={0.45 * (r.nojo ?? 0)} /> : null}
       <Cabelo d={d} poder={poder} id={id} perfil balanco={balanco} />
       <g transform={`translate(82 ${browY}) rotate(${-r.sobrancelha * 0.8})`}>
         {d.sobrancelhaGrossa ? <rect x={-30} y={-10} width={62} height={20} rx={10} fill={d.sobrancelha} /> : <rect x={-24} y={-5} width={50} height={10} rx={5} fill={d.sobrancelha} />}
       </g>
-      <Olho cx={84} abre={r.olhos} olhar={[0.9 + r.olhar[0] * 0.1, r.olhar[1]]} cor={corOlho} pele={d.pele} id={`${id}p`} rx0={30} vazio={vazio} brilho={d.cabeloPoder?.brilho} />
+      {(r.coracao ?? 0) > 0.5 ? (
+        <OlhoCoracao cx={84} tam={0.75} />
+      ) : (
+        <Olho cx={84} abre={r.olhos} olhar={[0.9 + r.olhar[0] * 0.1, r.olhar[1]]} cor={corOlho} pele={d.pele} id={`${id}p`} rx0={30} vazio={vazio} brilho={d.cabeloPoder?.brilho} />
+      )}
+      <Lagrima cx={78} lado={-1} forca={(r.lagrimas ?? 0) * 0.9} fim={110} />
       <Boca r={r} x={98} escalaX={0.6} />
       {d.bigode ? <path d="M 84 54 Q 110 38 140 52 Q 128 66 96 64 Z" fill={d.corCabelo} stroke={CONTORNO} strokeWidth={5} strokeLinejoin="round" /> : null}
       {d.oculos ? (

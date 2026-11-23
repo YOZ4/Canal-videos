@@ -5,7 +5,7 @@ import { DIEGO, LUCAS, type Design } from "../../estilo2d/personagens";
 /** Ficha completa de um personagem: todas as vistas + todas as expressões (composições FichaLucas / FichaDiego) */
 
 export const FICHA_W = 2400;
-export const FICHA_H = 1990;
+export const FICHA_H = 2430;
 
 type Expr = [string, Partial<Rosto>];
 
@@ -27,6 +27,10 @@ const EXPR: Expr[] = [
   ["MEDO", { olhos: 1.25, sobrancelha: -18, sobrancelhaY: 16, sorriso: -1, boca: 0.25, canto: 0, olhar: [-0.4, 0] }],
   ["SURPRESO", { olhos: 1.3, sobrancelha: -6, sobrancelhaY: 18, sorriso: 0, boca: 0.75, canto: 0 }],
   ["CANSADO", { olhos: 0.35, sobrancelha: -8, sorriso: -0.2, canto: 0, olhar: [0, 0.5] }],
+  ["ENVERGONHADO", { vergonha: 1, olhar: [-0.8, 0.5], sobrancelha: -10, sobrancelhaY: 8, sorriso: 0.25, canto: 0.3, olhos: 0.9, bochecha: 0 }],
+  ["CHORANDO", { lagrimas: 1, olhos: 0.85, olhar: [0, 0.7], sobrancelha: -22, sobrancelhaY: 14, sorriso: -0.6, boca: 0.7, canto: 0, bochecha: 1 }],
+  ["APAIXONADO", { coracao: 1, sorriso: 0.9, canto: 0, sobrancelhaY: 10, bochecha: 1, boca: 0 }],
+  ["COM NOJO", { nojo: 1, olhos: 0.55, sobrancelha: 14, sobrancelhaY: 4, olhar: [0.6, 0], canto: 0 }],
 ];
 
 const VISTAS: [string, Partial<Pose>][] = [

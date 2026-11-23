@@ -80,7 +80,8 @@ pendente) e faça commit + push junto com o trabalho.
 14. **Fichas dos personagens** (composições `FichaLucas`/`FichaDiego`, `src/videos/Folha/FichaPersonagem.tsx`,
     PNG em `out/personagens/ficha-lucas.png` e `ficha-diego.png`): 6 vistas (frente, 3/4 esq/dir, lado dir/esq, costas)
     + 14 expressões prontas (normal, feliz, rindo, falando, confiante, debochado, pensativo, sério, bravo, fúria, triste,
-    medo, surpreso, cansado). Os valores de cada expressão estão na lista `EXPR` do arquivo — reaproveitar nos episódios.
+    medo, surpreso, cansado + envergonhado, chorando, apaixonado, com nojo). Novos campos opcionais no Rosto:
+    `vergonha`, `lagrimas`, `coracao`, `nojo` (0..1; funcionam de frente e de perfil). Os valores de cada expressão estão na lista `EXPR` do arquivo — reaproveitar nos episódios.
 
 ## Pendências / ideias que ele ainda pode pedir
 - Testar a esteira de 4 agentes no próximo episódio e ajustar os arquivos dos agentes com o que ele achar.
