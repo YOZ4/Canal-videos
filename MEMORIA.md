@@ -87,6 +87,10 @@ pendente) e faça commit + push junto com o trabalho.
   título em "carimbo" inclinado, legenda em blocos de 3 palavras (cada palavra numa etiqueta), cartões de interface
   (janela, barra de progresso, checklist, terminal digitando, diagrama em estrela, lixeira, funil), mascote reagindo
   (linhas de susto, piscadinha, lupa). Proposta: kit `Infografico.tsx` + Lucas apresentador no canto. Aguardando ele decidir.
+  Ele queria na verdade o CONTEÚDO do vídeo (5 plugins do Claude Code: OmniRoute, Claude Mem, Headroom, Claude Setup,
+  Task Observer). Conclusão: nenhum vale instalar aqui (sessão na nuvem, container apagado no fim; memória já é a
+  MEMORIA.md no repo; roteador para outras IAs e compressor de tokens pioram qualidade/risco). Ideias aproveitáveis:
+  gancho de início de sessão que roda `npm ci` sozinho (oferecido) e atualizar skills com as lições de cada episódio.
 - Som de caneta (`caneta.wav`) para o quadro branco ainda não foi sintetizado.
 - Mais episódios no estilo JJK reaproveitando `src/videos/Broly` como modelo.
 
