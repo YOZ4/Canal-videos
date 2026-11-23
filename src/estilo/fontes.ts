@@ -27,3 +27,13 @@ loadFont({
   weight: "400",
   format: "woff2",
 });
+
+/** caixas de informação (HUD) estilo cartaz — Anton, licença OFL */
+export const FONTE_HUD = "Anton";
+
+loadFont({
+  family: FONTE_HUD,
+  url: staticFile("fonts/Anton-Regular.woff2"),
+  weight: "400",
+  format: "woff2",
+});

@@ -39,6 +39,8 @@ export type Design = {
   musculos?: boolean;
   /** faixa amarrada na cintura (ex.: camiseta rasgada) */
   faixa?: { cor: string; sombra: string };
+  /** figurino do Egito antigo: peito nu, saiote de linho, cinto na cor do personagem, colar largo, braceletes, sandálias */
+  egito?: { cinto: string; cintoSombra: string; colar: string; khat?: boolean };
 };
 
 export const CONTORNO = "#1d1424";

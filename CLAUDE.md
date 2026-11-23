@@ -98,3 +98,10 @@ npx remotion render <Composicao> out/<arquivo>.mp4 --browser-executable=/opt/pw-
 - Lucas transformado: `LUCAS_FURIA` / `LUCAS_PODER` (cabelo verde espetado, olhos vazios, músculos, faixa). Cenário de rua: `RuaAnime`.
 - Sons de ambiente: `passaros.wav`, `transito.wav` (gerar_sfx.py). Silêncio da música antes do golpe/grito final.
 - Entrega: versão `-alta.mp4` só no chat; versão leve (< 100 MB) no git.
+
+## Episódio de época / história real (modelo: `src/videos/Egito`, "Egito: a areia molhada", 60 qps)
+- Figurino egípcio: campo `egito` no Design (`Boneco2D`): saiote, cinto na cor do personagem, colar, braceletes, sandálias, `khat`.
+  Elenco pronto em `src/videos/Egito/elenco.ts`. Para outra época, siga o mesmo padrão (peça de roupa = opção do Design).
+- 60 qps: funções do `anim.ts` (afinadas a 30) recebem `fa/2`; `mola(..., fps=60)`. Mundo contínuo entre cenas em `mundo.ts`.
+- `Equipe` (atores.tsx): fila de puxadores com atraso/variação por pessoa e corda pelas mãos. HUD com fonte Anton (`FONTE_HUD`).
+- Áudio sintetizado do episódio: `python3 scripts/gerar_egito_audio.py`. Plano e revisões: `producao/egito/`.

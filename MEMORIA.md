@@ -89,6 +89,16 @@ pendente) e faça commit + push junto com o trabalho.
     juntos; a orelha antes ficava "descolada" fora da cabeça), nariz ganha lateral, ombro/braço de longe vai para
     trás do tronco, quadril e pés acompanham. Afeta todos os vídeos que usam `vira` (para melhor). Os valores de cada expressão estão na lista `EXPR` do arquivo — reaproveitar nos episódios.
 
+15. **Episódio "Egito: a areia molhada"** (`src/videos/Egito`, composição `Egito`, 60 qps, 75,55 s, 1ª história real
+    narrada em 3ª pessoa). Roteiro de produção dele (Roteiro 1) + áudio; o pacote zip com imagens/JSONs NÃO veio → feito
+    pelo texto + `alinhar.py`. Feito com a skill `roteiro-imagens-remotion` (plano e revisões em `producao/egito/`).
+    - Figurino egípcio novo no Boneco2D (`Design.egito`: saiote, cinto na cor, colar usekh, braceletes, sandálias, `khat`
+      do chefe). Elenco em `Egito/elenco.ts` (LUCAS_EG, DIEGO_EG, CHEFE, 4 TRABALHADORES).
+    - `Equipe` (puxadores defasados, corda passando pelas mãos, metade indo embora), estátua/trenó/jarro/balde/água/lama,
+      céu com sol descendo, diagrama em corte, pôr do sol com templo, parede de tumba, HUD (fonte Anton), loop no final.
+    - Trilha e efeitos sintetizados: `scripts/gerar_egito_audio.py` (música "hijaz" + drone; água, splash, glub...).
+    - Render: ~3 min em meia resolução (60 qps, sem estilo JJK).
+
 ## Pendências / ideias que ele ainda pode pedir
 - Testar a esteira de 4 agentes no próximo episódio e ajustar os arquivos dos agentes com o que ele achar.
 - Gesto de "mão na cabeça" no Lucas gigante (o braço atual não alcança a cabeça; virou punho tremendo).

@@ -253,6 +253,115 @@ const Tubo: React.FC<{
   );
 };
 
+// ---------- figurino do Egito antigo ----------
+
+const LINHO = "#f3ead6";
+const LINHO_SOMBRA = "#d9cdb2";
+const OURO_EG = "#e8c54a";
+const OURO_ESCURO = "#b8932a";
+const TURQUESA = "#2fa89a";
+
+/** saiote de linho (shendyt) + cinto com fivela, no espaço local do tronco (0 = quadril) */
+const Saiote: React.FC<{ d: Design; perfil?: boolean }> = ({ d, perfil }) => {
+  const e = d.egito!;
+  if (perfil) {
+    return (
+      <g stroke={CONTORNO} strokeWidth={LINHA} strokeLinejoin="round">
+        <path d="M -100 -22 L 106 -26 L 156 176 Q 30 192 -116 176 Z" fill={LINHO} />
+        <path d="M 30 -20 L 70 150" stroke={LINHO_SOMBRA} strokeWidth={5} fill="none" />
+        <path d="M -40 -20 L -50 152" stroke={LINHO_SOMBRA} strokeWidth={5} fill="none" />
+        <path d="M 106 -26 L 156 176 Q 124 180 98 176 Z" fill={LINHO_SOMBRA} strokeWidth={0} />
+        <path d="M -98 -44 Q 0 -30 104 -48 L 106 -14 Q 0 0 -98 -10 Z" fill={e.cinto} />
+        <rect x={60} y={-46} width={34} height={34} rx={6} fill={OURO_EG} strokeWidth={5} />
+      </g>
+    );
+  }
+  return (
+    <g stroke={CONTORNO} strokeWidth={LINHA} strokeLinejoin="round">
+      <path d="M -152 -22 L 152 -22 L 186 178 Q 0 196 -186 178 Z" fill={LINHO} />
+      {[-110, -60, 60, 110].map((x) => (
+        <path key={x} d={`M ${x} -14 L ${x * 1.2} 178`} stroke={LINHO_SOMBRA} strokeWidth={5} fill="none" />
+      ))}
+      {/* aba da frente (o "avental" triangular do shendyt) */}
+      <path d="M -40 -14 L 40 -14 L 66 178 Q 0 188 -66 178 Z" fill="#fbf5e6" />
+      <path d="M -152 -46 Q 0 -30 152 -46 L 154 -10 Q 0 6 -154 -10 Z" fill={e.cinto} />
+      <path d="M -150 -22 Q 0 -8 150 -22" stroke={e.cintoSombra} strokeWidth={8} fill="none" />
+      <rect x={-22} y={-48} width={44} height={42} rx={8} fill={OURO_EG} strokeWidth={5} />
+      <rect x={-10} y={-38} width={20} height={22} rx={4} fill={OURO_ESCURO} strokeWidth={0} />
+    </g>
+  );
+};
+
+/** colar largo (usekh) em arcos: dourado, cor do personagem, verde-água */
+const Colar: React.FC<{ d: Design; perfil?: boolean }> = ({ d, perfil }) => {
+  const cores = [OURO_EG, d.egito!.colar, TURQUESA, OURO_EG];
+  if (perfil) {
+    return (
+      <g>
+        {cores.map((c, i) => (
+          <path key={i} d={`M ${-30 - i * 4} ${-TRONCO + 6 + i * 16} Q ${30} ${-TRONCO + 40 + i * 20} ${96 - i * 2} ${-TRONCO + 26 + i * 18}`} stroke={CONTORNO} strokeWidth={22} fill="none" strokeLinecap="round" />
+        ))}
+        {cores.map((c, i) => (
+          <path key={`c${i}`} d={`M ${-30 - i * 4} ${-TRONCO + 6 + i * 16} Q ${30} ${-TRONCO + 40 + i * 20} ${96 - i * 2} ${-TRONCO + 26 + i * 18}`} stroke={c} strokeWidth={13} fill="none" strokeLinecap="round" />
+        ))}
+      </g>
+    );
+  }
+  return (
+    <g>
+      {cores.map((c, i) => {
+        const r = 62 + i * 19;
+        const dd = `M ${-r} ${-TRONCO + 2} A ${r} ${r * 0.72} 0 0 0 ${r} ${-TRONCO + 2}`;
+        return (
+          <g key={i}>
+            <path d={dd} stroke={CONTORNO} strokeWidth={24} fill="none" strokeLinecap="round" />
+            <path d={dd} stroke={c} strokeWidth={14} fill="none" strokeLinecap="round" />
+          </g>
+        );
+      })}
+      {/* contas na borda de baixo */}
+      {[-0.8, -0.55, -0.3, 0, 0.3, 0.55, 0.8].map((t) => {
+        const r = 62 + 3 * 19;
+        const a = Math.PI / 2 + t * 1.3;
+        return <circle key={t} cx={Math.cos(a) * r} cy={-TRONCO + 2 + Math.sin(a) * r * 0.72 + 12} r={8} fill={OURO_EG} stroke={CONTORNO} strokeWidth={4} />;
+      })}
+    </g>
+  );
+};
+
+/** peito nu: linhas leves de peitoral e umbigo */
+const Peito: React.FC<{ d: Design; perfil?: boolean }> = ({ d, perfil }) =>
+  perfil ? (
+    <g stroke={d.peleSombra} strokeWidth={6} fill="none" strokeLinecap="round">
+      <path d="M 100 -290 Q 80 -250 40 -258" />
+    </g>
+  ) : (
+    <g stroke={d.peleSombra} strokeWidth={6} fill="none" strokeLinecap="round">
+      <path d="M -96 -262 Q -50 -236 -10 -262 M 10 -262 Q 50 -236 96 -262" />
+      <path d="M 0 -120 Q -4 -112 0 -104" strokeWidth={5} />
+    </g>
+  );
+
+/** pano de cabeça listrado do chefe (khat) — vai por cima do cabelo */
+const Khat: React.FC<{ perfil?: boolean }> = ({ perfil }) =>
+  perfil ? (
+    <g stroke={CONTORNO} strokeWidth={LINHA} strokeLinejoin="round">
+      <path d="M 110 -70 Q 110 -170 0 -172 Q -130 -168 -150 -40 Q -170 60 -120 150 L -40 120 Q -60 40 -30 -40 L 110 -40 Z" fill={LINHO} />
+      {[-120, -90, -60].map((x) => (
+        <path key={x} d={`M ${x} -120 Q ${x - 10} 20 ${x + 10} 120`} stroke="#c8a96a" strokeWidth={8} fill="none" />
+      ))}
+      <path d="M 116 -64 L -40 -58" stroke={OURO_EG} strokeWidth={16} fill="none" />
+    </g>
+  ) : (
+    <g stroke={CONTORNO} strokeWidth={LINHA} strokeLinejoin="round">
+      <path d="M -150 -40 Q -150 -172 0 -174 Q 150 -172 150 -40 L 160 120 Q 120 60 120 -40 L -120 -40 Q -120 60 -160 120 Z" fill={LINHO} />
+      {[-100, -50, 0, 50, 100].map((x) => (
+        <path key={x} d={`M ${x} -160 L ${x * 1.05} -56`} stroke="#c8a96a" strokeWidth={8} fill="none" />
+      ))}
+      <path d="M -132 -62 Q 0 -80 132 -62" stroke={OURO_EG} strokeWidth={18} fill="none" />
+    </g>
+  );
+
 // ---------- mãos ----------
 
 /** dir = direção do antebraço (vetor unitário, do cotovelo para a mão) */
@@ -375,6 +484,13 @@ const BracoDesenho: React.FC<{
         )
       ) : null}
       <Mao p={m} dir={dir} gesto={gesto} d={d} espelho={sentido} cor={pele} />
+      {d.egito ? (
+        <>
+          <Tubo pts={[[m[0] - dir[0] * 46, m[1] - dir[1] * 46], [m[0] - dir[0] * 28, m[1] - dir[1] * 28]]} largura={68} cor={atras ? OURO_ESCURO : OURO_EG} cap="butt" />
+          <Tubo pts={[[o[0] + (c[0] - o[0]) * 0.42, o[1] + (c[1] - o[1]) * 0.42], [o[0] + (c[0] - o[0]) * 0.56, o[1] + (c[1] - o[1]) * 0.56]]} largura={70} cor={atras ? d.egito.cintoSombra : d.egito.cinto} cap="butt" />
+        </>
+      ) : null}
+      {d.egito ? null : <>
       <Tubo pts={[o, mangaFim]} largura={98} cor={camisa} />
       <circle cx={punho[0]} cy={punho[1]} r={40} fill={atras ? d.camisaSombra : d.manga} opacity={0.85} />
       <path
@@ -385,6 +501,7 @@ const BracoDesenho: React.FC<{
         transform={`translate(${-8 * sentido} -6)`}
         opacity={0.9}
       />
+      </>}
     </g>
   );
 };
@@ -423,7 +540,9 @@ const Tenis: React.FC<{ p: P; lado: number; d: Design; perfil?: boolean; rot?: n
       strokeLinejoin="round"
     />
     <path d="M -58 18 L 62 18 Q 70 22 64 27 L -54 27 Z" fill={d.sola} />
-    {perfil ? <path d="M -10 -28 L 20 -8 M 2 -30 L 30 -12" stroke="#c9c9d3" strokeWidth={5} strokeLinecap="round" /> : <path d="M -58 -30 L -58 28" stroke={CONTORNO} strokeWidth={LINHA} />}
+    {d.egito ? (
+      <path d="M -20 -26 Q 10 -2 40 -10" stroke="#8a5a2e" strokeWidth={12} fill="none" strokeLinecap="round" />
+    ) : perfil ? <path d="M -10 -28 L 20 -8 M 2 -30 L 30 -12" stroke="#c9c9d3" strokeWidth={5} strokeLinecap="round" /> : <path d="M -58 -30 L -58 28" stroke={CONTORNO} strokeWidth={LINHA} />}
   </g>
 );
 
@@ -444,7 +563,7 @@ const PernaDesenho: React.FC<{ joelhoX: number; quadril: P; pe: P; d: Design; la
   return (
     <g>
       <Tubo pts={[q, j, t]} largura={104} cor={atras ? d.calcaSombra : d.calca} sombra={atras ? undefined : d.calcaSombra} cap="butt" />
-      <Tenis p={[t[0], t[1] + 4]} lado={ladoTenis} d={atras ? { ...d, tenis: "#dcdce4" } : d} perfil={perfil} rot={rot} perto={perto} />
+      <Tenis p={[t[0], t[1] + 4]} lado={ladoTenis} d={atras ? { ...d, tenis: d.egito ? d.peleSombra : "#dcdce4" } : d} perfil={perfil} rot={rot} perto={perto} />
     </g>
   );
 };
@@ -888,7 +1007,7 @@ const Cabeca: React.FC<{ d: Design; r: Rosto; id: string; poder: number; balanco
         </g>
       ) : null}
       <g transform={`translate(${-vira * 22} 0)`}>
-        <Cabelo d={d} poder={poder} id={id} balanco={balanco} />
+        {d.egito?.khat ? <Khat /> : <Cabelo d={d} poder={poder} id={id} balanco={balanco} />}
       </g>
       {(r.palido ?? 0) > 0.3 ? (
         <g opacity={r.palido} stroke="#5b4a8a" strokeWidth={5} strokeLinecap="round">
@@ -973,7 +1092,7 @@ const CabecaPerfil: React.FC<{ d: Design; r: Rosto; id: string; poder: number; b
         </g>
       ) : null}
       {(r.nojo ?? 0) > 0 ? <ellipse cx={80} cy={22} rx={56} ry={22} fill="#7fc35c" opacity={0.45 * (r.nojo ?? 0)} /> : null}
-      <Cabelo d={d} poder={poder} id={id} perfil balanco={balanco} />
+      {d.egito?.khat ? <Khat perfil /> : <Cabelo d={d} poder={poder} id={id} perfil balanco={balanco} />}
       <g transform={`translate(82 ${browY}) rotate(${-r.sobrancelha * 0.8})`}>
         {d.sobrancelhaGrossa ? <rect x={-30} y={-10} width={62} height={20} rx={10} fill={d.sobrancelha} /> : <rect x={-24} y={-5} width={50} height={10} rx={5} fill={d.sobrancelha} />}
       </g>
@@ -1122,6 +1241,13 @@ const Frente: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
             <path d="M -140 0 L -110 -10 M 100 -14 L 130 -4" stroke={d.faixa.sombra} strokeWidth={6} fill="none" />
           </g>
         ) : null}
+        {d.egito ? (
+          <>
+            {!costas ? <Peito d={d} /> : null}
+            <Saiote d={d} />
+            {!costas ? <Colar d={d} /> : null}
+          </>
+        ) : null}
         {d.gravata && !costas ? (
           <path d={`M ${pose.vira * 40} ${-TRONCO + 16} l -20 26 l 14 170 l 6 18 l 6 -18 l 14 -170 Z`} fill={d.gravata} stroke={CONTORNO} strokeWidth={5} strokeLinejoin="round" />
         ) : null}
@@ -1205,6 +1331,13 @@ const Perfil: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
             <path d="M 70 -6 Q 120 60 130 150 L 76 140 Q 70 80 40 20 Z" fill={d.faixa.sombra} />
             <ellipse cx={74} cy={4} rx={30} ry={28} fill={d.faixa.sombra} />
           </g>
+        ) : null}
+        {d.egito ? (
+          <>
+            <Peito d={d} perfil />
+            <Saiote d={d} perfil />
+            <Colar d={d} perfil />
+          </>
         ) : null}</Parte>
         <g transform={`translate(4 ${-TRONCO - 60}) rotate(${pose.cabeca}) translate(0 ${-R_CABECA + 18})`}>
           <Parte k="cabeca"><CabecaPerfil d={d} r={rosto} id={id} poder={poder} balanco={pose.cabelo} /></Parte>
