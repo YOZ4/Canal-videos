@@ -90,7 +90,7 @@ pendente) e faça commit + push junto com o trabalho.
   Ele queria na verdade o CONTEÚDO do vídeo (5 plugins do Claude Code: OmniRoute, Claude Mem, Headroom, Claude Setup,
   Task Observer). Conclusão: nenhum vale instalar aqui (sessão na nuvem, container apagado no fim; memória já é a
   MEMORIA.md no repo; roteador para outras IAs e compressor de tokens pioram qualidade/risco). Ideias aproveitáveis:
-  gancho de início de sessão que roda `npm ci` sozinho (oferecido) e atualizar skills com as lições de cada episódio.
+  gancho de início de sessão (feito, ver Lições técnicas) e atualizar skills com as lições de cada episódio.
 - Som de caneta (`caneta.wav`) para o quadro branco ainda não foi sintetizado.
 - Mais episódios no estilo JJK reaproveitando `src/videos/Broly` como modelo.
 
@@ -99,7 +99,8 @@ pendente) e faça commit + push junto com o trabalho.
 - Para conferir quadros soltos: `npx remotion bundle --out-dir=<pasta>` uma vez e depois `npx remotion still <pasta> Broly x.png --frame=N --scale=0.25`
   **um por vez** (vários em paralelo estouram a memória).
 - `interpolate` exige entrada estritamente crescente: no volume de trilha dentro de `<Sequence from=X>`, o tempo é local (f − X).
-- Rodar `npm ci` se o tsc reclamar de dependências. Alinhamento: `alinhamento.json` é `{duracao, trechos, palavras}`.
+- Gancho de início de sessão (`.claude/hooks/session-start.sh`, registrado em `.claude/settings.json`) instala npm,
+  numpy e ffmpeg sozinho (só reinstala se package.json/lock mudar). Se o tsc reclamar de dependências: `npm install`. Alinhamento: `alinhamento.json` é `{duracao, trechos, palavras}`.
 - No estilo JJK, o desenho anda de 2 em 2 (`dois(f)`), mas câmera, aura e partículas andam a cada quadro.
 - Lado do braço no Boneco2D de frente: `bracoD` fica do lado direito da tela; ombro 90° = braço na horizontal.
 - Revisão rápida: folha de quadros `ffmpeg -vf "fps=0.5,scale=180:-1,tile=8x6"` + `scripts/tira.sh` nos momentos-chave.
