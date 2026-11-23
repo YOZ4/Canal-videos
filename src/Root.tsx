@@ -2,6 +2,8 @@ import { Composition } from "remotion";
 import "./estilo/fontes";
 import { LucasSaiyajin } from "./videos/LucasSaiyajin";
 import { Folha } from "./videos/Folha/Folha";
+import { Broly, DURACAO as DUR_BROLY } from "./videos/Broly/Broly";
+import { FolhaFuria } from "./videos/Folha/FolhaFuria";
 import { FolhaAngulos } from "./videos/Folha/FolhaAngulos";
 import { TesteJJK, DURACAO as DUR_JJK } from "./videos/EstiloJJK/TesteJJK";
 import { TesteMovimento2, DURACAO as DUR_MOV2 } from "./videos/Movimento/TesteMovimento2";
@@ -24,6 +26,8 @@ import { TesteEstilo, FIM } from "./videos/TesteEstilo/TesteEstilo";
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition id="Broly" component={Broly} durationInFrames={DUR_BROLY} fps={24} width={1080} height={1920} />
+      <Composition id="FolhaFuria" component={FolhaFuria} durationInFrames={4} fps={24} width={1080} height={1920} />
       <Composition id="FolhaAngulos" component={FolhaAngulos} durationInFrames={7} fps={24} width={1080} height={1920} />
       <Composition id="TesteJJK" component={TesteJJK} durationInFrames={DUR_JJK} fps={24} width={1080} height={1920} />
       <Composition id="TesteMovimento2" component={TesteMovimento2} durationInFrames={DUR_MOV2} fps={30} width={1080} height={1920} />

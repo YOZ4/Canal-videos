@@ -93,20 +93,31 @@ export const Desfoque: React.FC<{ chave: string; px: number; children: React.Rea
   );
 
 /** grade de cor da cena inteira (HTML): contraste alto, sombras azul-petróleo, vinheta forte. borrao = borrão horizontal (chicote) */
-export const GradeJJK: React.FC<{ children: React.ReactNode; borrao?: number; vinheta?: number }> = ({ children, borrao = 0, vinheta = 0.75 }) => (
-  <AbsoluteFill style={{ background: "#05080d", overflow: "hidden" }}>
-    <AbsoluteFill style={{ filter: `contrast(1.15) saturate(0.88) brightness(1.04)${borrao > 0 ? " url(#borraoX)" : ""}` }}>{children}</AbsoluteFill>
-    <svg width={0} height={0} style={{ position: "absolute" }}>
-      <filter id="borraoX">
-        <feGaussianBlur stdDeviation={`${borrao} 0`} />
-      </filter>
-    </svg>
-    {/* sombras puxadas para azul-petróleo */}
-    <AbsoluteFill style={{ background: "#0b1f2e", mixBlendMode: "lighten", opacity: 0.55 }} />
-    <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(20,60,80,0.18), rgba(5,10,20,0.25))", mixBlendMode: "multiply" }} />
-    <AbsoluteFill style={{ background: `radial-gradient(ellipse at 50% 46%, rgba(0,0,0,0) 42%, rgba(2,6,12,${vinheta}) 100%)` }} />
-  </AbsoluteFill>
-);
+/** tons de grade por ambiente: teal (padrão JJK), dia (quente e limpo), verde (fúria/aura), noiteVerde (cidade destruída) */
+const TONS = {
+  teal: { filtro: "contrast(1.15) saturate(0.88) brightness(1.04)", sombra: "#0b1f2e", sombraOp: 0.55, mult: "linear-gradient(180deg, rgba(20,60,80,0.18), rgba(5,10,20,0.25))", vinheta: "2,6,12" },
+  dia: { filtro: "contrast(1.1) saturate(1.12) brightness(1.03)", sombra: "#1a1530", sombraOp: 0.25, mult: "linear-gradient(180deg, rgba(255,240,210,0.0), rgba(255,200,150,0.12))", vinheta: "20,14,30" },
+  verde: { filtro: "contrast(1.16) saturate(1.0) brightness(1.0)", sombra: "#0b2414", sombraOp: 0.5, mult: "linear-gradient(180deg, rgba(40,90,40,0.22), rgba(5,20,10,0.3))", vinheta: "2,10,4" },
+  noiteVerde: { filtro: "contrast(1.18) saturate(0.95) brightness(1.05)", sombra: "#06180f", sombraOp: 0.55, mult: "linear-gradient(180deg, rgba(20,80,40,0.2), rgba(2,12,8,0.35))", vinheta: "1,6,3" },
+} as const;
+export type TomGrade = keyof typeof TONS;
+
+export const GradeJJK: React.FC<{ children: React.ReactNode; borrao?: number; vinheta?: number; tom?: TomGrade }> = ({ children, borrao = 0, vinheta = 0.75, tom = "teal" }) => {
+  const g = TONS[tom];
+  return (
+    <AbsoluteFill style={{ background: "#05080d", overflow: "hidden" }}>
+      <AbsoluteFill style={{ filter: `${g.filtro}${borrao > 0 ? " url(#borraoX)" : ""}` }}>{children}</AbsoluteFill>
+      <svg width={0} height={0} style={{ position: "absolute" }}>
+        <filter id="borraoX">
+          <feGaussianBlur stdDeviation={`${borrao} 0`} />
+        </filter>
+      </svg>
+      <AbsoluteFill style={{ background: g.sombra, mixBlendMode: "lighten", opacity: g.sombraOp }} />
+      <AbsoluteFill style={{ background: g.mult, mixBlendMode: "multiply" }} />
+      <AbsoluteFill style={{ background: `radial-gradient(ellipse at 50% 46%, rgba(0,0,0,0) 42%, rgba(${g.vinheta},${vinheta}) 100%)` }} />
+    </AbsoluteFill>
+  );
+};
 
 /** tremor "trauma": soma de impactos que decaem; cada um [frame, força px]. Varia a cada frame (24 qps). */
 export const tremorJJK = (f: number, impactos: [number, number][], decai = 9) => {
