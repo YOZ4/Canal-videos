@@ -22,11 +22,14 @@ import { SaiyajinV2, DURACAO as DUR_SAI2 } from "./videos/Saiyajin2D/SaiyajinV2"
 import { SaiyajinV3, DURACAO as DUR_SAI3 } from "./videos/Saiyajin2D/SaiyajinV3";
 import { TesteAnimacao, DURACAO as DUR_ANIM } from "./videos/TesteAnimacao/TesteAnimacao";
 import { TesteFerramentas, DURACAO as DUR_FERR } from "./videos/Ferramentas/TesteFerramentas";
+import { FichaLucas, FichaDiego, FICHA_W, FICHA_H } from "./videos/Folha/FichaPersonagem";
 import { TesteEstilo, FIM } from "./videos/TesteEstilo/TesteEstilo";
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition id="FichaLucas" component={FichaLucas} durationInFrames={1} fps={30} width={FICHA_W} height={FICHA_H} />
+      <Composition id="FichaDiego" component={FichaDiego} durationInFrames={1} fps={30} width={FICHA_W} height={FICHA_H} />
       <Composition id="TesteFerramentas" component={TesteFerramentas} durationInFrames={DUR_FERR} fps={30} width={1080} height={1920} />
       <Composition id="Broly" component={Broly} durationInFrames={DUR_BROLY} fps={24} width={1080} height={1920} />
       <Composition id="FolhaFuria" component={FolhaFuria} durationInFrames={4} fps={24} width={1080} height={1920} />

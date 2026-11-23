@@ -77,6 +77,11 @@ pendente) e faça commit + push junto com o trabalho.
     (`out/teste-ferramentas.mp4`, 17 s: infográfico em cascata → Lucas no quadro branco → esfera 3D nas mãos do Lucas).
     Os agentes e esta memória estavam num branch que não tinha ido para a main; foram trazidos para o branch desta sessão.
 
+14. **Fichas dos personagens** (composições `FichaLucas`/`FichaDiego`, `src/videos/Folha/FichaPersonagem.tsx`,
+    PNG em `out/personagens/ficha-lucas.png` e `ficha-diego.png`): 6 vistas (frente, 3/4 esq/dir, lado dir/esq, costas)
+    + 14 expressões prontas (normal, feliz, rindo, falando, confiante, debochado, pensativo, sério, bravo, fúria, triste,
+    medo, surpreso, cansado). Os valores de cada expressão estão na lista `EXPR` do arquivo — reaproveitar nos episódios.
+
 ## Pendências / ideias que ele ainda pode pedir
 - Testar a esteira de 4 agentes no próximo episódio e ajustar os arquivos dos agentes com o que ele achar.
 - Gesto de "mão na cabeça" no Lucas gigante (o braço atual não alcança a cabeça; virou punho tremendo).
