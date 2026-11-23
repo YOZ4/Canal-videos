@@ -5,7 +5,7 @@ import { DIEGO, LUCAS, type Design } from "../../estilo2d/personagens";
 /** Ficha completa de um personagem: todas as vistas + todas as expressões (composições FichaLucas / FichaDiego) */
 
 export const FICHA_W = 2400;
-export const FICHA_H = 2430;
+export const FICHA_H = 2870;
 
 type Expr = [string, Partial<Rosto>];
 
@@ -31,6 +31,13 @@ const EXPR: Expr[] = [
   ["CHORANDO", { lagrimas: 1, olhos: 0.85, olhar: [0, 0.7], sobrancelha: -22, sobrancelhaY: 14, sorriso: -0.6, boca: 0.7, canto: 0, bochecha: 1 }],
   ["APAIXONADO", { coracao: 1, sorriso: 0.9, canto: 0, sobrancelhaY: 10, bochecha: 1, boca: 0 }],
   ["COM NOJO", { nojo: 1, olhos: 0.55, sobrancelha: 14, sobrancelhaY: 4, olhar: [0.6, 0], canto: 0 }],
+  ["PÂNICO", { espiral: 1, suor: 1, sobrancelha: -20, sobrancelhaY: 16, sorriso: -0.6, boca: 0.7, canto: 0 }],
+  ["FOME", { baba: 1, olhos: 1.25, pupila: 1.25, olhar: [0.5, 0.7], sobrancelha: -6, sobrancelhaY: 10, sorriso: 0.4, boca: 0.3, canto: 0 }],
+  ["DORMINDO", { dormindo: 1, sobrancelha: -4, sorriso: 0.15, canto: 0, boca: 0 }],
+  ["CHOCADO", { palido: 1, pupila: 0.4, olhos: 1.2, sobrancelha: -8, sobrancelhaY: 14, sorriso: -0.5, boca: 0.45, canto: 0, bochecha: 0 }],
+  ["LEVE: CORADO", { vergonha: 0.5, sorriso: 0.5, canto: 0, olhar: [-0.4, 0.3], bochecha: 0 }],
+  ["LEVE: MAREJADO", { lagrimas: 0.3, sobrancelha: -14, sobrancelhaY: 8, sorriso: -0.4, canto: 0 }],
+  ["LEVE: SUANDO", { suor: 0.35, sobrancelha: -8, sobrancelhaY: 6, sorriso: 0.1, canto: 0.6 }],
 ];
 
 const VISTAS: [string, Partial<Pose>][] = [

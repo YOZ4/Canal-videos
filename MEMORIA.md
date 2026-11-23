@@ -81,7 +81,13 @@ pendente) e faça commit + push junto com o trabalho.
     PNG em `out/personagens/ficha-lucas.png` e `ficha-diego.png`): 6 vistas (frente, 3/4 esq/dir, lado dir/esq, costas)
     + 14 expressões prontas (normal, feliz, rindo, falando, confiante, debochado, pensativo, sério, bravo, fúria, triste,
     medo, surpreso, cansado + envergonhado, chorando, apaixonado, com nojo). Novos campos opcionais no Rosto:
-    `vergonha`, `lagrimas`, `coracao`, `nojo` (0..1; funcionam de frente e de perfil). Os valores de cada expressão estão na lista `EXPR` do arquivo — reaproveitar nos episódios.
+    `vergonha`, `lagrimas`, `coracao`, `nojo` (0..1; funcionam de frente e de perfil).
+    Depois: + pânico, fome, dormindo, chocado e exemplos de meia intensidade (corado, marejado, suando) = 25 rostos.
+    Mais campos: `espiral`, `suor`, `baba`, `dormindo` (bolha = valor; animar para encher/esvaziar), `palido`
+    (perde a cor e o queixo derrete), `pupila` (0.4 = choque). Boca aberta com sorriso ≤ −0.4 vira boca de cantos caídos.
+    **Vista 3/4 refeita** (ele achou errada): rosto gira como uma bola (olhos, nariz, boca, sobrancelhas e orelha
+    juntos; a orelha antes ficava "descolada" fora da cabeça), nariz ganha lateral, ombro/braço de longe vai para
+    trás do tronco, quadril e pés acompanham. Afeta todos os vídeos que usam `vira` (para melhor). Os valores de cada expressão estão na lista `EXPR` do arquivo — reaproveitar nos episódios.
 
 ## Pendências / ideias que ele ainda pode pedir
 - Testar a esteira de 4 agentes no próximo episódio e ajustar os arquivos dos agentes com o que ele achar.
