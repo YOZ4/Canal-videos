@@ -9,6 +9,7 @@ import { CURVA, balancoCabelo, k, kPose, trocaRosto } from "../../estilo2d/anim"
 import { entre, mola } from "../../estilo2d/movimento";
 import { CIANO, CelJJK, CenarioJJK, Desfoque, EnergiaCiano, GradeJJK, LinhasRadiais, Particulas, QuadroImpacto, Racha, RiscosVelocidade, tremorJJK } from "../../estilo2d/EstiloJJK";
 import { DIEGO, LUCAS } from "../../estilo2d/personagens";
+import { BonecoCima, ChaoCima, RachaCima } from "../../estilo2d/VistaCima";
 import { Som } from "../Cacadores/comum";
 
 /**
@@ -19,6 +20,7 @@ import { Som } from "../Cacadores/comum";
 export const FPS_JJK = 24;
 export const DURACAO = 220;
 const ESC = 0.72;
+const CEL = { luz: -160, sombra: 34, forca: 0.6, recorte: 10 };
 const IMP = 76; // contato do chute
 const PAUSA = 6; // hit-stop
 /** tempo da história (congela no impacto) */
@@ -40,8 +42,8 @@ const lucas = (t: number): Pose => {
   if (t <= IMP)
     return kPose(t, [
       [0, LG(260)],
-      [56, LG(260)],
-      [62, ant, CURVA.entra], // antecipação (segura)
+      [50, LG(260)],
+      [57, ant, CURVA.entra], // antecipação (segura)
       [64, ant],
       [68, voa, CURVA.sai], // arrancada em 2 desenhos
       [72, encolhe, CURVA.suave],
@@ -122,35 +124,51 @@ const diego = (t: number): Pose => {
 /** cabelo com 2–4 frames de atraso, também de 2 em 2 */
 const cabelo = (pose: (t: number) => Pose, f: number) => balancoCabelo(dois(f) - 2, (g) => pose(tw(g)).x * 0.18 * (pose(tw(g)).lado ?? 1), (g) => pose(tw(g)).inclina + pose(tw(g)).agacha * 0.06);
 
-// ---------------- câmera por plano (cortes secos) ----------------
-const PLANOS = [0, 40, 58, 86, 126, 172, 196];
-const camera = (f: number, pl: Pose, pd: Pose) => {
+// ---------------- câmera: planos curtos (cortes secos), ângulos extremos ----------------
+// inclina = rotateX em perspectiva (+ = câmera baixa olhando para cima; − = câmera alta olhando para baixo)
+// cima = plano aéreo (personagens vistos de cima); so = só um personagem no quadro (closes)
+type Plano = { de: number; x: number; y: number; zoom: number; rot: number; inclina?: number; cima?: boolean; borrao?: number; so?: "L" | "D" };
+export const PLANOS_JJK = [0, 18, 30, 40, 54, 62, 70, 76, 88, 100, 114, 128, 146, 160, 176, 198];
+const plano = (f: number, pl: Pose, pd: Pose): Plano => {
   const t = tw(f);
+  const meio = (pl.x + pd.x) / 2;
+  const P = PLANOS_JJK;
+  const i = P.filter((de) => f >= de).length - 1;
+  const u = (f - P[i]) / ((P[i + 1] ?? DURACAO) - P[i]); // 0..1 dentro do plano
+  const cabD = posCabeca(pd);
+  const cabL = posCabeca(pl);
+  switch (i) {
+    case 0: return { de: 0, x: 520 + u * 40, y: 1200, zoom: 0.74, rot: -6 - u * 2, inclina: 22 };
+    case 1: return { de: 18, x: meio, y: 0, zoom: 1.05 + u * 0.1, rot: 26 + u * 4, cima: true };
+    case 2: return { de: 30, x: pd.x - 160, y: CHAO_Y - 520, zoom: 2.6 + u * 0.3, rot: 9, borrao: 8, so: "D" };
+    case 3: return { de: 40, x: cabL[0] + 40, y: cabL[1] + 20, zoom: 2.4 + 0.7 * CURVA.sai(Math.min(1, (f - 40) / 4)), rot: 4, borrao: 9, so: "L" };
+    case 4: return { de: 54, x: pl.x + 40, y: CHAO_Y - 260, zoom: 1.45, rot: -10, inclina: 32, borrao: 2 };
+    case 5: return { de: 62, x: entre(320, 520, CURVA.suave(u)), y: 1140, zoom: 1.0, rot: -6, borrao: f < 66 ? 0 : 0 };
+    case 6: return { de: 70, x: pl.x + 160, y: CHAO_Y - 430, zoom: 1.35, rot: 12, inclina: -12 };
+    case 7: return { de: 76, x: entre(380, 640, 0.6), y: 1140, zoom: 1.0 + 0.22 * k(f, [[IMP - 1, 0], [IMP, 1, CURVA.sai], [IMP + PAUSA + 6, 0.3, CURVA.suave]]), rot: -8 };
+    case 8: return { de: 88, x: pd.x - 80, y: 1180, zoom: 0.92, rot: 6, inclina: -28 };
+    case 9: return { de: 100, x: cabD[0] - 30, y: cabD[1] + 20, zoom: 2.4 + u * 0.2, rot: -5, borrao: 9, so: "D" };
+    case 10: return { de: 114, x: pd.x - 60, y: 1250, zoom: 1.0, rot: 8, inclina: 34 };
+    case 11: return { de: 128, x: pd.x, y: Math.min(1100, pd.y - 200), zoom: 0.8, rot: -12, inclina: 40, so: "D" };
+    case 12: return { de: 146, x: meio, y: 1150 - Math.max(0, CHAO_Y - pd.y) * 0.45, zoom: 0.82, rot: -3 };
+    case 13: return { de: 160, x: meio + 30, y: 0, zoom: 0.98 + u * 0.08, rot: -18 - u * 3, cima: true };
+    case 14: return { de: 176, x: meio + 20, y: 1200, zoom: 0.74 + 0.1 * CURVA.suave(u), rot: -5 - u * 3, inclina: 18 };
+    default: return { de: 198, x: cabD[0] - 40, y: cabD[1] + 20, zoom: 2.4 + 0.6 * CURVA.sai(Math.min(1, (f - 198) / 4)), rot: -4, borrao: 9, so: "D" };
+  }
+  void t;
+};
+const camera = (f: number, pl: Pose, pd: Pose) => {
   const impactos: [number, number][] = [
     [IMP, 22],
     [IMP + PAUSA + 2, 8],
     [158, 18],
   ];
   const tr = tremorJJK(f, impactos);
-  let c: { x: number; y: number; zoom: number; rot: number };
-  if (f < 40) c = { x: 540 + f * 0.8, y: 1180 - f * 0.4, zoom: 0.7, rot: -4 - f * 0.03 };
-  else if (f < 58) {
-    const cab = posCabeca(pl);
-    const z = 2.4 + 0.7 * CURVA.sai(Math.min(1, (f - 40) / 4));
-    c = { x: cab[0] + 40, y: cab[1] + 20, zoom: z, rot: 4 };
-  } else if (f < 86) c = { x: entre(380, 640, CURVA.suave(Math.min(1, (t - 58) / 16))), y: 1140, zoom: 1.0 + 0.22 * k(f, [[IMP - 1, 0], [IMP, 1, CURVA.sai], [IMP + PAUSA + 6, 0.3, CURVA.suave]]), rot: -6 };
-  else if (f < 126) c = { x: entre(760, pd.x - 60, 0.85), y: 1120, zoom: 0.9, rot: 5 };
-  else if (f < 172) c = { x: (pl.x + pd.x) / 2, y: 1150 - Math.max(0, CHAO_Y - pd.y) * 0.45, zoom: 0.82, rot: -3 };
-  else if (f < 196) c = { x: (pl.x + pd.x) / 2 + 20, y: 1200, zoom: 0.74 + 0.1 * CURVA.suave(Math.min(1, (f - 172) / 24)), rot: -5 - (f - 172) * 0.05 };
-  else {
-    // close final no Diego (espelha o close do Lucas)
-    const cab = posCabeca(pd);
-    c = { x: cab[0] - 40, y: cab[1] + 20, zoom: 2.4 + 0.6 * CURVA.sai(Math.min(1, (f - 196) / 4)), rot: -4 };
-  }
+  const c = plano(f, pl, pd);
   return { ...c, x: c.x + tr.x, y: c.y + tr.y, rot: c.rot + tr.rot };
 };
 
-export const TesteJJK: React.FC = () => {
+export const TesteJJK: React.FC<{ semCel?: boolean }> = ({ semCel }) => {
   const f = useCurrentFrame();
   const t = tw(f);
   const gt = tw(dois(f)); // tempo dos desenhos (12 por segundo)
@@ -163,9 +181,8 @@ export const TesteJJK: React.FC = () => {
   const pl: Pose = { ...pl0, estica: pl0.estica + respL * 0.012, inclina: pl0.inclina + respL * 1.2, cabelo: cabelo(lucas, f) + vento(0) };
   const pd: Pose = { ...pd0, estica: pd0.estica + respD * 0.012, inclina: pd0.inclina + respD * 1.2, cabelo: cabelo(diego, f) + vento(2) };
   const cam = camera(f, pl, pd);
-  const close = (f >= 40 && f < 58) || f >= 196;
-  const closeDiego = f >= 196;
-  const borraoChicote = f >= 64 && f < 68 ? 26 : f >= 126 && f < 128 ? 18 : 0;
+  const closeDiego = cam.so === "D";
+  const borraoChicote = f >= 64 && f < 68 ? 26 : f >= 128 && f < 130 ? 18 : 0;
   const rl = trocaRosto(gt, [
     [0, { ...ROSTO_BASE, olhos: 0.8, sobrancelha: 20, sorriso: 0, olhar: [1, 0] }],
     [48, { ...ROSTO_BASE, olhos: 0.5, sobrancelha: 30, boca: 0.1, sorriso: -0.1, olhar: [1, 0] }, 0.5],
@@ -186,10 +203,23 @@ export const TesteJJK: React.FC = () => {
   const luzCena = 1.3 + 0.5 * k(f, [[172, 0], [210, 1, CURVA.suave]]);
   const contato = { x: pl0.x + 250, y: CHAO_Y - 300 };
   const impactoBranco = f === IMP + 2;
-  const cena = (
+  const alturaD = Math.max(0, CHAO_Y - pd.y);
+  const cenaCima = (
     <svg width={1080} height={1920}>
       <g transform={`translate(540 960) rotate(${cam.rot}) scale(${cam.zoom}) translate(${-cam.x} ${-cam.y})`}>
-        <Desfoque chave="fundo" px={close ? 9 : f >= 172 ? 1.5 : 0}>
+        <ChaoCima cx={cam.x} cz={0} />
+        <RachaCima x={pd.x} z={0} f={t} de={152} tamanho={1.6} />
+        <Particulas f={f} area={[cam.x - 900, -900, 1800, 1800]} forca={0.5} />
+        <BonecoCima d={LUCAS} pose={pl} z={-30} />
+        <BonecoCima d={DIEGO} pose={pd} z={30} altura={alturaD} espada />
+        <OndaChoque x={pd.x} y={0} f={t} de={152} dur={16} raio={900} cor={CIANO} />
+      </g>
+    </svg>
+  );
+  const cena = cam.cima ? cenaCima : (
+    <svg width={1080} height={1920}>
+      <g transform={`translate(540 960) rotate(${cam.rot}) scale(${cam.zoom}) translate(${-cam.x} ${-cam.y})`}>
+        <Desfoque chave="fundo" px={cam.borrao ?? (f >= 176 ? 1.5 : 0)}>
           <CenarioJJK camX={cam.x} luz={luzCena} />
         </Desfoque>
         {/* arrancada: riscos escuros + rastro de energia */}
@@ -204,12 +234,12 @@ export const TesteJJK: React.FC = () => {
         <Poeira x={700} y={CHAO_Y + 6} f={t} de={152} dur={26} largura={1.3} />
         <ObjetosFisica x={700} y={CHAO_Y - 10} f={t} de={152} n={9} chao={CHAO_Y + 30} velocidade={26} angulo={[-160, -20]} gravidade={1.6} semente="pjjk" desenho={(i) => <path d="M -12 -8 L 10 -12 L 14 6 L -6 12 Z" fill={["#3a4a52", "#26323a", "#4d5f68"][i % 3]} stroke="#05080c" strokeWidth={3} />} />
         <Particulas f={f} area={[cam.x - 700, CHAO_Y - 1300, 1400, 1400]} forca={0.55 + 0.45 * (luzCena - 1) / 0.6} />
-        {close && !closeDiego ? null : (<CelJJK chave="diego" luz={-160}>
-          <Boneco2D id="dJ" d={DIEGO} pose={{ ...pd, estica: pd.estica * rd.corpo.estica }} rosto={rd.rosto} naMao={<Espada brilho={0.4 + 0.6 * k(t, [[116, 0], [134, 1], [170, 0.3]])} cor={CIANO} />} naMaoGira />
+        {cam.so === "L" ? null : (<CelJJK chave="diego" luz={-160} sombra={0} recorte={0}>
+          <Boneco2D id="dJ" d={DIEGO} pose={{ ...pd, estica: pd.estica * rd.corpo.estica }} rosto={rd.rosto} cel={semCel ? undefined : CEL} naMao={<Espada brilho={0.4 + 0.6 * k(t, [[116, 0], [134, 1], [170, 0.3]])} cor={CIANO} />} naMaoGira />
         </CelJJK>)}
         {closeDiego ? null : (
-          <CelJJK chave="lucas" luz={-160}>
-            <Boneco2D id="lJ" d={LUCAS} pose={{ ...pl, estica: pl.estica * rl.corpo.estica }} rosto={rl.rosto} />
+          <CelJJK chave="lucas" luz={-160} sombra={0} recorte={0}>
+            <Boneco2D id="lJ" d={LUCAS} pose={{ ...pl, estica: pl.estica * rl.corpo.estica }} rosto={rl.rosto} cel={semCel ? undefined : CEL} />
           </CelJJK>
         )}
         {/* contra-ataque: corte de energia na descida */}
@@ -224,7 +254,9 @@ export const TesteJJK: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: "#000" }}>
       <QuadroImpacto ativo={pausa && f < IMP + 2} cor={f === IMP ? "vermelho" : "branco"}>
-        <GradeJJK borrao={borraoChicote}>{cena}</GradeJJK>
+        <GradeJJK borrao={borraoChicote}>
+          <AbsoluteFill style={{ transform: cam.inclina ? `perspective(1500px) rotateX(${cam.inclina}deg) scale(${1 + Math.abs(cam.inclina) / 38})` : undefined, transformOrigin: "50% 55%" }}>{cena}</AbsoluteFill>
+        </GradeJJK>
       </QuadroImpacto>
       {impactoBranco ? <AbsoluteFill style={{ background: "#f4ffff", opacity: 0.85 }} /> : null}
       {f >= DURACAO - 4 ? <AbsoluteFill style={{ background: "#000" }} /> : null}
@@ -248,4 +280,3 @@ export const TesteJJK: React.FC = () => {
   );
 };
 
-export const PLANOS_JJK = PLANOS;

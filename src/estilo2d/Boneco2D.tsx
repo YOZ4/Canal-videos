@@ -1,4 +1,25 @@
+import { createContext, useContext } from "react";
 import { CONTORNO, type Design } from "./personagens";
+
+/** sombra por partes (cel-shading): cada parte (perna, braço/tronco, cabeça) recebe o próprio filtro */
+type CelIds = { perna?: string; corpo?: string; cabeca?: string };
+const CelCtx = createContext<CelIds>({});
+const Parte: React.FC<{ k: keyof CelIds; children: React.ReactNode }> = ({ k, children }) => {
+  const ids = useContext(CelCtx);
+  return ids[k] ? <g filter={`url(#${ids[k]})`}>{children}</g> : <>{children}</>;
+};
+export type Cel = {
+  /** de onde vem a luz, em graus no MUNDO (0 = direita, -90 = de cima, -160 = esquerda e um pouco de cima) */
+  luz: number;
+  /** largura da sombra dura (px de mundo) */
+  sombra?: number;
+  cor?: string;
+  forca?: number;
+  /** largura da luz de recorte (px de mundo); 0 = sem */
+  recorte?: number;
+  corRecorte?: string;
+  forcaRecorte?: number;
+};
 
 /**
  * Personagem 2D articulado (SVG), desenhado no estilo da folha de personagens:
@@ -764,10 +785,10 @@ const Frente: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
           <stop offset="0.86" stopColor={d.camisaSombra} />
         </linearGradient>
       </defs>
-      <PernaDesenho joelhoX={-1} quadril={[-56, quadrilY]} pe={peE} d={d} ladoTenis={-1} frontal={pose.joelhoFrente ?? 0} />
-      <PernaDesenho joelhoX={1} quadril={[56, quadrilY]} pe={peD} d={d} ladoTenis={1} frontal={pose.joelhoFrente ?? 0} />
+      <Parte k="perna"><PernaDesenho joelhoX={-1} quadril={[-56, quadrilY]} pe={peE} d={d} ladoTenis={-1} frontal={pose.joelhoFrente ?? 0} /></Parte>
+      <Parte k="perna"><PernaDesenho joelhoX={1} quadril={[56, quadrilY]} pe={peD} d={d} ladoTenis={1} frontal={pose.joelhoFrente ?? 0} /></Parte>
       <g transform={`translate(0 ${quadrilY}) rotate(${pose.inclina})`}>
-        <g transform={`scale(${1 - Math.abs(pose.vira) * 0.12} 1)`}>
+        <Parte k="corpo"><g transform={`scale(${1 - Math.abs(pose.vira) * 0.12} 1)`}>
         <rect x={-36} y={-TRONCO - 72} width={72} height={90} rx={10} fill={d.pele} stroke={CONTORNO} strokeWidth={LINHA} />
         <rect x={-30} y={-TRONCO - 4} width={60} height={22} fill={d.peleSombra} opacity={0.6} />
         <path
@@ -797,15 +818,17 @@ const Frente: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
             {d.numero}
           </text>
         ) : null}
-        </g>
-        <BracoDesenho o={[-OMBRO_X + 8, ombroY]} sentido={-1} b={bE} gesto={cruz > 0.5 ? "bola" : pose.maoE} d={d} alonga={alonga} />
-        <BracoDesenho o={[OMBRO_X - 8, ombroY]} sentido={1} b={bD} gesto={cruz > 0.5 ? "bola" : pose.maoD} d={d} alonga={alonga} biceps={pose.biceps} objeto={objeto} objetoGira={objetoGira} />
+        </g></Parte>
+        <Parte k="corpo"><BracoDesenho o={[-OMBRO_X + 8, ombroY]} sentido={-1} b={bE} gesto={cruz > 0.5 ? "bola" : pose.maoE} d={d} alonga={alonga} /></Parte>
+        <Parte k="corpo"><BracoDesenho o={[OMBRO_X - 8, ombroY]} sentido={1} b={bD} gesto={cruz > 0.5 ? "bola" : pose.maoD} d={d} alonga={alonga} biceps={pose.biceps} objeto={objeto} objetoGira={objetoGira} /></Parte>
         <g transform={`translate(0 ${-TRONCO - 60}) rotate(${pose.cabeca}) translate(0 ${-R_CABECA + 18})`}>
+          <Parte k="cabeca">
           {costas ? (
             <CabecaCostas d={d} id={id} poder={poder} balanco={pose.cabelo} />
           ) : (
             <Cabeca d={d} r={rosto} id={id} poder={poder} balanco={pose.cabelo} vira={pose.vira} />
           )}
+          </Parte>
         </g>
       </g>
     </g>
@@ -830,13 +853,13 @@ const Perfil: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
         </linearGradient>
       </defs>
       {/* perna e braço de trás */}
-      <PernaDesenho joelhoX={1} quadril={[-6, quadrilY]} pe={peTras} d={d} ladoTenis={1} perfil atras rot={pose.peE.rot ?? 0} />
+      <Parte k="perna"><PernaDesenho joelhoX={1} quadril={[-6, quadrilY]} pe={peTras} d={d} ladoTenis={1} perfil atras rot={pose.peE.rot ?? 0} /></Parte>
       <g transform={`translate(0 ${quadrilY}) rotate(${pose.inclina})`}>
-        <BracoDesenho o={[-6, ombroY]} sentido={1} b={pose.bracoE} gesto={pose.maoE} d={d} atras />
+        <Parte k="corpo"><BracoDesenho o={[-6, ombroY]} sentido={1} b={pose.bracoE} gesto={pose.maoE} d={d} atras /></Parte>
       </g>
-      <PernaDesenho joelhoX={1} quadril={[8, quadrilY]} pe={peFrente} d={d} ladoTenis={1} perfil rot={pose.peD.rot ?? 0} />
+      <Parte k="perna"><PernaDesenho joelhoX={1} quadril={[8, quadrilY]} pe={peFrente} d={d} ladoTenis={1} perfil rot={pose.peD.rot ?? 0} /></Parte>
       <g transform={`translate(0 ${quadrilY}) rotate(${pose.inclina})`}>
-        <rect x={-30} y={-TRONCO - 72} width={64} height={90} rx={10} fill={d.pele} stroke={CONTORNO} strokeWidth={LINHA} />
+        <Parte k="corpo"><rect x={-30} y={-TRONCO - 72} width={64} height={90} rx={10} fill={d.pele} stroke={CONTORNO} strokeWidth={LINHA} />
         <path
           d={`M -50 ${-TRONCO + 2} Q -92 ${-TRONCO + 14} -94 ${-TRONCO + 70} L -86 -60 Q -84 -10 -88 22 L 98 22 Q 94 -20 98 -80 Q 114 -250 94 ${-TRONCO + 50} Q 82 ${-TRONCO + 4} 40 ${-TRONCO} Q 0 ${-TRONCO + 30} -50 ${-TRONCO + 2} Z`}
           fill={`url(#${tid})`}
@@ -844,11 +867,11 @@ const Perfil: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
           strokeWidth={LINHA}
           strokeLinejoin="round"
         />
-        <path d="M 60 -250 Q 40 -200 56 -150" stroke={d.camisaSombra} strokeWidth={4} fill="none" strokeLinecap="round" />
+        <path d="M 60 -250 Q 40 -200 56 -150" stroke={d.camisaSombra} strokeWidth={4} fill="none" strokeLinecap="round" /></Parte>
         <g transform={`translate(4 ${-TRONCO - 60}) rotate(${pose.cabeca}) translate(0 ${-R_CABECA + 18})`}>
-          <CabecaPerfil d={d} r={rosto} id={id} poder={poder} balanco={pose.cabelo} />
+          <Parte k="cabeca"><CabecaPerfil d={d} r={rosto} id={id} poder={poder} balanco={pose.cabelo} /></Parte>
         </g>
-        <BracoDesenho o={[8, ombroY]} sentido={1} b={pose.bracoD} gesto={pose.maoD} d={d} objeto={objeto} objetoGira={objetoGira} />
+        <Parte k="corpo"><BracoDesenho o={[8, ombroY]} sentido={1} b={pose.bracoD} gesto={pose.maoD} d={d} objeto={objeto} objetoGira={objetoGira} /></Parte>
       </g>
     </g>
   );
@@ -867,6 +890,8 @@ export const Boneco2D: React.FC<{
   naMao?: React.ReactNode;
   /** objeto acompanha a direção do antebraço (espadas) */
   naMaoGira?: boolean;
+  /** sombra dura + luz de recorte em CADA parte do corpo (estilo anime) */
+  cel?: Cel;
 }> = ({
   d,
   pose,
@@ -876,8 +901,24 @@ export const Boneco2D: React.FC<{
   opacidade = 1,
   naMao,
   naMaoGira,
+  cel,
 }) => {
   const peMin = Math.min(pose.peE.dy, pose.peD.dy);
+  // direção da luz em cada espaço local (desfaz giro, espelho do lado, inclinação e cabeça)
+  const filtros: { k: keyof CelIds; rot: number }[] = [
+    { k: "perna", rot: 0 },
+    { k: "corpo", rot: pose.inclina },
+    { k: "cabeca", rot: pose.inclina + pose.cabeca },
+  ];
+  const ids: CelIds = cel ? { perna: `celp-${id}`, corpo: `celc-${id}`, cabeca: `celh-${id}` } : {};
+  const dirLocal = (rotLocal: number): P => {
+    const a = rad(cel ? cel.luz : 0) - rad(pose.gira * pose.lado);
+    let x = Math.cos(a);
+    const y = Math.sin(a);
+    x *= pose.lado;
+    const b = -rad(rotLocal);
+    return [x * Math.cos(b) - y * Math.sin(b), x * Math.sin(b) + y * Math.cos(b)];
+  };
   return (
     <g
       opacity={opacidade}
@@ -888,12 +929,42 @@ export const Boneco2D: React.FC<{
           <feGaussianBlur stdDeviation={16} />
         </filter>
       </defs>
+      {cel ? (
+        <defs>
+          {filtros.map(({ k, rot }) => {
+            const [lx, ly] = dirLocal(rot);
+            const sh = (cel.sombra ?? 30) / pose.escala;
+            const rc = (cel.recorte ?? 9) / pose.escala;
+            return (
+              <filter key={k} id={ids[k]} x="-20%" y="-20%" width="140%" height="140%" colorInterpolationFilters="sRGB">
+                <feOffset in="SourceAlpha" dx={lx * sh} dy={ly * sh} result="paraLuz" />
+                <feComposite in="SourceAlpha" in2="paraLuz" operator="out" result="meia" />
+                <feFlood floodColor={cel.cor ?? "#141c38"} floodOpacity={cel.forca ?? 0.55} />
+                <feComposite in2="meia" operator="in" result="sombra" />
+                <feOffset in="SourceAlpha" dx={-lx * rc} dy={-ly * rc} result="longe" />
+                <feComposite in="SourceAlpha" in2="longe" operator="out" result="faixa" />
+                <feFlood floodColor={cel.corRecorte ?? "#5ff4ff"} floodOpacity={rc > 0 ? cel.forcaRecorte ?? 1 : 0} />
+                <feComposite in2="faixa" operator="in" result="recorte" />
+                <feGaussianBlur in="recorte" stdDeviation={6 / pose.escala} result="brilho" />
+                <feMerge>
+                  <feMergeNode in="SourceGraphic" />
+                  <feMergeNode in="sombra" />
+                  <feMergeNode in="brilho" />
+                  <feMergeNode in="recorte" />
+                </feMerge>
+              </filter>
+            );
+          })}
+        </defs>
+      ) : null}
       <ellipse cx={0} cy={4} rx={pose.vista === "perfil" ? 170 : 210} ry={30} fill="#1d1424" opacity={0.26 * Math.max(0.2, 1 + peMin / 400)} filter={`url(#sombra-${id})`} />
-      {pose.vista === "perfil" ? (
-        <Perfil d={d} pose={pose} rosto={rosto} id={id} poder={poder} objeto={naMao} objetoGira={naMaoGira} />
-      ) : (
-        <Frente d={d} pose={pose} rosto={rosto} id={id} poder={poder} objeto={naMao} objetoGira={naMaoGira} costas={pose.vista === "costas"} />
-      )}
+      <CelCtx.Provider value={ids}>
+        {pose.vista === "perfil" ? (
+          <Perfil d={d} pose={pose} rosto={rosto} id={id} poder={poder} objeto={naMao} objetoGira={naMaoGira} />
+        ) : (
+          <Frente d={d} pose={pose} rosto={rosto} id={id} poder={poder} objeto={naMao} objetoGira={naMaoGira} costas={pose.vista === "costas"} />
+        )}
+      </CelCtx.Provider>
     </g>
   );
 };
