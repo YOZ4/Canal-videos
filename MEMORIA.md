@@ -154,5 +154,7 @@ pendente) e faça commit + push junto com o trabalho.
 - Gancho de início de sessão (`.claude/hooks/session-start.sh`, registrado em `.claude/settings.json`) instala npm,
   numpy e ffmpeg sozinho (só reinstala se package.json/lock mudar). Se o tsc reclamar de dependências: `npm install`. Alinhamento: `alinhamento.json` é `{duracao, trechos, palavras}`.
 - No estilo JJK, o desenho anda de 2 em 2 (`dois(f)`), mas câmera, aura e partículas andam a cada quadro.
+- Perna de perfil (IK em `pontosPerna`): o joelho segue a anatomia (calcanhar dobra pra trás). Antes ele era forçado
+  "pra frente" e virava AO CONTRÁRIO quando o pé subia acima do quadril (chute) — o usuário reclamou. Pé abaixo do quadril = igual antes.
 - Lado do braço no Boneco2D de frente: `bracoD` fica do lado direito da tela; ombro 90° = braço na horizontal.
 - Revisão rápida: folha de quadros `ffmpeg -vf "fps=0.5,scale=180:-1,tile=8x6"` + `scripts/tira.sh` nos momentos-chave.

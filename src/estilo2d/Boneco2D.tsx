@@ -521,7 +521,7 @@ const BracoDesenho: React.FC<{
 // ---------- perna (IK de 2 ossos: pé fica plantado) ----------
 
 /** joelhoX: direção preferida do joelho (frente: pra fora; perfil: pra frente = +1) */
-const pontosPerna = (joelhoX: number, quadril: P, pe: P, frontal = 0): { q: P; j: P; t: P } => {
+const pontosPerna = (joelhoX: number, quadril: P, pe: P, frontal = 0, perfil = false): { q: P; j: P; t: P } => {
   const dx = pe[0] - quadril[0];
   const dy = pe[1] - quadril[1];
   let dist = Math.hypot(dx, dy);
@@ -535,7 +535,12 @@ const pontosPerna = (joelhoX: number, quadril: P, pe: P, frontal = 0): { q: P; j
   const h = Math.sqrt(Math.max(0, COXA * COXA - (dist / 2) * (dist / 2))) * (1 - 0.88 * frontal);
   let px = -dy / dist;
   let py = dx / dist;
-  if (px * joelhoX < 0) {
+  if (perfil) {
+    // perfil: regra da anatomia — o calcanhar sempre dobra pra TRÁS. Pé abaixo do quadril → joelho pra frente (igual
+    // antes); pé à frente/acima do quadril (chute, joelho no peito) → joelho pra CIMA; pé atrás → joelho pra baixo.
+    px = (dy / dist) * Math.sign(joelhoX || 1);
+    py = (-dx / dist) * Math.sign(joelhoX || 1);
+  } else if (px * joelhoX < 0) {
     px = -px;
     py = -py;
   }
@@ -569,7 +574,7 @@ const PernaDesenho: React.FC<{ joelhoX: number; quadril: P; pe: P; d: Design; la
   rot = 0,
   frontal = 0,
 }) => {
-  const { q, j, t } = pontosPerna(joelhoX, quadril, pe, frontal);
+  const { q, j, t } = pontosPerna(joelhoX, quadril, pe, frontal, perfil);
   // de frente, pé levantado = mais perto da câmera (aparece um pouco maior)
   const perto = !perfil && frontal > 0 ? Math.max(0, Math.min(1, (TORNOZELO_Y - pe[1]) / 200)) * frontal : 0;
   return (
