@@ -40,3 +40,9 @@ Já instalado: `three`, `@react-three/fiber`, `@remotion/three`. Regras gerais d
    Avise o usuário do tempo extra (meça com um trecho curto antes do render final).
 6. Modelos prontos (.glb) só se o usuário mandar o arquivo e a licença permitir; colocar em `public/modelos/` e carregar
    com `useGLTF` + `staticFile` (sem internet no render).
+
+7. **Híbrido com câmera 3D movendo (órbita, dolly em profundidade)** — modelo: `src/videos/SaiyajinRemake/` (`mundo3d.tsx`):
+   o cenário vira 3D (chão, pedras, rachaduras, onda de choque) e o personagem continua 2D, posto na tela pela projeção da
+   câmera (`projeta(cam, [0,0,0])` = pés; altura pela projeção de [0,1.85,0]); duas camadas 3D (`Fundo3D` atrás e `Frente3D`
+   na frente do personagem, separando objetos pela profundidade). Na órbita, o personagem vira com `vira = -sin(ângulo)`.
+   Pedras e poses de 2 em 2 (`dois(f)`), câmera a 24. Revisão de 3D: checklist no agente `revisor-qualidade`.

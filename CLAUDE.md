@@ -62,6 +62,11 @@ trocando arquivos em `producao/<episodio>/` (guia em `producao/README.md`). Use 
   (CorteArco, Faiscas, OndaChoque, Chamas, Fumaca, Rastro, Onomatopeia), trilha `scripts/gerar_trilha_luta.py`.
   Exemplo completo: `src/videos/Luta/LutaTeste.tsx` (cartão VS, close nos olhos, hit-stop, inversão de cor).
 
+## Híbrido 2D + 3D com câmera 3D (modelo: `src/videos/SaiyajinRemake`)
+- Cenário em 3D toon (`mundo3d.tsx`: chão, pedras, rachas, onda de choque, `Fundo3D`/`Frente3D`), personagem SEMPRE 2D posto
+  pela projeção da câmera (`projeta`); órbita → personagem vira com `vira`. 3D só onde o 2D trava (órbita, profundidade,
+  objetos flutuando). Render `--gl=swangle`. Revisão de 3D: checklist no agente `revisor-qualidade`.
+
 ## Ferramentas extras (skills próprias, exemplo em `src/videos/Ferramentas/TesteFerramentas.tsx`)
 - `motion-design` → `coreografia.ts`: entrada/saída/vida com mola, `escalonado` (cascata), `pulso`, `conta`, `TEMPO`.
 - `desenho-a-mao` → `Desenho.tsx`: `Desenho` (traços com caneta), `TextoMao` (fonte Patrick Hand), `eixos`, `curvaGrafico`, `seta`, `circulado`, `Papel`.

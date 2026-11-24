@@ -137,6 +137,13 @@ pendente) e faça commit + push junto com o trabalho.
     (trilha com ducking automático sob a narração + 14 efeitos `as-*`). Plano/revisões: `producao/asch/`.
     Vídeo: `out/experimento-asch.mp4` (alta só no chat).
 
+21. **Remake do 1º vídeo ("E se você virasse um Saiyajin?", `out/lucas-saiyajin.mp4`)** em 2D estilo JJK + 3D estratégico
+    (`src/videos/SaiyajinRemake`, composição `SaiyajinRemake`, 24 qps, 13 s). Ele mandou um comando pronto: 3D toon só onde o
+    2D fica limitado (órbita de câmera, avanço em profundidade, pedras flutuando, explosão), mesma cadência (de 2 em 2), mesma
+    grade/grão. Técnica: cenário 3D (`mundo3d.tsx`) + personagem 2D posto pela projeção da câmera (`projeta`), duas camadas 3D
+    (atrás/frente por profundidade), virada 3/4 acompanhando a órbita. Protocolo de revisão de 3D colocado no agente
+    `revisor-qualidade` e na skill `cena-3d` (pedido dele). Antes/depois: `out/saiyajin-antes-depois.mp4`.
+
 ## Pendências / ideias que ele ainda pode pedir
 - Torção e pano da camiseta também na vista de frente/costas (hoje só perfil).
 - Testar a esteira de 4 agentes no próximo episódio e ajustar os arquivos dos agentes com o que ele achar.

@@ -38,6 +38,25 @@ não perdoa nada. Você não edita código — só aponta e prescreve.
   ordem natural (skill `desenho-a-mao`). 3D: mesma luz/contorno do 2D, objeto encaixado nas mãos/cenário (skill `cena-3d`).
 - Itens já rejeitados pelo usuário voltaram (câmera em perspectiva, efeitos de Pintura além do FilmeMudo)? Isso é falha grave.
 
+
+## Revisão de 3D (obrigatória quando o vídeo usa @remotion/three / `Camada3D` / `Objeto3D`)
+Faça junto com as revisões 1 e 2, em stills com `--gl=swangle` nos quadros de entrada, meio e saída de cada plano 3D.
+**Revisão 1 — caça aos erros técnicos de 3D**
+1. Geometria e articulação: objeto atravessando outro (clipping), pedra/objeto entrando no personagem 2D ou na câmera
+   (algo a < 1 unidade do caminho da câmera enche a tela), proporção deformada em ângulo estranho, parte "boneco rígido".
+2. Câmera e escala: câmera abaixo do chão ou atravessando parede/objeto; FOV distorcendo (fov > 50 em close deforma);
+   movimento linear/robótico (toda câmera com curva/mola; nada em velocidade constante perfeita).
+3. Integração de luz: 3D "plástico" (brilho especular, degradê suave) diferente do 2D → só `meshToonMaterial`/
+   `MaterialDesenho` com 2–3 faixas, contorno escuro (casca invertida), luz principal igual à do 2D, recorte na cor da aura.
+4. Encaixe 2D↔3D: personagem 2D pisa no chão 3D (posição e tamanho pela projeção da câmera, ex.: `projeta` em
+   `src/videos/SaiyajinRemake/mundo3d.tsx`)? Objetos atrás do personagem na camada de trás e os da frente na da frente?
+   Personagem 2D NUNCA girado em perspectiva (rotateX): numa órbita, ele vira com `vira`/`vista` acompanhando o ângulo.
+**Revisão 2 — fluidez, peso e impacto do híbrido**
+5. Transição 2D↔3D: mesma paleta, mesma grade de cor (`GradeJJK`), mesmo grão (finalizar.sh) e glow por cima dos dois?
+   Algum "salto" de cor, de espessura de linha ou de escala no corte?
+6. Cadência: personagem 2D de 2 em 2 → poses do 3D (objetos, pedras) também de 2 em 2; só câmera e partículas a 24/30.
+7. Peso: antecipação, hit-stop, follow-through nos objetos 3D (pedras sobem desacelerando, explodem e perdem velocidade).
+
 ## O que você entrega
 `producao/<episodio>/04-revisao-<n>.md` (n = 1, 2, 3...), com duas seções (Revisão 1 / Revisão 2). Cada falha:
 `[gravidade: alta/média/baixa] tempo mm:ss (quadro N) | o que está errado | prova (qual folha/tira) | ajuste cirúrgico`

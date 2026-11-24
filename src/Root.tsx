@@ -30,6 +30,7 @@ import { FolhaGolpes, FOLHA_G_W, FOLHA_G_H } from "./videos/Folha/FolhaGolpes";
 import { DemoGolpes, DURACAO_DEMO } from "./videos/TesteCamera/DemoGolpes";
 import { DemoGolpes2, DURACAO_DEMO2 } from "./videos/Luta2/DemoGolpes2";
 import { FichaAsch } from "./videos/Asch/FichaAsch";
+import { SaiyajinRemake, DUR_R } from "./videos/SaiyajinRemake/SaiyajinRemake";
 import { Asch, DURACAO as DUR_ASCH } from "./videos/Asch/Asch";
 import { TesteEstilo, FIM } from "./videos/TesteEstilo/TesteEstilo";
 
@@ -38,6 +39,7 @@ export const RemotionRoot: React.FC = () => {
     <>
       <Composition id="DemoGolpes" component={DemoGolpes} durationInFrames={DURACAO_DEMO} fps={30} width={1080} height={1920} />
       <Composition id="Asch" component={Asch} durationInFrames={DUR_ASCH} fps={60} width={1080} height={1920} />
+      <Composition id="SaiyajinRemake" component={SaiyajinRemake} durationInFrames={DUR_R} fps={24} width={1080} height={1920} />
       <Composition id="FichaAsch" component={FichaAsch} durationInFrames={1} fps={60} width={2400} height={1400} />
       <Composition id="DemoGolpes2" component={DemoGolpes2} durationInFrames={DURACAO_DEMO2} fps={30} width={1080} height={1920} />
       <Composition id="FolhaGolpes" component={FolhaGolpes} durationInFrames={1} fps={30} width={FOLHA_G_W} height={FOLHA_G_H} />
