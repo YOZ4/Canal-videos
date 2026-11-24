@@ -144,6 +144,12 @@ pendente) e faça commit + push junto com o trabalho.
     (atrás/frente por profundidade), virada 3/4 acompanhando a órbita. Protocolo de revisão de 3D colocado no agente
     `revisor-qualidade` e na skill `cena-3d` (pedido dele). Antes/depois: `out/saiyajin-antes-depois.mp4`.
 
+22. **Remake do "Caçadores — parte 1"** (pedido: "refaça com tudo o que aprendeu") — `src/videos/Cacadores2`, composição
+    `Cacadores2`, mesma narração/tempos (`../Cacadores/tempo.ts`), 12 atos (`atos1/2/3.tsx`). Usa camada de naturalidade
+    (`anima()` por trecho), rosto atuado, torção, corrida com pé plantado, luta.ts nos dois rounds, desenho à mão, copo do
+    Nen em 3D toon (híbrido com mãos/aura 2D), FilmeMudo. Lição: `<Sequence from={-de}>` dentro de outra Sequence NÃO
+    limita o filho (os atos apareciam todos) → use um seletor de ato por quadro. Revisões: `producao/cacadores-remake/`.
+
 ## Pendências / ideias que ele ainda pode pedir
 - Torção e pano da camiseta também na vista de frente/costas (hoje só perfil).
 - Testar a esteira de 4 agentes no próximo episódio e ajustar os arquivos dos agentes com o que ele achar.
