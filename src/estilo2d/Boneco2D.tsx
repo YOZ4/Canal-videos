@@ -74,6 +74,9 @@ export type Pose = {
   biceps: number;
   /** giro do corpo inteiro em graus, em torno do centro do corpo (mortal, queda) */
   gira: number;
+  /** altura (unidades do boneco, acima do chão da pose) do ponto em volta do qual o `gira` roda. Padrão 600 (peito).
+   *  396 = quadril, ~30 = tornozelos (tombar como árvore). */
+  giraEm?: number;
   /** vista de frente/costas: 0 = joelho dobra pro lado; 1 = joelho vem na direção da câmera (corrida de frente) */
   joelhoFrente?: number;
 };
@@ -1393,7 +1396,7 @@ export const Boneco2D: React.FC<{
   return (
     <g
       opacity={opacidade}
-      transform={`translate(${pose.x} ${pose.y}) rotate(${pose.gira * pose.lado} 0 ${-600 * pose.escala}) scale(${(pose.escala * pose.lado * pose.largura) / Math.sqrt(pose.estica)} ${pose.escala * pose.estica})`}
+      transform={`translate(${pose.x} ${pose.y}) rotate(${pose.gira * pose.lado} 0 ${-(pose.giraEm ?? 600) * pose.escala}) scale(${(pose.escala * pose.lado * pose.largura) / Math.sqrt(pose.estica)} ${pose.escala * pose.estica})`}
     >
       <defs>
         <filter id={`sombra-${id}`} x="-50%" y="-200%" width="200%" height="500%">

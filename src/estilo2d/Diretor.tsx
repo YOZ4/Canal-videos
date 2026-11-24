@@ -47,6 +47,29 @@ export const camDiretor = (f: number, planos: Plano[]) => {
   return { zoom: v(p.zoom, 1), x: v(p.x), y: v(p.y), rot: v(p.rot), foco: p.foco ?? ([0.5, 0.5] as [number, number]) };
 };
 
+/** menor zoom ≥ z em que a cena transformada cobre a tela inteira */
+export const zoomQueCobre = (z: number, rot: number, x: number, y: number, ox: number, oy: number, w: number, h: number) => {
+  const a = (-rot * Math.PI) / 180;
+  const c = Math.cos(a);
+  const s = Math.sin(a);
+  const cobre = (zz: number) =>
+    [
+      [0, 0],
+      [w, 0],
+      [0, h],
+      [w, h],
+    ].every(([qx, qy]) => {
+      const dx = qx - ox - x;
+      const dy = qy - oy - y;
+      const px = ox + (dx * c - dy * s) / zz;
+      const py = oy + (dx * s + dy * c) / zz;
+      return px >= -0.5 && px <= w + 0.5 && py >= -0.5 && py <= h + 0.5;
+    });
+  let zz = z;
+  for (let i = 0; i < 200 && !cobre(zz); i++) zz *= 1.005;
+  return zz;
+};
+
 export const Diretor: React.FC<{ planos: Plano[]; efeitos?: Efeito[]; fundo?: string; children: React.ReactNode }> = ({ planos, efeitos = [], fundo = "#000", children }) => {
   const f = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
@@ -89,12 +112,11 @@ export const Diretor: React.FC<{ planos: Plano[]; efeitos?: Efeito[]; fundo?: st
     if (e.tipo === "faixas" && f >= e.de - 10 && f < e.ate + 10) faixas = Math.max(faixas, ip(f, [e.de - 10, e.de, e.ate, e.ate + 10], [0, 1, 1, 0], Easing.inOut(Easing.cubic)) * (e.tam ?? 170));
     if (e.tipo === "velocidade" && f >= e.de && f < e.ate) vel.push({ forca: (e.forca ?? 1) * ip(f, [e.de, e.de + 6, e.ate - 6, e.ate], [0, 1, 1, 0]), dir: e.dir ?? 1 });
   }
-  // nunca mostrar borda: zoom mínimo que cobre a tela com a rotação e o deslocamento atuais
-  const r = (Math.abs(rot) * Math.PI) / 180;
-  const cobre = Math.cos(r) + (height / width) * Math.sin(r) + 2 * Math.max(Math.abs(x) / width, Math.abs(y) / height);
-  if (blur < 0.5) zoom = Math.max(zoom, cobre);
   const ox = foco[0] * width;
   const oy = foco[1] * height;
+  // nunca mostrar borda: aumenta o zoom até os 4 cantos da tela caírem dentro da cena (considera foco fora do
+  // centro, rotação e deslocamento — a conta antiga ignorava o foco e deixava aparecer faixa preta)
+  if (blur < 0.5) zoom = zoomQueCobre(zoom, rot, x, y, ox, oy, width, height);
   return (
     <AbsoluteFill style={{ overflow: "hidden", background: "#000" }}>
       <AbsoluteFill
