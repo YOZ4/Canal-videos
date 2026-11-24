@@ -21,6 +21,7 @@ Depois: `out/saiyajin-remake.mp4` (13 s, 24 qps). Comparativo lado a lado: `out/
 | Dolly final chegava perto demais (Lucas enchia a tela) e o carimbo cobria o cabelo | parada em z 4,9→4,45; carimbo mais alto |
 | Pedras do caminho a ~0,2 unidade da câmera (a lente atravessaria uma pedra) | corredor livre de ~1 unidade em volta do caminho da câmera |
 | Plano do chão (P2) mostrava mais o Lucas que as pedrinhas | plano mais baixo e mais fechado nos pés |
+| (achado no comparativo, 6 s) Pedra da camada da frente passava na frente do ROSTO do Lucas na órbita | pedras a < 2,6 unidades flutuam só até o peito; as altas ficam mais longe |
 Sem clipping no personagem (ele é 2D: pedras atrás na camada de trás, as da frente na da frente, por profundidade);
 câmera sempre acima do chão (0,32–1,15); fov 36–42 (sem distorção); luz só toon 2 faixas + contorno + recorte dourado.
 

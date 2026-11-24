@@ -40,7 +40,8 @@ export const pedrasAura = (g: number, sobeDe: number, explode: number): Pedra[] 
     const u = Math.max(0, g - de);
     // sobe com antecipação (treme no chão 6 q), depois sobe desacelerando e flutua
     const treme = g >= de - 6 && g < de ? (random(`pt${i}${g}`) - 0.5) * 0.05 : 0;
-    const alturaAlvo = 0.6 + random(`ph${i}`) * 2.2;
+    // pedras perto do Lucas flutuam só até o peito (nunca passam na frente do rosto); as altas ficam mais longe
+    const alturaAlvo = raio < 2.6 ? 0.35 + random(`ph${i}`) * 0.75 : 0.8 + random(`ph${i}`) * 2.0;
     const sobe = 1 - Math.exp(-u / 14);
     const bob = Math.sin(g * 0.12 + i) * 0.06 * sobe;
     let y = esc * 0.6 + sobe * alturaAlvo + bob;
