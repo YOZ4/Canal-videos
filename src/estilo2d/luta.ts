@@ -53,6 +53,10 @@ export type Lance = {
   alcance?: boolean;
   /** vira de lado no fim do golpe (depois de cruzar o adversário) */
   vira?: boolean;
+  /** multiplica o quanto o próprio golpe/passo anda (0.5 = passo curto, 1.5 = longo) */
+  amplitude?: number;
+  /** com `alvo` num movimento (passo, mortal): ajusta o deslocamento para terminar a esta distância (px) do alvo */
+  distancia?: number;
   /** o alvo vira de lado no fim da resposta */
   viraAlvo?: boolean;
   /** a resposta escorrega no chão (bloqueio de golpe muito forte) */
@@ -172,7 +176,7 @@ export const criarLuta = (atoresIn: Record<string, { base: Pose; semente?: numbe
         if (s.g.tipo === "reacao" && u >= (s.g.recebe ?? 0)) u = Math.max(u, (s.g.recebe ?? 0) + 1.5); // estalo do impacto
         const p = poseGolpe(s.g, u, s.base, s.empurra, s.extra);
         const fim = s.em + s.dur;
-        const l = s.vira ? Math.max(0.12, suave((fim - t) / 4)) : 1;
+        const l = s.vira ? Math.max(0.12, suave((fim - t) / 3)) : 1;
         return largura(p, t, viraFim, l);
       }
       ultimoFim = s.em + s.dur;
@@ -185,7 +189,7 @@ export const criarLuta = (atoresIn: Record<string, { base: Pose; semente?: numbe
     return largura(guardaViva(t, base, a.semente, suave((t - ultimoFim) / 10)), t, viraFim);
   };
   const largura = (p: Pose, t: number, viraFim: number, l = 1): Pose => {
-    const depois = t >= viraFim && t < viraFim + 4 ? Math.max(0.12, suave((t - viraFim) / 4)) : 1;
+    const depois = t >= viraFim && t < viraFim + 3 ? Math.max(0.12, suave((t - viraFim) / 3)) : 1;
     const k = Math.min(l, depois);
     return k < 1 ? { ...p, largura: p.largura * k } : p;
   };
@@ -205,7 +209,17 @@ export const criarLuta = (atoresIn: Record<string, { base: Pose; semente?: numbe
     let em = l.em ?? (l.noContato !== undefined ? ultimo.marco + l.noContato : ultimo.fim + (l.depois ?? 2));
     if (em < a.livre) em = a.livre; // não começa um golpe no meio do outro
     const forca = l.forca ?? 1;
-    const seg: Seg = { g: l.golpe, em, dur: duracaoCom(l.golpe, l.ritmo), ritmo: l.ritmo, base: baseAgora(a), empurra: 1, extra: () => 0, vira: !!l.vira, escorrega: false };
+    const baseA = baseAgora(a);
+    let amp = l.amplitude ?? 1;
+    // movimento com destino: termina a `distancia` px do alvo (do outro lado se o golpe cruza o adversário)
+    if (l.distancia !== undefined && l.alvo && l.golpe.desloca) {
+      const vx = baseAgora(atores[l.alvo]).x;
+      const lado = Math.sign(l.golpe.desloca) * baseA.lado;
+      const cruza = Math.sign(vx - baseA.x) === lado && !!l.vira;
+      const destino = cruza ? vx + lado * l.distancia : vx - lado * l.distancia;
+      amp = clamp((destino - baseA.x) / (l.golpe.desloca * baseA.lado * baseA.escala), 0.3, 2.2);
+    }
+    const seg: Seg = { g: l.golpe, em, dur: duracaoCom(l.golpe, l.ritmo), ritmo: l.ritmo, base: baseA, empurra: amp, extra: () => 0, vira: !!l.vira, escorrega: false };
     a.segs.push(seg);
     a.livre = em + seg.dur;
     const marcoU = l.golpe.contato ?? l.golpe.pouso;
@@ -213,7 +227,7 @@ export const criarLuta = (atoresIn: Record<string, { base: Pose; semente?: numbe
     if (l.golpe.prep !== undefined && l.golpe.tipo === "ataque") eventosLuta.push({ tipo: "whoosh", f: 0, t: em + relogioGolpe(l.golpe, l.golpe.prep, l.ritmo) - 1, quem: l.quem, forca });
 
     let resp: Seg | undefined;
-    if (l.alvo && l.resposta && l.golpe.contato !== undefined) {
+    if (l.alvo && l.resposta && l.golpe.contato !== undefined && l.distancia === undefined) {
       const v = atores[l.alvo];
       const r = l.resposta;
       const emR = Math.max(v.livre, tContato - relogioGolpe(r, r.recebe ?? 0, l.ritmoResposta));
@@ -228,7 +242,7 @@ export const criarLuta = (atoresIn: Record<string, { base: Pose; semente?: numbe
         const ap = poseLutaRaw(a, tContato);
         const alvoPt: [number, number] = r.nome === "defesa" ? [posMao(vp, "D")[0] - a.base.lado * 20 * vp.escala, posMao(vp, "D")[1]] : pontoAlvo(vp, l.golpe.mira, seg.base.lado);
         const m = pontoMembro(ap, l.golpe.membro);
-        const err = clamp(((alvoPt[0] - m[0]) * seg.base.lado) / seg.base.escala, -180, 240);
+        const err = clamp(((alvoPt[0] - m[0]) * seg.base.lado) / seg.base.escala, -70, 240); // recuar demais parece "andar pra trás"
         const g = l.golpe;
         const p0 = g.prep ?? 0;
         const c0 = g.contato ?? 0;
@@ -395,24 +409,41 @@ export const criarLuta = (atoresIn: Record<string, { base: Pose; semente?: numbe
           y1 = Math.max(y1, y);
         }
       }
-      y1 = Math.max(y1, atores[Object.keys(atores)[0]].base0.y);
+      // folga: tênis, mãos e cabelo passam um pouco dos pontos de articulação
+      x0 -= 55;
+      x1 += 55;
+      y0 -= 70;
+      y1 = Math.max(y1 + 30, atores[Object.keys(atores)[0]].base0.y + 30);
       const z = clamp(Math.min((1080 - 2 * margem) / (x1 - x0), 1150 / (y1 - y0)), zMin, zMax);
-      return { x: (x0 + x1) / 2, y: (y0 + y1) / 2, z };
+      return { x: (x0 + x1) / 2, y: (y0 + y1) / 2, z, x0, x1, y0, y1 };
     });
     const cam: { x: number; y: number; zoom: number }[] = [];
     let c = { ...alvos[0] };
     let v = { x: 0, y: 0, z: 0 };
-    const w = 0.22; // rigidez (mola criticamente amortecida)
+    const w = 0.26; // rigidez (mola criticamente amortecida)
     for (let f = 0; f < N; f++) {
-      const a = alvos[Math.min(N - 1, f + 3)]; // olha 3 quadros à frente (o cinegrafista antecipa um pouco)
+      const a = alvos[Math.min(N - 1, f + 5)]; // olha 5 quadros à frente (o cinegrafista antecipa um pouco)
       for (const k of ["x", "y", "z"] as const) {
         const ac = w * w * (a[k] - c[k]) - 2 * w * v[k];
         v[k] += ac;
         c[k] += v[k];
       }
-      // nunca deixar o grupo sair do quadro: se a mola atrasar demais, puxa
-      const zoom = c.z;
-      cam.push({ x: c.x, y: c.y + (960 - centroY) / zoom, zoom });
+      // TRAVA: nunca deixar ninguém sair do quadro (agora e nos próximos 2 quadros) — se a mola atrasar, a câmera abre/anda na hora
+      const caixa = [0, 1, 2].map((d) => alvos[Math.min(N - 1, f + d)]);
+      const x0 = Math.min(...caixa.map((q) => q.x0));
+      const x1 = Math.max(...caixa.map((q) => q.x1));
+      const y0 = Math.min(...caixa.map((q) => q.y0));
+      const y1 = Math.max(...caixa.map((q) => q.y1));
+      const zLim = Math.min((1080 - 120) / (x1 - x0), (1800 - 170) / (y1 - y0));
+      if (c.z > zLim) {
+        c.z = zLim;
+        v.z = Math.min(0, v.z);
+      }
+      const z = c.z;
+      c.x = clamp(c.x, x1 - 480 / z, x0 + 480 / z);
+      const off = (960 - centroY) / z;
+      c.y = clamp(c.y + off, y1 - 840 / z, y0 + 790 / z) - off;
+      cam.push({ x: c.x, y: c.y + off, zoom: z });
     }
     cache.__cam = cam as unknown as Pose[];
   };

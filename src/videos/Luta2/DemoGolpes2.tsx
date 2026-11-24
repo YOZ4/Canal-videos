@@ -112,7 +112,7 @@ const Cena: React.FC = () => {
           </g>
         ) : null,
       )}
-      <Onomatopeia texto="POW!" x={FINAL.x - 40} y={FINAL.y - 240} f={f} de={FINAL.f + 2} dur={26} tamanho={150} />
+      <Onomatopeia texto="POW!" x={FINAL.x - 60} y={FINAL.y - 150} f={f} de={FINAL.f + 2} dur={26} tamanho={150} />
     </Palco>
   );
 };

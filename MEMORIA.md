@@ -114,7 +114,16 @@ pendente) e faça commit + push junto com o trabalho.
     relativos + `combate()`), prévias `FolhaGolpes` e `DemoGolpes` (`out/demo-golpes.mp4`). Próximas: rolamento no chão
     (ponto de giro), atuação/reações, mais golpes, caminhada/corrida dentro do `combate()`.
 
+18. **Etapa 2 do sistema de combate** (pedido: avaliar `demo-golpes.mp4` e melhorar a QUALIDADE, não a quantidade;
+    preservar o Boneco2D). Diagnóstico em 10 pontos + o que foi feito em `producao/sistema/etapa2.md`. Faixas pretas = efeito
+    "faixas de cinema" ligando/desligando (removido da demo) + conta de borda do Diretor errada com foco fora do centro
+    (corrigida). Novo `luta.ts` (coreografia por lances: preparação → execução → contato → hit-stop → reação → recuperação →
+    continuação; alcance automático, pés plantados, cabelo com mola, câmera que enquadra sem cortar). `golpes.ts` refeito
+    com os mesmos nomes; `giraEm` no Boneco2D (padrão = antes). Demo nova `DemoGolpes2` (`out/demo-golpes-v2.mp4`, 17,5 s) e
+    comparação lado a lado `out/demo-golpes-comparacao.mp4`. Render: ~2 min em resolução total. Aguardando opinião dele.
+
 ## Pendências / ideias que ele ainda pode pedir
+- Etapa 3 de combate (se ele aprovar): torção de tronco, reação de golpe no corpo (dobrar), pano da camiseta, `trocaRosto` nas lutas.
 - Testar a esteira de 4 agentes no próximo episódio e ajustar os arquivos dos agentes com o que ele achar.
 - Gesto de "mão na cabeça" no Lucas gigante (o braço atual não alcança a cabeça; virou punho tremendo).
 - Fuga do Diego com corrida de pânico (braços se debatendo, olhando para trás) — hoje usa a corrida comum.

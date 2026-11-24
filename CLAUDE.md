@@ -73,6 +73,18 @@ trocando arquivos em `producao/<episodio>/` (guia em `producao/README.md`). Use 
   Exemplo: `src/videos/TesteCamera/DemoGolpes.tsx`. Folha: composição `FolhaGolpes`.
 - `tempo.tsx`: `<CameraLenta trechos>` = câmera lenta verdadeira (tempo remapeado). Efeitos do Diretor e sons ficam fora.
 - `Diretor.tsx`: planos (zoom/foco/holandês) + crash, treme, chicote, flash, inverte, faixas, velocidade.
+  `zoomQueCobre` garante que nunca aparece borda preta. **Faixas de cinema: não usar em vídeo vertical** (pareceu defeito).
+
+## Coreografia de luta (etapa 2 — ver `producao/sistema/etapa2.md`) — USE ISTO para lutas novas
+- `luta.ts`: `criarLuta({ L: {base}, D: {base} }, LANCES)` → `.pose(id, f)`, `.camera(f)` (para o Palco), `.eventos`
+  (contato/pouso/whoosh/deslize/passo → efeitos e sons), `.estado(id, f)` (fase → rosto), `.quando(id, golpe, u)`, `.duracao`.
+- Lance: `{ quem, golpe, alvo, resposta, forca, hitstop, ritmo: {preparo, acao, recupera}, depois | noContato | em,
+  vira, viraAlvo, escorrega, amplitude, distancia }`. O sistema alinha a resposta no contato, ajusta o alcance, faz
+  hit-stop, planta os pés (passo automático em vez de patinar), cabelo com mola e câmera que enquadra os dois sem cortar.
+- Golpes têm fases (`prep`, `contato`, `recebe`, `pouso`), `voo` (parábola), `desliza`. Boneco2D: `giraEm` = ponto do giro.
+- Regras: câmera lenta ANTES do golpe (na carga), nunca no contato; no contato, hit-stop + crash no ponto do golpe;
+  guarda com ≥ 400 px entre os dois; o chute do boneco alcança o peito, não a cabeça.
+  Exemplo: `src/videos/Luta2/` (composição `DemoGolpes2`, `out/demo-golpes-v2.mp4`).
 
 ## Regras de animação (aprendidas das referências)
 - Corte/mudança de plano a cada ~1,5–2,5 s. Legenda 1 palavra por vez, palavra-chave em laranja.
