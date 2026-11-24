@@ -77,6 +77,11 @@ export type Pose = {
   /** altura (unidades do boneco, acima do chão da pose) do ponto em volta do qual o `gira` roda. Padrão 600 (peito).
    *  396 = quadril, ~30 = tornozelos (tombar como árvore). */
   giraEm?: number;
+  /** perfil: torção do tronco -1..1. + = ombro de TRÁS vem pra frente (direto, fim do giro); - = ombro da FRENTE avança e
+   *  o de trás recua (jab, carga do direto). Ombros mudam de lugar e o peito estreita (ilusão de giro). Padrão 0 */
+  torce?: number;
+  /** perfil: balanço da barra de trás da camiseta em graus (movimento secundário; + = abre pra trás). Sem valor = sem pano */
+  barra?: number;
   /** vista de frente/costas: 0 = joelho dobra pro lado; 1 = joelho vem na direção da câmera (corrida de frente) */
   joelhoFrente?: number;
 };
@@ -188,11 +193,15 @@ export const posCabeca = (p: Pose): P => {
   return [p.x + lx * p.escala * p.lado * p.largura, p.y + ly * p.escala * p.estica];
 };
 
+/** ombro no perfil com torção: o de trás avança com torce > 0, o da frente recua (e vice-versa) */
+const ombroPerfil = (qual: "E" | "D", torce: number, ombroY: number): P =>
+  qual === "E" ? [-6 + 62 * torce, ombroY + 6 * Math.abs(torce)] : [8 - 34 * torce, ombroY + 4 * Math.abs(torce)];
+
 /** posição (mundo) da mão. Perfil: "D" = mão da frente. Ignora `gira` e o braço cruzado. Útil para close de detalhe. */
 export const posMao = (p: Pose, qual: "E" | "D"): P => {
   const perfil = p.vista === "perfil";
   const ombroY = perfil ? -TRONCO + 40 : -TRONCO + 32;
-  const o: P = perfil ? [qual === "E" ? -6 : 8, ombroY] : [qual === "E" ? -OMBRO_X + 8 : OMBRO_X - 8, ombroY];
+  const o: P = perfil ? ombroPerfil(qual, p.torce ?? 0, ombroY) : [qual === "E" ? -OMBRO_X + 8 : OMBRO_X - 8, ombroY];
   const sentido = perfil ? 1 : qual === "E" ? -1 : 1;
   const { m } = pontosBraco(o, sentido, qual === "E" ? p.bracoE : p.bracoD);
   const a = rad(p.inclina);
@@ -1294,6 +1303,9 @@ const Perfil: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
   const tid = `camisap-${id}`;
   const peTras: P = [pose.peE.dx, TORNOZELO_Y + pose.peE.dy];
   const peFrente: P = [pose.peD.dx, TORNOZELO_Y + pose.peD.dy];
+  const tc = pose.torce ?? 0;
+  // peito estreita quando torce (o tronco "gira" pra câmera ou de costas)
+  const peito = tc ? `translate(${tc * 6} 0) scale(${1 - 0.13 * Math.abs(tc)} 1)` : undefined;
   return (
     <g>
       <defs>
@@ -1306,11 +1318,20 @@ const Perfil: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
       {/* perna e braço de trás */}
       <Parte k="perna"><PernaDesenho joelhoX={1} quadril={[-6, quadrilY]} pe={peTras} d={d} ladoTenis={1} perfil atras rot={pose.peE.rot ?? 0} /></Parte>
       <g transform={`translate(0 ${quadrilY}) rotate(${pose.inclina})`}>
-        <Parte k="corpo"><BracoDesenho o={[-6, ombroY]} sentido={1} b={pose.bracoE} gesto={pose.maoE} d={d} atras /></Parte>
+        <Parte k="corpo"><BracoDesenho o={ombroPerfil("E", tc, ombroY)} sentido={1} b={pose.bracoE} gesto={pose.maoE} d={d} atras /></Parte>
       </g>
       <Parte k="perna"><PernaDesenho joelhoX={1} quadril={[8, quadrilY]} pe={peFrente} d={d} ladoTenis={1} perfil rot={pose.peD.rot ?? 0} /></Parte>
       <g transform={`translate(0 ${quadrilY}) rotate(${pose.inclina})`}>
+        {pose.barra !== undefined && !d.egito ? (
+          // barra de trás da camiseta: escondida atrás do tronco quando parada; abre e balança com o movimento
+          <Parte k="corpo">
+            <g transform={`rotate(${pose.barra} -24 -26)`}>
+              <path d="M -84 -60 Q -92 -10 -94 26 Q -60 34 -24 26 L -24 -26 Z" fill={d.camisaSombra} stroke={CONTORNO} strokeWidth={LINHA} strokeLinejoin="round" />
+            </g>
+          </Parte>
+        ) : null}
         <Parte k="corpo"><rect x={-30} y={-TRONCO - 72} width={64} height={90} rx={10} fill={d.pele} stroke={CONTORNO} strokeWidth={LINHA} />
+        <g transform={peito}>
         <path
           d={`M -50 ${-TRONCO + 2} Q -92 ${-TRONCO + 14} -94 ${-TRONCO + 70} L -86 -60 Q -84 -10 -88 22 L 98 22 Q 94 -20 98 -80 Q 114 -250 94 ${-TRONCO + 50} Q 82 ${-TRONCO + 4} 40 ${-TRONCO} Q 0 ${-TRONCO + 30} -50 ${-TRONCO + 2} Z`}
           fill={`url(#${tid})`}
@@ -1319,6 +1340,8 @@ const Perfil: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
           strokeLinejoin="round"
         />
         <path d="M 60 -250 Q 40 -200 56 -150" stroke={d.camisaSombra} strokeWidth={4} fill="none" strokeLinecap="round" />
+        {tc > 0.05 ? <path d={`M ${70 - 40 * tc} -300 Q ${40 - 30 * tc} -220 ${60 - 30 * tc} -120`} stroke={d.camisaSombra} strokeWidth={5} fill="none" strokeLinecap="round" opacity={Math.min(1, tc * 1.5)} /> : null}
+        </g>
         {d.musculos ? (
           <g stroke={CONTORNO} strokeWidth={6} fill="none" strokeLinecap="round" opacity={0.75}>
             <path d="M 104 -300 Q 70 -250 20 -262" />
@@ -1345,7 +1368,7 @@ const Perfil: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
         <g transform={`translate(4 ${-TRONCO - 60}) rotate(${pose.cabeca}) translate(0 ${-R_CABECA + 18})`}>
           <Parte k="cabeca"><CabecaPerfil d={d} r={rosto} id={id} poder={poder} balanco={pose.cabelo} /></Parte>
         </g>
-        <Parte k="corpo"><BracoDesenho o={[8, ombroY]} sentido={1} b={pose.bracoD} gesto={pose.maoD} d={d} objeto={objeto} objetoGira={objetoGira} /></Parte>
+        <Parte k="corpo"><BracoDesenho o={ombroPerfil("D", tc, ombroY)} sentido={1} b={pose.bracoD} gesto={pose.maoD} d={d} objeto={objeto} objetoGira={objetoGira} /></Parte>
       </g>
     </g>
   );

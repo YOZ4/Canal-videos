@@ -75,6 +75,14 @@ trocando arquivos em `producao/<episodio>/` (guia em `producao/README.md`). Use 
 - `Diretor.tsx`: planos (zoom/foco/holandês) + crash, treme, chicote, flash, inverte, faixas, velocidade.
   `zoomQueCobre` garante que nunca aparece borda preta. **Faixas de cinema: não usar em vídeo vertical** (pareceu defeito).
 
+## NATURALIDADE EM TODA ANIMAÇÃO (obrigatório — `src/estilo2d/naturalidade.ts`)
+- Toda cena com personagem: pose crua por quadro → `criarAnimacao(DUR, (f) => ({ L: ..., D: ... }), { chao: CHAO_Y })`
+  (no nível do módulo) → `.pose(id, f)` no Boneco2D e `.camera(f)` no `<Palco cam parado>`. Dá pés plantados (passo
+  automático, nunca patina), cabelo + barra da camiseta com mola (`barra` no Boneco2D), câmera que enquadra sem cortar.
+- Trocas de expressão: `rostoAtuado(n, (f) => ({ nome, rosto, tam }))` → `.em(f)` (antecipa, troca escondida, take).
+- Boneco2D de perfil: `torce` (-1..1) gira o tronco (ombros trocam de lugar) — use em socos, arremessos, apontar, virar.
+- O esqueleto de `scripts/novo_video.py` já nasce assim. Agentes e skills (video-do-canal, analise-movimento) exigem.
+
 ## Coreografia de luta (etapa 2 — ver `producao/sistema/etapa2.md`) — USE ISTO para lutas novas
 - `luta.ts`: `criarLuta({ L: {base}, D: {base} }, LANCES)` → `.pose(id, f)`, `.camera(f)` (para o Palco), `.eventos`
   (contato/pouso/whoosh/deslize/passo → efeitos e sons), `.estado(id, f)` (fase → rosto), `.quando(id, golpe, u)`, `.duracao`.

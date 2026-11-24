@@ -65,6 +65,14 @@ Toda afirmação "científica" do roteiro ganha um **infográfico com o Lucas in
 órgão em raio-X no peito, medidor em cima da cabeça). Falas entre aspas = o personagem fala (boca mexendo).
 
 ### 3. Escreva as cenas
+- **Camada de naturalidade em TODA cena com personagem** (`src/estilo2d/naturalidade.ts`): escreva só a pose crua de
+  cada personagem por quadro e passe por `criarAnimacao(DUR, (f) => ({ L: poseL(f), D: poseD(f) }), { chao: CHAO_Y })`
+  (no nível do módulo, fora do componente). Use `.pose(id, f)` no Boneco2D e `.camera(f)` no `<Palco cam parado>`.
+  Ela dá: pés plantados (passo automático em vez de patinar), cabelo e barra da camiseta com mola, câmera que enquadra
+  sem cortar ninguém. Rosto: `rostoAtuado(n, escolha)` (troca atuada). Só desligue partes com motivo
+  (`camera: false` num close fixo, `pes: false` num plano de busto). Luta: `luta.ts` (que já usa esta camada).
+- Ações prontas (perfil): `golpes.ts` (com fases, torção do tronco `torce`, saltos com parábola). Servem fora de luta
+  também: `avanca`/`recua` (passos), `salto`, `esquiva*` (susto), `levaGolpe*`/`queda` (tropeço, tombo, levar bolada).
 - Cada cena é `React.FC<{ t0: number }>` com `const f = useCurrentFrame()` (frame **local** da cena).
 - Momentos dentro da cena: `T("trecho") - t0` (início do trecho) e `TF("trecho") - t0` (fim).
 - Lista `CENAS: [Componente, T("trecho onde começa")]` no arquivo principal define os cortes.

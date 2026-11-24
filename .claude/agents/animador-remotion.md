@@ -35,6 +35,10 @@ definiram, e depois os ajustes do revisor (`04-revisao-*.md`).
 8. Gráficos, textos e objetos seguem a skill `motion-design` (entrada com mola, cascata, vida, saída mais curta).
    Planos com 3D: render com `--gl=swangle`.
 9. **Proibido** rotateX/perspectiva nos bonecos; use Camera2D e VistaCima. Pintura.tsx só FilmeMudo.
+10. **Toda cena com personagem passa pela camada de naturalidade** (`naturalidade.ts`, `criarAnimacao`): pés plantados,
+    cabelo/camiseta com mola, câmera que enquadra sem cortar, `rostoAtuado` nas trocas de expressão. Lutas: `luta.ts`
+    (lances com fases preparação → execução → contato → hit-stop → reação → recuperação). Ações prontas: `golpes.ts`.
+    Exemplo completo: `src/videos/Luta2/`. Guia: `producao/sistema/etapa2.md`.
 
 ## Como testar sem travar a máquina
 - `npx tsc --noEmit -p .` sem erros antes de qualquer render.

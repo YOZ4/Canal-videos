@@ -48,8 +48,21 @@ melhorando a QUALIDADE dos movimentos existentes (peso, força, velocidade, impa
 - Revisão 2 (ritmo/peso): pé do Lucas cortado no ápice do mortal (câmera com atraso) → antecipação de 5 quadros + trava
   com folga; Diego levantava da esquiva com o Lucas ainda em cima → abaixa mais tarde e segura mais.
 
+## Etapa 2b — o que "dava para melhorar" (feito) + sistema valendo para TODA animação
+- Torção do tronco: `torce` no Boneco2D (perfil): ombros trocam de lugar e o peito estreita; usado no jab (ombro da
+  frente avança), direto (carrega com o de trás recuado e solta com ele à frente), chute, voadora, defesa, reação.
+- Reação de golpe no corpo: `levaGolpeCorpo` (empurrado primeiro, depois dobra pra frente, cabeça cai atrasada, mãos na
+  barriga, respira). `luta.ts` escolhe sozinho quando o ataque mira o peito e a resposta é `levaGolpe`.
+- Pano da camiseta: `barra` no Boneco2D (barra de trás escondida quando parada; abre com velocidade/queda e balança).
+- Expressões: `rostoAtuado` (troca atuada com trocaRosto, montada a partir da fase do golpe).
+- **`naturalidade.ts`**: pés plantados, secundários (cabelo + barra), câmera que enquadra e rosto atuado viraram uma
+  camada GERAL (`criarAnimacao`) para qualquer cena; `luta.ts` passou a usar a mesma camada (sem código duplicado).
+  `scripts/novo_video.py` gera cenas já com ela; CLAUDE.md, skills (video-do-canal, analise-movimento) e agentes
+  (animador, revisor) exigem o uso.
+- Ajustes vistos na revisão: Diego dobrava pra frente cedo e encostava a cabeça no Lucas → primeiro é empurrado, depois dobra;
+  mãos ficavam no peito → vão à barriga.
+
 ## Pendente / dá para melhorar
-- Torção do tronco (o perfil não gira ombros/quadril separadamente; hoje é simulado com inclina + passo).
-- Reação específica para golpe no corpo (dobrar pra frente) — hoje o chute no peito usa a mesma reação do soco no rosto.
-- Roupas: a camiseta não tem pano solto para balançar (só cabelo e braços têm movimento secundário).
-- Expressões com `trocaRosto` (troca atuada) em vez de troca seca por fase.
+- Torção também na vista de FRENTE (hoje `torce` só existe no perfil; de frente há o `vira`).
+- Barra da camiseta só no perfil; de frente e de costas ainda não balança.
+- Converter episódios antigos para a camada de naturalidade (só se ele pedir — os vídeos prontos continuam iguais).

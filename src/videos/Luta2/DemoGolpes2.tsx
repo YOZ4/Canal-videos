@@ -1,5 +1,6 @@
 import { AbsoluteFill, Html5Audio, Sequence, interpolate, staticFile, useCurrentFrame } from "remotion";
-import { Boneco2D, ROSTO_BASE, type Rosto } from "../../estilo2d/Boneco2D";
+import { Boneco2D, ROSTO_BASE, type Pose, type Rosto } from "../../estilo2d/Boneco2D";
+import { rostoAtuado } from "../../estilo2d/naturalidade";
 import { piscar } from "../../estilo2d/anim";
 import { Diretor, type Efeito, type Plano } from "../../estilo2d/Diretor";
 import { CameraLenta, tempoCena, type Trecho } from "../../estilo2d/tempo";
@@ -63,24 +64,36 @@ const R = {
   confiante: { ...ROSTO_BASE, olhos: 0.75, canto: 1, sorriso: 0.5, sobrancelha: 8 },
 } satisfies Record<string, Rosto>;
 
-const rostoDe = (id: string, f: number, semente: string): Rosto => {
+/** escolha do rosto pela fase do golpe (nome + tamanho da reação para a troca atuada) */
+const escolhe = (id: string) => (f: number): { nome: string; rosto: Rosto; tam: number } => {
   const e = LUTA.estado(id, f);
-  let r: Rosto = R.serio;
-  if (e.fase === "preparo") r = R.foco;
-  else if (e.fase === "acao" || e.fase === "contato") r = R.grito;
-  else if (e.fase === "recupera") r = R.bravo;
-  else if (e.fase === "reacao") r = e.golpe === "queda" ? (e.u < 13 ? R.dor : e.u < 50 ? R.tonto : R.dor) : e.u < 14 ? R.dor : R.bravo;
-  else if (e.fase === "defesa") r = e.golpe === "defesa" ? R.firme : R.surpresa;
-  else if (e.fase === "movimento") r = e.golpe === "cambalhota" ? R.confiante : R.serio;
-  if (id === "L" && f > FINAL.f + 30) r = R.confiante;
-  return { ...r, olhos: r.olhos * piscar(f, semente) };
+  if (id === "L" && f > FINAL.f + 30) return { nome: "confiante", rosto: R.confiante, tam: 0.6 };
+  if (e.fase === "preparo") return { nome: "foco", rosto: R.foco, tam: 0.5 };
+  if (e.fase === "acao" || e.fase === "contato") return { nome: "grito", rosto: R.grito, tam: 0 };
+  if (e.fase === "recupera") return { nome: "bravo", rosto: R.bravo, tam: 0.4 };
+  if (e.fase === "reacao") {
+    if (e.golpe === "queda") return e.u < 13 ? { nome: "dor", rosto: R.dor, tam: 0 } : e.u < 50 ? { nome: "tonto", rosto: R.tonto, tam: 1 } : { nome: "dor2", rosto: R.dor, tam: 0.6 };
+    return e.u < 14 ? { nome: "dor", rosto: R.dor, tam: 0 } : { nome: "bravo", rosto: R.bravo, tam: 0.8 };
+  }
+  if (e.fase === "defesa") return e.golpe === "defesa" ? { nome: "firme", rosto: R.firme, tam: 0.3 } : { nome: "surpresa", rosto: R.surpresa, tam: 1.6 };
+  if (e.fase === "movimento" && e.golpe === "cambalhota") return { nome: "confiante", rosto: R.confiante, tam: 0.5 };
+  return { nome: "serio", rosto: R.serio, tam: 0.5 };
+};
+// troca de expressão ATUADA (antecipa apertando os olhos, troca escondida, "take" com mola) — camada de naturalidade
+const ROSTOS = { L: rostoAtuado(LUTA.duracao + 2, escolhe("L")), D: rostoAtuado(LUTA.duracao + 2, escolhe("D")) };
+const atuar = (id: "L" | "D", f: number, semente: string, p: Pose): { rosto: Rosto; pose: Pose } => {
+  const { rosto, corpo } = ROSTOS[id].em(f);
+  const emPe = LUTA.estado(id, f).fase !== "reacao" && !p.gira;
+  return { rosto: { ...rosto, olhos: rosto.olhos * piscar(f, semente) }, pose: emPe ? { ...p, agacha: p.agacha + corpo.agacha, estica: p.estica * corpo.estica } : p };
 };
 
 // ---------------- cena (quadros de CENA)
 const Cena: React.FC = () => {
   const f = useCurrentFrame();
-  const l = LUTA.pose("L", f);
-  const d = LUTA.pose("D", f);
+  const al = atuar("L", f, "ll", LUTA.pose("L", f));
+  const ad = atuar("D", f, "dd", LUTA.pose("D", f));
+  const l = al.pose;
+  const d = ad.pose;
   const cam = LUTA.camera(f);
   const atores = { L: l, D: d };
   return (
@@ -96,8 +109,8 @@ const Cena: React.FC = () => {
         }
         return null;
       })}
-      <Boneco2D id="dg2" d={DIEGO} pose={d} rosto={rostoDe("D", f, "dd")} />
-      <Boneco2D id="lc2" d={LUCAS} pose={l} rosto={rostoDe("L", f, "ll")} />
+      <Boneco2D id="dg2" d={DIEGO} pose={d} rosto={ad.rosto} />
+      <Boneco2D id="lc2" d={LUCAS} pose={l} rosto={al.rosto} />
       {CONTATOS.map((e, i) =>
         e.tipo !== "contato" ? null : e.resultado === "acerto" ? (
           <g key={i}>

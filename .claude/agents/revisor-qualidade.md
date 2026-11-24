@@ -24,6 +24,8 @@ não perdoa nada. Você não edita código — só aponta e prescreve.
   personagem atravessando/encostando no outro, ordem de desenho errada (quem está na frente).
 - Aderência: cada fala com o plano e a ação certos do roteiro? Legenda acompanha a voz? Quem fala está mexendo a boca?
   Algum enquadramento corta cabeça/rosto? Corte a cada ~1,5–2,5 s?
+- A cena usa a camada de naturalidade (`criarAnimacao`/`luta.ts`)? Se não usa, é falha: pé patinando, cabelo duro e
+  câmera cortando são os sintomas. Faixas pretas/borda aparecendo = falha grave (não usar "faixas" no vertical).
 
 ## Revisão 2 — peso, atuação, luz e câmera
 - Peso: quadril afunda após contato, squash no impacto, partes pesadas param depois, acomodação com mola (passa do ponto e assenta).

@@ -78,12 +78,16 @@ linhas_cenas = []
 for i, (cid, ini, fr) in enumerate(cenas):
     linhas_cenas.append(
         f'''// "{fr.replace('"', "'")}"
+// pose CRUA de cada personagem por quadro (keyframes, golpes.ts, ciclos de corrida...) → camada de naturalidade
+// (naturalidade.ts): pés plantados, cabelo/camiseta com mola e câmera que enquadra sem cortar. Use SEMPRE.
+const A_{cid} = criarAnimacao(DURACAO, (f) => ({{ L: frente(560, {{ cabeca: k(f, [[0, 0], [40, 4]]) }}) }}), {{ chao: CHAO_Y, camera: {{ zoomMax: 1.1 }} }});
 const {cid}: React.FC<{{ t0: number }}> = () => {{
   const f = useCurrentFrame();
+  const cam = A_{cid}.camera(f);
   return (
-    <Palco cam={{{{ x: 560, y: 1000, zoom: k(f, [[0, 1], [90, 1.08]]) }}}}>
-      <Praca camX={{600}} />
-      <Boneco2D id="{cid.lower()}" d={{LUCAS}} pose={{frente(560)}} rosto={{vivo(ROSTO_BASE, f, "{cid.lower()}")}} />
+    <Palco cam={{cam}} parado>
+      <Praca camX={{cam.x}} />
+      <Boneco2D id="{cid.lower()}" d={{LUCAS}} pose={{A_{cid}.pose("L", f)}} rosto={{vivo(ROSTO_BASE, f, "{cid.lower()}")}} />
     </Palco>
   );
 }};
@@ -93,7 +97,8 @@ const {cid}: React.FC<{{ t0: number }}> = () => {{
 lista = "\n".join(f'  [{cid}, {"0" if i == 0 else f"T({json.dumps(ini, ensure_ascii=False)})"}],' for i, (cid, ini, _) in enumerate(cenas))
 principal = f'''import {{ AbsoluteFill, Html5Audio, Sequence, interpolate, staticFile, useCurrentFrame }} from "remotion";
 import {{ Boneco2D, ROSTO_BASE }} from "../../estilo2d/Boneco2D";
-import {{ Praca }} from "../../estilo2d/Cenario2D";
+import {{ CHAO_Y, Praca }} from "../../estilo2d/Cenario2D";
+import {{ criarAnimacao }} from "../../estilo2d/naturalidade";
 import {{ k }} from "../../estilo2d/anim";
 import {{ LUCAS }} from "../../estilo2d/personagens";
 import {{ LegendaPalavra }} from "../../estilo2d/UI";

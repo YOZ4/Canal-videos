@@ -1,6 +1,8 @@
 import { posCabeca, posMao, posPe, type Pose } from "./Boneco2D";
 import { mixPose } from "./anim";
-import { duracaoCom, guardaViva, poseGolpe, relogioGolpe, tempoGolpe, type Golpe, type Ritmo } from "./golpes";
+import { comGiro, enquadrar, plantarPes, secundarios } from "./naturalidade";
+export { pontosCorpo } from "./naturalidade";
+import { GOLPES, duracaoCom, guardaViva, poseGolpe, relogioGolpe, tempoGolpe, type Golpe, type Ritmo } from "./golpes";
 
 /**
  * SISTEMA DE COREOGRAFIA DE LUTA (etapa 2).
@@ -92,38 +94,6 @@ const suave = (t: number) => {
   return x * x * (3 - 2 * x);
 };
 const R_CABECA = 135;
-
-/** pontos do corpo no mundo, considerando o giro (para câmera e efeitos) */
-export const pontosCorpo = (p: Pose): [number, number][] => {
-  const [cx, cy] = posCabeca(p);
-  const r = R_CABECA * 1.3 * p.escala;
-  const pts: [number, number][] = [
-    [cx - r, cy - r],
-    [cx + r, cy - r],
-    [cx, cy + r * 0.5],
-    posMao(p, "D"),
-    posMao(p, "E"),
-    posPe(p, "D"),
-    posPe(p, "E"),
-    [p.x, p.y + (-396 + p.agacha) * p.escala],
-  ];
-  if (!p.gira) return pts;
-  const ox = p.x;
-  const oy = p.y - (p.giraEm ?? 600) * p.escala;
-  const a = (p.gira * p.lado * Math.PI) / 180;
-  const c = Math.cos(a);
-  const s = Math.sin(a);
-  return pts.map(([x, y]) => [ox + (x - ox) * c - (y - oy) * s, oy + (x - ox) * s + (y - oy) * c]);
-};
-
-/** gira um ponto do corpo pelo `gira` da pose (posMao/posPe ignoram o giro) */
-const comGiro = (p: Pose, [x, y]: [number, number]): [number, number] => {
-  if (!p.gira) return [x, y];
-  const ox = p.x;
-  const oy = p.y - (p.giraEm ?? 600) * p.escala;
-  const a = (p.gira * p.lado * Math.PI) / 180;
-  return [ox + (x - ox) * Math.cos(a) - (y - oy) * Math.sin(a), oy + (x - ox) * Math.sin(a) + (y - oy) * Math.cos(a)];
-};
 
 /** ponto do membro que bate */
 const pontoMembro = (p: Pose, m: Golpe["membro"]): [number, number] => comGiro(p, m === "peD" ? posPe(p, "D") : posMao(p, m === "maoE" ? "E" : "D"));
@@ -229,7 +199,8 @@ export const criarLuta = (atoresIn: Record<string, { base: Pose; semente?: numbe
     let resp: Seg | undefined;
     if (l.alvo && l.resposta && l.golpe.contato !== undefined && l.distancia === undefined) {
       const v = atores[l.alvo];
-      const r = l.resposta;
+      // golpe no corpo pede a reação de dobrar pra frente (não a de jogar a cabeça pra trás)
+      const r = l.resposta.nome === "levaGolpe" && l.golpe.mira === "peito" ? GOLPES.levaGolpeCorpo : l.resposta;
       const emR = Math.max(v.livre, tContato - relogioGolpe(r, r.recebe ?? 0, l.ritmoResposta));
       const reacao = r.tipo === "reacao";
       resp = { g: r, em: emR, dur: duracaoCom(r, l.ritmoResposta), ritmo: l.ritmoResposta, base: baseAgora(v), empurra: reacao || r.nome === "defesa" ? forca : 1, extra: () => 0, vira: !!l.viraAlvo, escorrega: !!l.escorrega };
@@ -307,15 +278,9 @@ export const criarLuta = (atoresIn: Record<string, { base: Pose; semente?: numbe
     // quem apanha em cada congelamento
     const vitimaDe = (c: number) => contatos.find((x) => x.t === c);
     for (const a of Object.values(atores)) {
-      const arr: Pose[] = [];
-      const chao = a.base0.y;
-      const LIMITE = 40; // unidades: mais que isso longe do pé plantado → dá um passo
-      const PASSO = 5;
-      type EstPe = { preso: boolean; x: number; passo?: { de: number; ini: number } };
-      const est: Record<"E" | "D", EstPe> = { E: { preso: false, x: 0 }, D: { preso: false, x: 0 } };
-      let cab = 0;
-      let cabV = 0;
-      const hx: number[] = [];
+      const cru: Pose[] = [];
+      const solto: boolean[] = [];
+      const parado: boolean[] = [];
       for (let f = 0; f < N; f++) {
         const { t, stop } = relogio(f);
         let p = poseLutaRaw(a, t);
@@ -323,128 +288,24 @@ export const criarLuta = (atoresIn: Record<string, { base: Pose; semente?: numbe
         if (stop) {
           const ct = vitimaDe(stop.c);
           const fz = ct?.lance.forca ?? 1;
-          const ehVitima = ct?.lance.alvo === a.id;
-          const ehAtacante = ct?.lance.quem === a.id;
-          const amp = ehVitima ? 7 + 5 * fz : ehAtacante ? 2.5 : 0;
+          const amp = ct?.lance.alvo === a.id ? 7 + 5 * fz : ct?.lance.quem === a.id ? 2.5 : 0;
           const dec = 1 - stop.k / (stop.dur + 1);
           p = { ...p, x: p.x + (Math.floor(stop.k) % 2 ? 1 : -1) * amp * dec * p.escala * 1.6 };
         }
-        // ---- pés plantados
         const s = estadoSeg(a, t);
         const u = s ? tempoGolpe(s.g, t - s.em, s.ritmo) : 0;
         const dz = s ? s.g.desliza ?? (s.escorrega ? [s.g.recebe ?? 0, (s.g.recebe ?? 0) + 8] : undefined) : undefined;
-        const deslizando = !!dz && u >= dz[0] && u <= dz[1];
-        const giroOk = Math.abs((((p.gira % 360) + 540) % 360) - 180) < 12; // gira ≈ 0 (mod 360)
-        const fator = p.escala * p.lado * p.largura / Math.sqrt(p.estica);
-        const novos: Partial<Pose> = {};
-        const ordem: ("E" | "D")[] = ["E", "D"];
-        // quem está mais longe do seu lugar dá o passo primeiro
-        const rawX = (q: "E" | "D") => p.x + (q === "E" ? p.peE.dx : p.peD.dx) * fator;
-        ordem.sort((q1, q2) => Math.abs(rawX(q2) - est[q2].x) - Math.abs(rawX(q1) - est[q1].x));
-        for (const q of ordem) {
-          const pe = q === "E" ? p.peE : p.peD;
-          const outro = est[q === "E" ? "D" : "E"];
-          const alvoX = rawX(q);
-          const h = (p.y - chao) / p.escala + pe.dy;
-          const noChao = h > -4 && giroOk && p.largura > 0.9 && !deslizando;
-          const e = est[q];
-          let x = alvoX;
-          let dy = pe.dy;
-          if (e.passo) {
-            const k = (f - e.passo.ini) / PASSO;
-            if (k >= 1 || !noChao) {
-              e.passo = undefined;
-              e.preso = noChao;
-              e.x = alvoX;
-              if (noChao) eventos.push({ tipo: "passo", f, x: alvoX, quem: a.id });
-            } else {
-              x = e.passo.de + (alvoX - e.passo.de) * suave(k);
-              dy = Math.min(dy, -Math.sin(k * Math.PI) * 30);
-            }
-          } else if (noChao) {
-            if (!e.preso) {
-              e.preso = true;
-              e.x = alvoX;
-            } else {
-              const longe = Math.abs(alvoX - e.x) / p.escala;
-              const parado = !s; // na guarda: ajeita pés que ficaram fora do lugar
-              if ((longe > LIMITE && (!outro.passo || longe > LIMITE * 2.5)) || (parado && longe > 22 && !outro.passo)) {
-                e.passo = { de: e.x, ini: f };
-                e.preso = false;
-              } else x = e.x;
-            }
-          } else e.preso = false;
-          novos[q === "E" ? "peE" : "peD"] = { ...pe, dx: (x - p.x) / fator, dy };
-        }
-        p = { ...p, ...novos };
-        // ---- cabelo: mola guiada pela aceleração da cabeça (e pelo giro do corpo)
-        const [cx] = posCabeca(p);
-        hx.push(cx + p.gira * 1.2);
-        const n = hx.length;
-        const acel = n >= 3 ? hx[n - 1] - 2 * hx[n - 2] + hx[n - 3] : 0;
-        const vel = n >= 2 ? hx[n - 1] - hx[n - 2] : 0;
-        if (!stop) {
-          cabV += -0.2 * cab - 0.3 * cabV - 0.32 * acel - 0.03 * vel;
-          cab = clamp(cab + cabV, -20, 20);
-        }
-        arr.push({ ...p, cabelo: p.cabelo + cab * p.lado });
+        solto.push(!!dz && u >= dz[0] && u <= dz[1]);
+        parado.push(!s);
+        cru.push(p);
       }
-      cache[a.id] = arr;
+      // camada de naturalidade (a mesma de qualquer animação): pés plantados + cabelo/camiseta com mola
+      const pl = plantarPes(cru, { chao: a.base0.y, solto: (f) => solto[f], parado: (f) => parado[f] });
+      for (const ps of pl.passos) eventos.push({ tipo: "passo", f: ps.f, x: ps.x, quem: a.id });
+      cache[a.id] = secundarios(pl.poses, { congelado: (f) => !!relogio(f).stop });
     }
-    // ---- câmera: enquadra todos (com atraso de cinegrafista)
-    const margem = op.margem ?? 150;
-    const zMin = op.zoomMin ?? 0.72;
-    const zMax = op.zoomMax ?? 1.22;
-    const centroY = op.centroY ?? 880;
-    const alvos = new Array(N).fill(0).map((_, f) => {
-      let x0 = Infinity;
-      let x1 = -Infinity;
-      let y0 = Infinity;
-      let y1 = -Infinity;
-      for (const id of Object.keys(atores)) {
-        for (const [x, y] of pontosCorpo(cache[id][f])) {
-          x0 = Math.min(x0, x);
-          x1 = Math.max(x1, x);
-          y0 = Math.min(y0, y);
-          y1 = Math.max(y1, y);
-        }
-      }
-      // folga: tênis, mãos e cabelo passam um pouco dos pontos de articulação
-      x0 -= 55;
-      x1 += 55;
-      y0 -= 70;
-      y1 = Math.max(y1 + 30, atores[Object.keys(atores)[0]].base0.y + 30);
-      const z = clamp(Math.min((1080 - 2 * margem) / (x1 - x0), 1150 / (y1 - y0)), zMin, zMax);
-      return { x: (x0 + x1) / 2, y: (y0 + y1) / 2, z, x0, x1, y0, y1 };
-    });
-    const cam: { x: number; y: number; zoom: number }[] = [];
-    let c = { ...alvos[0] };
-    let v = { x: 0, y: 0, z: 0 };
-    const w = 0.26; // rigidez (mola criticamente amortecida)
-    for (let f = 0; f < N; f++) {
-      const a = alvos[Math.min(N - 1, f + 5)]; // olha 5 quadros à frente (o cinegrafista antecipa um pouco)
-      for (const k of ["x", "y", "z"] as const) {
-        const ac = w * w * (a[k] - c[k]) - 2 * w * v[k];
-        v[k] += ac;
-        c[k] += v[k];
-      }
-      // TRAVA: nunca deixar ninguém sair do quadro (agora e nos próximos 2 quadros) — se a mola atrasar, a câmera abre/anda na hora
-      const caixa = [0, 1, 2].map((d) => alvos[Math.min(N - 1, f + d)]);
-      const x0 = Math.min(...caixa.map((q) => q.x0));
-      const x1 = Math.max(...caixa.map((q) => q.x1));
-      const y0 = Math.min(...caixa.map((q) => q.y0));
-      const y1 = Math.max(...caixa.map((q) => q.y1));
-      const zLim = Math.min((1080 - 120) / (x1 - x0), (1800 - 170) / (y1 - y0));
-      if (c.z > zLim) {
-        c.z = zLim;
-        v.z = Math.min(0, v.z);
-      }
-      const z = c.z;
-      c.x = clamp(c.x, x1 - 480 / z, x0 + 480 / z);
-      const off = (960 - centroY) / z;
-      c.y = clamp(c.y + off, y1 - 840 / z, y0 + 790 / z) - off;
-      cam.push({ x: c.x, y: c.y + off, zoom: z });
-    }
+    // câmera que enquadra todos (mesma da camada de naturalidade)
+    const cam = enquadrar(Object.keys(atores).map((id) => cache[id]), { chao: atores[Object.keys(atores)[0]].base0.y, margem: op.margem, zoomMin: op.zoomMin, zoomMax: op.zoomMax, centroY: op.centroY });
     cache.__cam = cam as unknown as Pose[];
   };
 

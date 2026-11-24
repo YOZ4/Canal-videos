@@ -62,6 +62,8 @@ Antes de escrever o código final, mostre ao usuário um resumo curto em tópico
 Depois siga para o código (não precisa esperar aprovação, a não ser que algo dependa de escolha dele).
 
 ### 2b. Regras anti-robótico
+0. **Sempre** termine passando as poses pela camada `naturalidade.ts` (`criarAnimacao`): pés plantados com passo
+   automático, cabelo/camiseta com mola, câmera que enquadra. Para golpes/quedas/saltos use `golpes.ts` e `luta.ts`.
 1. **Nada linear.** Todo `interpolate` de movimento tem `easing` (ou use `k()` do anim.ts, que já usa curva por trecho).
    Linear só para coisas mecânicas de verdade (esteira, ponteiro de relógio).
 2. **Nunca várias partes mudando no mesmo frame.** Calcule a pose em função do tempo e avalie cada parte num tempo

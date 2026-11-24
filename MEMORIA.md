@@ -122,8 +122,14 @@ pendente) e faça commit + push junto com o trabalho.
     com os mesmos nomes; `giraEm` no Boneco2D (padrão = antes). Demo nova `DemoGolpes2` (`out/demo-golpes-v2.mp4`, 17,5 s) e
     comparação lado a lado `out/demo-golpes-comparacao.mp4`. Render: ~2 min em resolução total. Aguardando opinião dele.
 
+19. **Etapa 2b** — ele pediu para fazer o "dá para melhorar" (sem vídeo de antes/depois, só o atualizado) e que **todo o
+    sistema valha para TODAS as animações, não só luta**. Feito: `torce` (torção do tronco) e `barra` (pano da camiseta) no
+    Boneco2D (opcionais, padrão = igual antes), `levaGolpeCorpo`, `rostoAtuado`, e a camada geral `naturalidade.ts`
+    (`criarAnimacao`: pés plantados + cabelo/camiseta com mola + câmera que enquadra) usada pela luta e exigida em toda cena
+    (CLAUDE.md, skills, agentes, esqueleto do `novo_video.py`). Vídeo: `out/demo-golpes-v3.mp4`.
+
 ## Pendências / ideias que ele ainda pode pedir
-- Etapa 3 de combate (se ele aprovar): torção de tronco, reação de golpe no corpo (dobrar), pano da camiseta, `trocaRosto` nas lutas.
+- Torção e pano da camiseta também na vista de frente/costas (hoje só perfil).
 - Testar a esteira de 4 agentes no próximo episódio e ajustar os arquivos dos agentes com o que ele achar.
 - Gesto de "mão na cabeça" no Lucas gigante (o braço atual não alcança a cabeça; virou punho tremendo).
 - Fuga do Diego com corrida de pânico (braços se debatendo, olhando para trás) — hoje usa a corrida comum.
