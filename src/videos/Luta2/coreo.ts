@@ -18,7 +18,7 @@ export const LANCES: Lance[] = [
   // 2. contra-ataque do Diego com o direto — Lucas abaixa
   { quem: "D", golpe: G.direto, alvo: "L", resposta: G.esquivaBaixa, noContato: 7, ritmo: { preparo: 1.2 } },
   // 3. Lucas aproveita que está embaixo: sobe com o chute alto (carrega mais) — acerta em cheio
-  { quem: "L", golpe: G.chuteAlto, alvo: "D", resposta: G.levaGolpe, forca: 1.3, noContato: 12, ritmo: { preparo: 1.4 } },
+  { quem: "L", golpe: G.chuteAlto, alvo: "D", resposta: G.levaGolpe, forca: 1.7, noContato: 12, ritmo: { preparo: 1.4 } },
   // 4. Diego volta bravo; Lucas passa POR CIMA dele com o mortal enquanto Diego se abaixa — os dois viram
   { quem: "L", golpe: G.cambalhota, alvo: "D", distancia: 330, depois: 16, vira: true },
   { quem: "D", golpe: G.esquivaBaixa, noContato: -20, vira: true, ritmo: { recupera: 1.6 } },
