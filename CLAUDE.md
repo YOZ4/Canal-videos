@@ -126,6 +126,12 @@ npx remotion render <Composicao> out/<arquivo>.mp4 --browser-executable=/opt/pw-
 - Sons de ambiente: `passaros.wav`, `transito.wav` (gerar_sfx.py). Silêncio da música antes do golpe/grito final.
 - Entrega: versão `-alta.mp4` só no chat; versão leve (< 100 MB) no git.
 
+## Personagens da época sem Lucas/Diego (modelo: `src/videos/Asch`, "Experimento de Asch", 60 qps)
+- Design: `colete` {cor, sombra}, `gola`, `gravata`, `oculos`, cabelo `penteado` (anos 50). Elenco em `Asch/elenco.ts`.
+- Legenda vinda pronta (`legenda.json` com startMs/endMs/destaque) → `tempo.ts` com `T()`/`TF()`/`LEGENDAS`.
+- Fileira sentada atrás de carteiras (carteira esconde as pernas), cartões na mão (`naMao`), cascatas com `random`.
+- Ducking da música sob a narração direto no gerador de áudio (`scripts/gerar_asch_audio.py`).
+
 ## Episódio de época / história real (modelo: `src/videos/Egito`, "Egito: a areia molhada", 60 qps)
 - Figurino egípcio: campo `egito` no Design (`Boneco2D`): saiote, cinto na cor do personagem, colar, braceletes, sandálias, `khat`.
   Elenco pronto em `src/videos/Egito/elenco.ts`. Para outra época, siga o mesmo padrão (peça de roupa = opção do Design).

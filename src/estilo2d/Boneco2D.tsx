@@ -884,6 +884,41 @@ const CabeloCacheado: React.FC<{ d: Design; perfil?: boolean }> = ({ d, perfil }
   );
 };
 
+/** cabelo penteado anos 50: liso, risca lateral, onda de brilhantina na frente */
+const CabeloPenteado: React.FC<{ d: Design; perfil?: boolean }> = ({ d, perfil }) =>
+  perfil ? (
+    <g>
+      <path
+        d="M -150 40 Q -172 -60 -128 -146 Q -70 -206 30 -204 Q 130 -200 168 -150 Q 150 -146 140 -132 Q 100 -150 40 -128 Q -10 -110 -50 -70 Q -90 -20 -104 40 Z"
+        fill={d.corCabelo}
+        stroke={CONTORNO}
+        strokeWidth={LINHA}
+        strokeLinejoin="round"
+      />
+      {["M -120 10 Q -126 -110 -50 -168", "M -70 -60 Q -50 -150 40 -180", "M 20 -126 Q 80 -170 150 -160"].map((p, i) => (
+        <path key={i} d={p} stroke={d.corCabeloSombra} strokeWidth={5} fill="none" strokeLinecap="round" />
+      ))}
+      <path d="M -90 -160 Q -20 -198 70 -190" stroke={d.brilhoCabelo} strokeWidth={14} fill="none" strokeLinecap="round" opacity={0.7} />
+    </g>
+  ) : (
+    <g>
+      <path
+        d="M -146 20 Q -160 -80 -116 -150 Q -60 -214 30 -210 Q 120 -206 156 -140 Q 168 -80 150 10 Q 140 -40 128 -76 Q 70 -110 -10 -104 Q -40 -102 -56 -96 Q -100 -84 -126 -40 Z"
+        fill={d.corCabelo}
+        stroke={CONTORNO}
+        strokeWidth={LINHA}
+        strokeLinejoin="round"
+      />
+      {/* risca lateral + onda */}
+      <path d="M -56 -96 Q -62 -150 -50 -202" stroke={CONTORNO} strokeWidth={5} fill="none" strokeLinecap="round" />
+      <path d="M -40 -104 Q 40 -150 140 -110" stroke={d.corCabeloSombra} strokeWidth={6} fill="none" strokeLinecap="round" />
+      {["M -120 -40 Q -120 -130 -70 -180", "M -10 -150 Q 60 -196 130 -150"].map((p, i) => (
+        <path key={i} d={p} stroke={d.corCabeloSombra} strokeWidth={5} fill="none" strokeLinecap="round" />
+      ))}
+      <path d="M 0 -186 Q 60 -200 116 -170" stroke={d.brilhoCabelo} strokeWidth={14} fill="none" strokeLinecap="round" opacity={0.7} />
+    </g>
+  );
+
 const CabeloTopete: React.FC<{ d: Design; perfil?: boolean }> = ({ d, perfil }) =>
   perfil ? (
     <g>
@@ -959,6 +994,8 @@ const Cabelo: React.FC<{ d: Design; poder: number; id: string; perfil?: boolean;
         <CabeloSaiyajin id={id} perfil={perfil} c={d.cabeloPoder} />
       ) : dd.cabelo === "cacheado" ? (
         <CabeloCacheado d={dd} perfil={perfil} />
+      ) : dd.cabelo === "penteado" ? (
+        <CabeloPenteado d={dd} perfil={perfil} />
       ) : (
         <CabeloTopete d={dd} perfil={perfil} />
       )}
@@ -1268,6 +1305,28 @@ const Frente: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
         {d.gravata && !costas ? (
           <path d={`M ${pose.vira * 40} ${-TRONCO + 16} l -20 26 l 14 170 l 6 18 l 6 -18 l 14 -170 Z`} fill={d.gravata} stroke={CONTORNO} strokeWidth={5} strokeLinejoin="round" />
         ) : null}
+        {d.colete ? (
+          <g transform={`translate(${pose.vira * 30} 0)`}>
+            <path
+              d={costas ? `M -150 ${-TRONCO + 70} Q -140 ${-TRONCO + 20} -70 ${-TRONCO + 8} L 70 ${-TRONCO + 8} Q 140 ${-TRONCO + 20} 150 ${-TRONCO + 70} L 146 14 Q 0 30 -146 14 Z` : `M -62 ${-TRONCO + 8} Q -128 ${-TRONCO + 22} -150 ${-TRONCO + 90} L -146 14 Q 0 32 146 14 L 150 ${-TRONCO + 90} Q 128 ${-TRONCO + 22} 62 ${-TRONCO + 8} L 0 -176 Z`}
+              fill={d.colete.cor}
+              stroke={CONTORNO}
+              strokeWidth={LINHA}
+              strokeLinejoin="round"
+            />
+            {[-110, -70, 70, 110].map((x) => (
+              <path key={x} d={`M ${x} ${-TRONCO + 110} L ${x * 1.02} -10`} stroke={d.colete!.sombra} strokeWidth={5} opacity={0.7} />
+            ))}
+            <path d="M -144 -4 Q 0 16 144 -4" stroke={d.colete.sombra} strokeWidth={8} fill="none" />
+            {!costas ? [-120, -70].map((y) => <circle key={y} cx={-14} cy={y} r={7} fill={d.colete!.sombra} stroke={CONTORNO} strokeWidth={3} />) : null}
+          </g>
+        ) : null}
+        {d.gola && !costas ? (
+          <g transform={`translate(${pose.vira * 34} 0)`} stroke={CONTORNO} strokeWidth={5} strokeLinejoin="round" fill={d.gola}>
+            <path d={`M -56 ${-TRONCO - 4} L -6 ${-TRONCO + 40} L -50 ${-TRONCO + 54} Q -66 ${-TRONCO + 20} -56 ${-TRONCO - 4} Z`} />
+            <path d={`M 56 ${-TRONCO - 4} L 6 ${-TRONCO + 40} L 50 ${-TRONCO + 54} Q 66 ${-TRONCO + 20} 56 ${-TRONCO - 4} Z`} />
+          </g>
+        ) : null}
         {d.numero ? (
           <text
             x={pose.vira * 50}
@@ -1346,6 +1405,23 @@ const Perfil: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
         />
         <path d="M 60 -250 Q 40 -200 56 -150" stroke={d.camisaSombra} strokeWidth={4} fill="none" strokeLinecap="round" />
         {tc > 0.05 ? <path d={`M ${70 - 40 * tc} -300 Q ${40 - 30 * tc} -220 ${60 - 30 * tc} -120`} stroke={d.camisaSombra} strokeWidth={5} fill="none" strokeLinecap="round" opacity={Math.min(1, tc * 1.5)} /> : null}
+        {d.gravata ? <path d={`M 64 ${-TRONCO + 20} L 96 ${-TRONCO + 34} Q 104 ${-TRONCO + 110} 98 ${-TRONCO + 190} L 80 ${-TRONCO + 178} Q 84 ${-TRONCO + 100} 64 ${-TRONCO + 20} Z`} fill={d.gravata} stroke={CONTORNO} strokeWidth={5} strokeLinejoin="round" /> : null}
+        {d.colete ? (
+          <g>
+            <path
+              d={`M -52 ${-TRONCO + 4} Q -92 ${-TRONCO + 16} -94 ${-TRONCO + 70} L -86 -60 Q -84 -10 -88 20 L 98 20 Q 94 -20 98 -80 Q 104 -150 92 ${-TRONCO + 150} Q 60 ${-TRONCO + 60} 30 ${-TRONCO + 8} Q 0 ${-TRONCO + 20} -52 ${-TRONCO + 4} Z`}
+              fill={d.colete.cor}
+              stroke={CONTORNO}
+              strokeWidth={LINHA}
+              strokeLinejoin="round"
+            />
+            {[-40, 10, 60].map((x) => (
+              <path key={x} d={`M ${x} ${-TRONCO + 70} L ${x} -10`} stroke={d.colete!.sombra} strokeWidth={5} opacity={0.7} />
+            ))}
+            <path d="M -86 4 L 96 4" stroke={d.colete.sombra} strokeWidth={8} />
+          </g>
+        ) : null}
+        {d.gola ? <path d={`M 30 ${-TRONCO - 2} L 96 ${-TRONCO + 30} L 70 ${-TRONCO + 50} Q 40 ${-TRONCO + 24} 30 ${-TRONCO - 2} Z`} fill={d.gola} stroke={CONTORNO} strokeWidth={5} strokeLinejoin="round" /> : null}
         </g>
         {d.musculos ? (
           <g stroke={CONTORNO} strokeWidth={6} fill="none" strokeLinecap="round" opacity={0.75}>

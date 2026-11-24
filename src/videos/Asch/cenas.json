@@ -1,0 +1,673 @@
+{
+ "video": "experimento-asch",
+ "largura": 1080,
+ "altura": 1920,
+ "fps": 60,
+ "duracao_s": 79.8,
+ "total_frames": 4788,
+ "audio": "experimento-asch.mp3",
+ "legenda": "experimento-asch-legenda.json",
+ "cenas": [
+  {
+   "id": "C01",
+   "ini": 0,
+   "fim": 4.8,
+   "cenario": "sala de aula 1951 (luz de dia pela janela)",
+   "imagens": [
+    "c01-abertura-sete-homens-storyboard.png",
+    "ref-04-atores.png",
+    "ref-05-cartoes.png",
+    "ref-06-cenario-sala.png"
+   ],
+   "acao": "Os 7 homens, um ao lado do outro, levantam ao mesmo tempo um cartão com a letra A (a linha curta), com atraso de 2–4 frames entre eles. Close no cartão de opções com o anel VERMELHO na linha A.",
+   "personagens": [
+    {
+     "nome": "atores_x7",
+     "keyframes": [
+      {
+       "t": 0.3,
+       "pose": "levantando cartão A",
+       "expressao": "neutro sério"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 0,
+     "nota": "close no cartão com a linha A curta (zoom 1,8)"
+    },
+    {
+     "t": 2.2,
+     "nota": "abre com spring mostrando os 7 de cartão erguido (zoom 0,62)"
+    }
+   ],
+   "hud": [],
+   "transicao": "corte seco com whoosh",
+   "sons": [
+    {
+     "t": 0.3,
+     "som": "7 cartões levantando (papel, em cascata)"
+    },
+    {
+     "t": 2.2,
+     "som": "whoosh grave"
+    }
+   ],
+   "inicio_frame": 0,
+   "fim_frame": 288,
+   "fala": "Sete homens olharam pra uma linha claramente curta… e disseram que era a maior."
+  },
+  {
+   "id": "C02",
+   "ini": 4.8,
+   "fim": 10.4,
+   "cenario": "sala de aula 1951 (luz de dia pela janela)",
+   "imagens": [
+    "c02-zombaria-oculos-storyboard.png",
+    "ref-02-ficha-estudante.png",
+    "ref-03-ficha-zombador.png"
+   ],
+   "acao": "O estudante pisca 2x, confuso. O ator do lado (colete vinho) se inclina e ri em \"Tá precisando de óculos, garoto?\".",
+   "personagens": [
+    {
+     "nome": "estudante",
+     "keyframes": [
+      {
+       "t": 5.0,
+       "pose": "parado",
+       "expressao": "confuso"
+      }
+     ]
+    },
+    {
+     "nome": "zombador",
+     "keyframes": [
+      {
+       "t": 7.8,
+       "pose": "inclinado",
+       "expressao": "rindo"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 4.8,
+     "nota": "plano dos dois (zoom 1,25)"
+    },
+    {
+     "t": 8.7,
+     "nota": "push-in no zombador rindo"
+    }
+   ],
+   "hud": [],
+   "transicao": "corte seco",
+   "sons": [
+    {
+     "t": 5.2,
+     "som": "piscada (tic)"
+    },
+    {
+     "t": 7.9,
+     "som": "risadinha"
+    }
+   ],
+   "inicio_frame": 288,
+   "fim_frame": 624,
+   "fala": "O oitavo, um estudante magrinho, piscou. O do lado riu: \"Tá precisando de óculos, garoto?\""
+  },
+  {
+   "id": "C03",
+   "ini": 10.4,
+   "fim": 15.2,
+   "cenario": "sala de aula 1951 (luz de dia pela janela)",
+   "imagens": [
+    "c03-eua-1951-faculdade-storyboard.png",
+    "ref-06-cenario-sala.png"
+   ],
+   "acao": "Plano geral da sala: quadro-negro \"TESTE DE VISÃO\", carteiras, os 8 sentados, pesquisador de óculos na frente.",
+   "personagens": [
+    {
+     "nome": "pesquisador",
+     "keyframes": [
+      {
+       "t": 10.6,
+       "pose": "parado com prancheta",
+       "expressao": "neutro"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 10.4,
+     "nota": "pan lento da janela até o quadro (zoom 0,6)"
+    }
+   ],
+   "hud": [
+    {
+     "t": 10.7,
+     "tipo": "etiqueta",
+     "texto": "EUA • 1951"
+    }
+   ],
+   "transicao": "corte seco",
+   "sons": [
+    {
+     "t": 10.5,
+     "som": "tique-taque de relógio de parede (loop baixo)"
+    }
+   ],
+   "inicio_frame": 624,
+   "fim_frame": 912,
+   "fala": "Estados Unidos, 1951. Um teste de visão numa faculdade."
+  },
+  {
+   "id": "C04",
+   "ini": 15.2,
+   "fim": 23.9,
+   "cenario": "sala de aula 1951 (luz de dia pela janela)",
+   "imagens": [
+    "c04-cartoes-menos-de-1-storyboard.png",
+    "ref-05-cartoes.png"
+   ],
+   "acao": "Close nos cartões: linha de referência à esquerda e opções A, B, C à direita. Em \"qual tem o mesmo tamanho?\" uma régua pontilhada liga a referência à B. Em \"menos de um por cento\" entra o HUD.",
+   "personagens": [],
+   "camera": [
+    {
+     "t": 15.2,
+     "nota": "close nos cartões (zoom 1,4)"
+    },
+    {
+     "t": 19.1,
+     "nota": "desliza da referência até a B"
+    }
+   ],
+   "hud": [
+    {
+     "t": 22.5,
+     "tipo": "contador",
+     "texto": "SOZINHO, ERRA",
+     "valor": "< 1%"
+    }
+   ],
+   "transicao": "whoosh",
+   "sons": [
+    {
+     "t": 19.2,
+     "som": "traço de giz"
+    },
+    {
+     "t": 22.5,
+     "som": "pop"
+    }
+   ],
+   "inicio_frame": 912,
+   "fim_frame": 1434,
+   "fala": "Uma linha de referência, três opções e uma pergunta simples: qual tem o mesmo tamanho? Sozinha, quase ninguém erra: menos de um por cento."
+  },
+  {
+   "id": "C05",
+   "ini": 23.9,
+   "fim": 32.0,
+   "cenario": "sala de aula 1951 (luz de dia pela janela)",
+   "imagens": [
+    "c05-rodada-1-e-3-storyboard.png",
+    "ref-04-atores.png"
+   ],
+   "acao": "Rodada 1: todos levantam B (certa), tudo normal. Rodada 3: os 7 levantam A; o estudante levanta B (cartão verde). Em \"A sala inteira vira pra ele\" as 7 cabeças viram ao mesmo tempo… com atraso de 2 frames entre elas (onda).",
+   "personagens": [
+    {
+     "nome": "atores_x7",
+     "keyframes": [
+      {
+       "t": 26.5,
+       "pose": "levantando cartão A",
+       "expressao": "sério"
+      },
+      {
+       "t": 30.2,
+       "pose": "virando pro estudante",
+       "expressao": "encarando"
+      }
+     ]
+    },
+    {
+     "nome": "estudante",
+     "keyframes": [
+      {
+       "t": 28.8,
+       "pose": "levantando cartão B",
+       "expressao": "confuso"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 23.9,
+     "nota": "plano geral da fileira"
+    },
+    {
+     "t": 30.1,
+     "nota": "zoom rápido no estudante (snap 6 frames)"
+    }
+   ],
+   "hud": [
+    {
+     "t": 23.9,
+     "tipo": "etiqueta",
+     "texto": "RODADA 1 / 18"
+    },
+    {
+     "t": 26.2,
+     "tipo": "etiqueta",
+     "texto": "RODADA 3 / 18"
+    }
+   ],
+   "transicao": "corte seco",
+   "sons": [
+    {
+     "t": 26.5,
+     "som": "cartões"
+    },
+    {
+     "t": 30.2,
+     "som": "silêncio súbito + cadeiras rangendo"
+    }
+   ],
+   "inicio_frame": 1434,
+   "fim_frame": 1920,
+   "fala": "Na primeira rodada, todo mundo acerta. Na terceira, os sete escolhem a linha errada. Ele fala a certa. A sala inteira vira pra ele."
+  },
+  {
+   "id": "C06",
+   "ini": 32.0,
+   "fim": 38.1,
+   "cenario": "sala de aula 1951 (luz de dia pela janela), luz um pouco mais fria",
+   "imagens": [
+    "c06-rodada-5-suor-storyboard.png",
+    "ref-02-ficha-estudante.png"
+   ],
+   "acao": "Rodada 5: close no estudante, gota de suor escorrendo na nuca (close na nuca). O zombador cochicha de lado, cobrindo a boca.",
+   "personagens": [
+    {
+     "nome": "estudante",
+     "keyframes": [
+      {
+       "t": 33.5,
+       "pose": "parado tenso",
+       "expressao": "nervoso suando"
+      }
+     ]
+    },
+    {
+     "nome": "zombador",
+     "keyframes": [
+      {
+       "t": 35.4,
+       "pose": "cochichando",
+       "expressao": "deboche"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 32.0,
+     "nota": "close no rosto (zoom 1,4)"
+    },
+    {
+     "t": 33.6,
+     "nota": "close extremo na nuca com a gota"
+    },
+    {
+     "t": 35.4,
+     "nota": "pan até o zombador"
+    }
+   ],
+   "hud": [
+    {
+     "t": 32.0,
+     "tipo": "etiqueta",
+     "texto": "RODADA 5 / 18"
+    }
+   ],
+   "transicao": "corte seco",
+   "sons": [
+    {
+     "t": 33.6,
+     "som": "batimento cardíaco (começa)"
+    },
+    {
+     "t": 36.6,
+     "som": "cochicho"
+    }
+   ],
+   "inicio_frame": 1920,
+   "fim_frame": 2286,
+   "fala": "Na quinta, de novo. Ele sente o suor escorrer na nuca. O do lado cochicha: \"Esse aí não enxerga nada.\""
+  },
+  {
+   "id": "C07",
+   "ini": 38.1,
+   "fim": 46.1,
+   "cenario": "sala de aula 1951 (luz de dia pela janela), luz fria, vinheta forte",
+   "imagens": [
+    "c07-rodada-7-cede-storyboard.png",
+    "ref-02-ficha-estudante.png",
+    "ref-03-ficha-zombador.png"
+   ],
+   "acao": "Rodada 7: o pesquisador pergunta. O estudante olha pras linhas, olha pros homens (olhos indo e voltando), hold de 12 frames… e levanta o cartão A. O zombador sorri satisfeito em \"Agora sim\".",
+   "personagens": [
+    {
+     "nome": "estudante",
+     "keyframes": [
+      {
+       "t": 40.5,
+       "pose": "olhando",
+       "expressao": "nervoso"
+      },
+      {
+       "t": 43.0,
+       "pose": "levantando cartão A",
+       "expressao": "cedendo"
+      }
+     ]
+    },
+    {
+     "nome": "zombador",
+     "keyframes": [
+      {
+       "t": 44.2,
+       "pose": "parado",
+       "expressao": "sorriso agora sim"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 38.1,
+     "nota": "plano médio"
+    },
+    {
+     "t": 40.5,
+     "nota": "push-in lento no rosto até 43,0"
+    },
+    {
+     "t": 43.0,
+     "nota": "corte pro cartão A subindo"
+    }
+   ],
+   "hud": [
+    {
+     "t": 38.1,
+     "tipo": "etiqueta",
+     "texto": "RODADA 7 / 18"
+    }
+   ],
+   "transicao": "mudança de luz pra azul (fade 15 frames)",
+   "sons": [
+    {
+     "t": 38.2,
+     "som": "batimento acelerando"
+    },
+    {
+     "t": 43.0,
+     "som": "batimento para / impacto seco"
+    },
+    {
+     "t": 45.2,
+     "som": "música para"
+    }
+   ],
+   "inicio_frame": 2286,
+   "fim_frame": 2766,
+   "fala": "Na sétima, o pesquisador pergunta. Ele olha pras linhas, olha pros homens… e responde a errada. O do lado sorri: \"Agora sim.\""
+  },
+  {
+   "id": "C08",
+   "ini": 46.1,
+   "fim": 62.6,
+   "cenario": "explicação: fundo azul escuro",
+   "imagens": [
+    "c08-sabe-por-que-atores-storyboard.png"
+   ],
+   "acao": "\"Sabe por quê?\": luz azul. Os 7 aparecem em fila e uma etiqueta \"ATOR\" cai em cima de cada um (cascata). O estudante fica com um anel de luz: \"o único sendo testado\". Em \"ri de uma piada\": inset rápido de um grupo rindo e o estudante rindo sem graça. Em \"pílula azul\": uma pílula azul simples flutua e gira (sem nada do filme).",
+   "personagens": [
+    {
+     "nome": "atores_x7",
+     "keyframes": [
+      {
+       "t": 47.3,
+       "pose": "parados",
+       "expressao": "neutro"
+      }
+     ]
+    },
+    {
+     "nome": "estudante",
+     "keyframes": [
+      {
+       "t": 49.0,
+       "pose": "parado",
+       "expressao": "surpreso"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 46.1,
+     "nota": "plano geral, push lento"
+    }
+   ],
+   "hud": [
+    {
+     "t": 47.3,
+     "tipo": "etiqueta",
+     "texto": "ATOR (x7, em cascata)"
+    },
+    {
+     "t": 58.0,
+     "tipo": "objeto",
+     "texto": "pílula azul"
+    }
+   ],
+   "transicao": "clarão curto",
+   "sons": [
+    {
+     "t": 46.2,
+     "som": "drone grave de mistério"
+    },
+    {
+     "t": 47.3,
+     "som": "7 carimbos \"ATOR\" em sequência"
+    },
+    {
+     "t": 55.0,
+     "som": "risadas abafadas"
+    },
+    {
+     "t": 58.0,
+     "som": "brilho"
+    }
+   ],
+   "inicio_frame": 2766,
+   "fim_frame": 3756,
+   "fala": "Sabe por quê? Os sete eram atores. O único sendo testado era ele. Ser o único diferente numa sala incomoda de verdade. É tipo quando todo mundo ri de uma piada que você não entendeu… e você ri junto. Ou escolher a pílula azul do Matrix: é mais confortável fingir que está tudo certo."
+  },
+  {
+   "id": "C09",
+   "ini": 62.6,
+   "fim": 67.8,
+   "cenario": "explicação: fundo azul escuro",
+   "imagens": [
+    "c09-tres-de-quatro-storyboard.png"
+   ],
+   "acao": "4 bonequinhos: 3 ficam vermelhos um a um (cederam), 1 fica branco. HUD \"3 DE 4\".",
+   "personagens": [],
+   "camera": [
+    {
+     "t": 62.6,
+     "nota": "estático com leve push"
+    }
+   ],
+   "hud": [
+    {
+     "t": 64.5,
+     "tipo": "contador",
+     "texto": "CEDERAM 1 VEZ OU MAIS",
+     "valor": "3 DE 4"
+    }
+   ],
+   "transicao": "whoosh de volta pra sala",
+   "sons": [
+    {
+     "t": 64.0,
+     "som": "3 pops graves"
+    },
+    {
+     "t": 65.5,
+     "som": "pop agudo"
+    }
+   ],
+   "inicio_frame": 3756,
+   "fim_frame": 4068,
+   "fala": "E não foi só ele. Três de cada quatro pessoas seguiram o grupo errado pelo menos uma vez."
+  },
+  {
+   "id": "C10",
+   "ini": 67.8,
+   "fim": 74.2,
+   "cenario": "sala de aula 1951 (luz de dia pela janela) (luz volta quente)",
+   "imagens": [
+    "c10-um-aliado-storyboard.png",
+    "ref-04-atores.png"
+   ],
+   "acao": "Nova versão do teste: a fileira levanta A, mas UM ator (o 4º) levanta B com cartão verde e anel verde.",
+   "personagens": [
+    {
+     "nome": "atores_x7",
+     "keyframes": [
+      {
+       "t": 71.2,
+       "pose": "levantando A; o 4º levanta B",
+       "expressao": "neutro"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 67.8,
+     "nota": "plano geral"
+    },
+    {
+     "t": 71.2,
+     "nota": "zoom no aliado"
+    }
+   ],
+   "hud": [
+    {
+     "t": 71.2,
+     "tipo": "etiqueta",
+     "texto": "UM ÚNICO ATOR DIZ A VERDADE"
+    }
+   ],
+   "transicao": "corte seco",
+   "sons": [
+    {
+     "t": 71.2,
+     "som": "brilho/acorde positivo"
+    }
+   ],
+   "inicio_frame": 4068,
+   "fim_frame": 4452,
+   "fala": "Mas o psicólogo Solomon Asch testou mais uma coisa. Colocou na sala um único ator que respondia a verdade."
+  },
+  {
+   "id": "C11",
+   "ini": 74.2,
+   "fim": 79.8,
+   "cenario": "sala de aula 1951 (luz de dia pela janela)",
+   "imagens": [
+    "c11-final-uma-voz-storyboard.png",
+    "ref-05-cartoes.png"
+   ],
+   "acao": "O estudante, calmo, levanta B. O zombador fica de boca aberta. Câmera desce até o cartão: a linha A volta a parecer curta (anel verde na B). Último quadro: close na linha A curta, igual ao primeiro quadro do C01 (loop).",
+   "personagens": [
+    {
+     "nome": "estudante",
+     "keyframes": [
+      {
+       "t": 74.4,
+       "pose": "levantando cartão B",
+       "expressao": "alívio"
+      }
+     ]
+    },
+    {
+     "nome": "zombador",
+     "keyframes": [
+      {
+       "t": 75.0,
+       "pose": "parado",
+       "expressao": "surpreso"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 74.2,
+     "nota": "plano médio"
+    },
+    {
+     "t": 77.0,
+     "nota": "desce até o cartão e termina no close da linha A (= 1º quadro)"
+    }
+   ],
+   "hud": [],
+   "transicao": "LOOP: o último quadro casa com o primeiro",
+   "sons": [
+    {
+     "t": 74.4,
+     "som": "cartão"
+    },
+    {
+     "t": 78.5,
+     "som": "tique-taque do relógio (o mesmo do começo)"
+    }
+   ],
+   "inicio_frame": 4452,
+   "fim_frame": 4788,
+   "fala": "E quase ninguém cedeu mais. Bastava uma voz… pra linha curta voltar a ser curta."
+  }
+ ],
+ "personagens": {
+  "estudante": "ref-02-ficha-estudante.png",
+  "zombador": "ref-03-ficha-zombador.png",
+  "atores_x7": "ref-04-atores.png (6 variações + o zombador)",
+  "pesquisador": "ref-01-figurino-anos50.png (genérico, NÃO imitar o Solomon Asch real)"
+ },
+ "musica": [
+  {
+   "de": 0,
+   "ate": 46.1,
+   "clima": "tensa, piano baixo e relógio; abaixa ~50% sob a narração; batimento entra em 33,6 s"
+  },
+  {
+   "de": 46.1,
+   "ate": 67.8,
+   "clima": "drone grave de mistério (luz azul)"
+  },
+  {
+   "de": 67.8,
+   "ate": 79.8,
+   "clima": "volta suave e esperançosa; termina no tique-taque pro loop"
+  }
+ ]
+}

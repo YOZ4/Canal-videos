@@ -3,7 +3,7 @@
  * Para criar um personagem novo, copie um destes e troque cores/cabelo.
  */
 
-export type TipoCabelo = "cacheado" | "topete";
+export type TipoCabelo = "cacheado" | "topete" | "penteado";
 
 export type Design = {
   nome: string;
@@ -39,6 +39,10 @@ export type Design = {
   musculos?: boolean;
   /** faixa amarrada na cintura (ex.: camiseta rasgada) */
   faixa?: { cor: string; sombra: string };
+  /** colete (de tricô) por cima da camisa — gola em V mostra a camisa e a gravata */
+  colete?: { cor: string; sombra: string };
+  /** gola da camisa social (cor da gola) */
+  gola?: string;
   /** figurino do Egito antigo: peito nu, saiote de linho, cinto na cor do personagem, colar largo, braceletes, sandálias */
   egito?: { cinto: string; cintoSombra: string; colar: string; khat?: boolean };
 };

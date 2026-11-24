@@ -128,6 +128,15 @@ pendente) e faça commit + push junto com o trabalho.
     (`criarAnimacao`: pés plantados + cabelo/camiseta com mola + câmera que enquadra) usada pela luta e exigida em toda cena
     (CLAUDE.md, skills, agentes, esqueleto do `novo_video.py`). Vídeo: `out/demo-golpes-v3.mp4`.
 
+20. **"Experimento de Asch"** (`src/videos/Asch`, composição `Asch`, 60 qps, 79,8 s, 11 cenas) — 1º vídeo com personagens
+    da época (sem Lucas e Diego), feito com a skill `roteiro-imagens-remotion` a partir do Roteiro 1 + `cenas.json` +
+    `legenda.json` (tempos reais por palavra, `destaque`). **As imagens de referência não vieram** (só áudio, roteiro e JSON):
+    produzido pelas descrições. Novos no Boneco2D/Design: `colete`, `gola`, cabelo `penteado` (risca lateral anos 50).
+    Mundo contínuo: sala com quadro-negro + cartão do teste (`sala.tsx`), fileira de 8 em carteiras (`atores.tsx`, via
+    `criarAnimacao` + `rostoAtuado`), luz quente → fria → azul (`Luz`), loop no cartão A. Áudio: `scripts/gerar_asch_audio.py`
+    (trilha com ducking automático sob a narração + 14 efeitos `as-*`). Plano/revisões: `producao/asch/`.
+    Vídeo: `out/experimento-asch.mp4` (alta só no chat).
+
 ## Pendências / ideias que ele ainda pode pedir
 - Torção e pano da camiseta também na vista de frente/costas (hoje só perfil).
 - Testar a esteira de 4 agentes no próximo episódio e ajustar os arquivos dos agentes com o que ele achar.
