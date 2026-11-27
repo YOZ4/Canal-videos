@@ -1,0 +1,927 @@
+{
+ "video": "torre-eiffel",
+ "largura": 1080,
+ "altura": 1920,
+ "fps": 60,
+ "duracao_s": 81.24,
+ "total_frames": 4874,
+ "audio": "torre-eiffel.mp3",
+ "legenda": "torre-eiffel-legenda.json",
+ "cenas": [
+  {
+   "id": "C01",
+   "ini": 0,
+   "fim": 4.2,
+   "cenario": "A: salão do hotel de luxo, 1925 (papel de parede vinho, dourado, lustre, janela com a torre)",
+   "imagens": [
+    "c01-gancho-venda-secreta-storyboard.png",
+    "ref-02-ficha-lustig.png",
+    "ref-04-comerciantes.png",
+    "ref-05-objetos.png",
+    "ref-06-cenario-hotel.png"
+   ],
+   "acao": "Já começa em movimento: Lustig, calmo e sorrindo, desliza pela mesa um documento com o desenho da torre e um carimbo vermelho, na direção da câmera. Atrás, os comerciantes (grupo 1) olham em silêncio. Em \"reunião secreta\" ele fecha a cortina com a outra mão.",
+   "personagens": [
+    {
+     "nome": "lustig",
+     "keyframes": [
+      {
+       "t": 0.1,
+       "pose": "braço esticado deslizando o documento",
+       "expressao": "sorriso de vendedor"
+      },
+      {
+       "t": 2.8,
+       "pose": "puxando a cortina",
+       "expressao": "calmo/oficial"
+      }
+     ]
+    },
+    {
+     "nome": "comerciantes_grupo1",
+     "keyframes": [
+      {
+       "t": 0.5,
+       "pose": "sentados",
+       "expressao": "sério"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 0,
+     "nota": "close no documento chegando (zoom 1,6)"
+    },
+    {
+     "t": 1.6,
+     "nota": "dolly-out revelando a mesa e Lustig (zoom 0,75)"
+    }
+   ],
+   "tres_d": "PONTO-CHAVE (gancho). Câmera 3D em dolly-out atravessando as camadas: documento z=0 → mesa z=-300 → personagens z=-450 → parede/janela z=-1200. O documento é um plano 3D que desliza na mesa e gira ~15° em direção à câmera, com sombra no tampo.",
+   "hud": [],
+   "transicao": "corte seco com whoosh",
+   "sons": [
+    {
+     "t": 0.1,
+     "som": "papel deslizando na mesa"
+    },
+    {
+     "t": 2.8,
+     "som": "cortina fechando"
+    },
+    {
+     "t": 3.6,
+     "som": "carimbo (tum)"
+    }
+   ],
+   "inicio_frame": 0,
+   "fim_frame": 252,
+   "fala": "Um homem de terno vende a Torre Eiffel… numa reunião secreta em Paris."
+  },
+  {
+   "id": "C02",
+   "ini": 4.2,
+   "fim": 9.0,
+   "cenario": "A: salão do hotel de luxo, 1925 (papel de parede vinho, dourado, lustre, janela com a torre), luz quente",
+   "imagens": [
+    "c02-zombaria-piada-storyboard.png",
+    "ref-03-ficha-poisson.png"
+   ],
+   "acao": "Close em Poisson: segura o riso em \"Vender a Torre Eiffel?\" e solta a gargalhada em \"Só pode ser piada\", balançando a barriga. Lustig não reage (inset pequeno dele sorrindo calmo).",
+   "personagens": [
+    {
+     "nome": "poisson",
+     "keyframes": [
+      {
+       "t": 4.4,
+       "pose": "inclinado pra frente",
+       "expressao": "desconfiado"
+      },
+      {
+       "t": 5.7,
+       "pose": "rindo, ombros sacudindo",
+       "expressao": "rindo/deboche"
+      }
+     ]
+    },
+    {
+     "nome": "lustig",
+     "keyframes": [
+      {
+       "t": 7.0,
+       "pose": "parado (inset)",
+       "expressao": "calmo/oficial"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 4.2,
+     "nota": "close em Poisson (zoom 1,35)"
+    },
+    {
+     "t": 5.7,
+     "nota": "tremida curta na gargalhada (6 frames)"
+    }
+   ],
+   "tres_d": "Só parallax leve (fundo do hotel 0,3x mais lento que Poisson).",
+   "hud": [],
+   "transicao": "corte seco",
+   "sons": [
+    {
+     "t": 5.7,
+     "som": "gargalhada"
+    },
+    {
+     "t": 7.0,
+     "som": "tilintar de taça"
+    }
+   ],
+   "inicio_frame": 252,
+   "fim_frame": 540,
+   "fala": "\"Vender a Torre Eiffel? Só pode ser piada\", ri o comerciante André Poisson."
+  },
+  {
+   "id": "C03",
+   "ini": 9.0,
+   "fim": 14.0,
+   "cenario": "B: rua de Paris, 1925 (prédios creme, telhado azul-acinzentado, calçamento, torre ao fundo)",
+   "imagens": [
+    "c03-paris-1925-diretor-storyboard.png",
+    "ref-07-cenario-paris.png",
+    "ref-01-figurino-1925.png"
+   ],
+   "acao": "Abertura de Paris 1925 com a torre. Em \"diretor do governo francês\" Lustig (de chapéu fedora) aparece na calçada e mostra um papel \"oficial\" com carimbo, ajeitando a gravata.",
+   "personagens": [
+    {
+     "nome": "lustig_rua",
+     "keyframes": [
+      {
+       "t": 11.5,
+       "pose": "mostrando o papel",
+       "expressao": "sorriso de vendedor"
+      },
+      {
+       "t": 13.0,
+       "pose": "ajeitando a gravata",
+       "expressao": "calmo/oficial"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 9.0,
+     "nota": "crane up da rua até o topo da torre"
+    },
+    {
+     "t": 11.5,
+     "nota": "desce rápido (whip) até Lustig na calçada"
+    }
+   ],
+   "tres_d": "Cenário com profundidade: calçamento z=0, prédios z=-600, torre z=-2500, céu z=-4000. A câmera sobe em crane mostrando o parallax entre prédios e torre. Torre pode ser um modelo 3D simples ou um plano com parallax.",
+   "hud": [
+    {
+     "t": 9.1,
+     "tipo": "etiqueta",
+     "texto": "PARIS • 1925"
+    }
+   ],
+   "transicao": "whip pan com borrão",
+   "sons": [
+    {
+     "t": 9.0,
+     "som": "rua de Paris: buzina antiga + sanfona baixinha"
+    },
+    {
+     "t": 11.5,
+     "som": "whoosh"
+    }
+   ],
+   "inicio_frame": 540,
+   "fim_frame": 840,
+   "fala": "Paris, 1925. O homem diz que é diretor do governo francês."
+  },
+  {
+   "id": "C04",
+   "ini": 14.0,
+   "fim": 21.75,
+   "cenario": "A: salão do hotel de luxo, 1925 (papel de parede vinho, dourado, lustre, janela com a torre)",
+   "imagens": [
+    "c04-seis-comerciantes-7300t-storyboard.png",
+    "ref-04-comerciantes.png",
+    "ref-03-ficha-poisson.png",
+    "ref-06-cenario-hotel.png"
+   ],
+   "acao": "Os seis comerciantes (5 do grupo 1 + Poisson) entram e sentam em sequência (1 a cada 5 frames). Lustig põe uma mini torre na mesa. Em \"sete mil e trezentas toneladas\" o contador sobe de 0 até 7.300. Em \"à venda\" uma etiqueta vermelha cai na mini torre.",
+   "personagens": [
+    {
+     "nome": "comerciantes_grupo1",
+     "keyframes": [
+      {
+       "t": 14.4,
+       "pose": "sentando em sequência",
+       "expressao": "curioso"
+      }
+     ]
+    },
+    {
+     "nome": "poisson",
+     "keyframes": [
+      {
+       "t": 15.2,
+       "pose": "sentando",
+       "expressao": "rindo/deboche"
+      }
+     ]
+    },
+    {
+     "nome": "lustig",
+     "keyframes": [
+      {
+       "t": 18.3,
+       "pose": "apoiando as mãos na mesa",
+       "expressao": "sorriso de vendedor"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 14.0,
+     "nota": "plano geral da mesa (zoom 0,72)"
+    },
+    {
+     "t": 18.3,
+     "nota": "push-in até a mini torre"
+    }
+   ],
+   "tres_d": "PONTO-CHAVE (número). A mini torre em cima da mesa gira 360° em 3D enquanto o número sobe. O HUD \"7.300 t\" tem volume (texto extrudado com luz dourada) e entra vindo do fundo (z=-800 → 0).",
+   "hud": [
+    {
+     "t": 14.2,
+     "tipo": "etiqueta",
+     "texto": "6 COMERCIANTES"
+    },
+    {
+     "t": 18.3,
+     "tipo": "contador",
+     "texto": "DE FERRO",
+     "valor": "0 → 7.300 t (até 21,0 s)"
+    },
+    {
+     "t": 21.0,
+     "tipo": "etiqueta",
+     "texto": "À VENDA"
+    }
+   ],
+   "transicao": "corte seco",
+   "sons": [
+    {
+     "t": 14.4,
+     "som": "cadeiras arrastando (6x)"
+    },
+    {
+     "t": 18.3,
+     "som": "contador rolando (tic-tic)"
+    },
+    {
+     "t": 21.0,
+     "som": "impacto metálico (clang)"
+    }
+   ],
+   "inicio_frame": 840,
+   "fim_frame": 1305,
+   "fala": "Ele chama seis comerciantes de ferro-velho pra um hotel de luxo e anuncia: sete mil e trezentas toneladas de ferro… à venda."
+  },
+  {
+   "id": "C05",
+   "ini": 21.75,
+   "fim": 23.85,
+   "cenario": "fundo azul-escuro chapado (pausa da pergunta)",
+   "imagens": [
+    "c05-pergunta-aberta-storyboard.png"
+   ],
+   "acao": "Tela dividida em 4: três comerciantes e Poisson piscam ao mesmo tempo, com cara de dúvida. A pergunta fica no centro (loop aberto até a cena 9).",
+   "personagens": [
+    {
+     "nome": "comerciantes_grupo1",
+     "keyframes": [
+      {
+       "t": 21.9,
+       "pose": "retrato",
+       "expressao": "curioso"
+      }
+     ]
+    },
+    {
+     "nome": "poisson",
+     "keyframes": [
+      {
+       "t": 21.9,
+       "pose": "retrato",
+       "expressao": "interessado"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 21.75,
+     "nota": "estático, cada quadro entra com spring"
+    }
+   ],
+   "tres_d": "Nenhum (contraste com as cenas 3D).",
+   "hud": [
+    {
+     "t": 21.9,
+     "tipo": "texto",
+     "texto": "POR QUE ALGUÉM ACREDITARIA?"
+    }
+   ],
+   "transicao": "corte seco",
+   "sons": [
+    {
+     "t": 21.9,
+     "som": "4 pops em sequência"
+    }
+   ],
+   "inicio_frame": 1305,
+   "fim_frame": 1431,
+   "fala": "Mas por que alguém acreditaria nisso?"
+  },
+  {
+   "id": "C06",
+   "ini": 23.85,
+   "fim": 33.08,
+   "cenario": "B: rua de Paris, 1925 (prédios creme, telhado azul-acinzentado, calçamento, torre ao fundo), em tom sépia (flashback 1889) e depois (a partir de 30,6 s) close de Lustig no hotel",
+   "imagens": [
+    "c06-escalada1-provisoria-segredo-storyboard.png",
+    "ref-05-objetos.png",
+    "ref-02-ficha-lustig.png"
+   ],
+   "acao": "Escalada 1. Flashback sépia: a torre nova de 1889 com bandeirinhas; carimbo \"PROVISÓRIA\" bate na tela. Em \"caro demais\" a torre fica cheia de ferrugem e notas de dinheiro voam pra longe. Em \"mas é segredo\" volta pro hotel: Lustig faz \"shh\" com o dedo nos lábios.",
+   "personagens": [
+    {
+     "nome": "lustig",
+     "keyframes": [
+      {
+       "t": 30.6,
+       "pose": "dedo nos lábios",
+       "expressao": "segredo (\"shh\")"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 23.85,
+     "nota": "plano da torre sépia"
+    },
+    {
+     "t": 28.0,
+     "nota": "zoom na ferrugem"
+    },
+    {
+     "t": 30.6,
+     "nota": "corte pro close de Lustig"
+    }
+   ],
+   "tres_d": "A torre do flashback faz uma órbita lenta de ~20° (câmera gira em volta). O carimbo \"PROVISÓRIA\" vem de z=+400 e bate na tela com tremida.",
+   "hud": [
+    {
+     "t": 24.0,
+     "tipo": "etiqueta",
+     "texto": "1889: SÓ PRA EXPOSIÇÃO"
+    },
+    {
+     "t": 26.5,
+     "tipo": "carimbo",
+     "texto": "PROVISÓRIA"
+    },
+    {
+     "t": 28.8,
+     "tipo": "texto",
+     "texto": "CONSERTO CARO DEMAIS"
+    },
+    {
+     "t": 31.5,
+     "tipo": "etiqueta",
+     "texto": "SEGREDO"
+    }
+   ],
+   "transicao": "clarão sépia → corte",
+   "sons": [
+    {
+     "t": 24.0,
+     "som": "projetor antigo"
+    },
+    {
+     "t": 26.5,
+     "som": "carimbo forte"
+    },
+    {
+     "t": 28.8,
+     "som": "rangido de metal + moedas caindo"
+    },
+    {
+     "t": 31.0,
+     "som": "\"shhh\""
+    }
+   ],
+   "inicio_frame": 1431,
+   "fim_frame": 1985,
+   "fala": "Primeiro, ele explica: a torre foi feita só pra uma exposição, era pra ser provisória, e o conserto está caro demais. O governo quer desmontar… mas é segredo."
+  },
+  {
+   "id": "C07",
+   "ini": 33.08,
+   "fim": 40.56,
+   "cenario": "B: rua de Paris, 1925 (prédios creme, telhado azul-acinzentado, calçamento, torre ao fundo)",
+   "imagens": [
+    "c07-escalada2-inspecao-carro-storyboard.png",
+    "ref-05-objetos.png",
+    "ref-03-ficha-poisson.png",
+    "ref-07-cenario-paris.png"
+   ],
+   "acao": "Escalada 2. Um carro preto de 1925 leva o grupo até a torre (balança nas pedras). Na base, Lustig aponta as vigas como dono. Em \"Poisson, que ria no começo\" inset rápido dele rindo (cena 2); em \"agora anota tudo\" ele escreve rápido num caderninho, de olhos arregalados.",
+   "personagens": [
+    {
+     "nome": "lustig_rua",
+     "keyframes": [
+      {
+       "t": 35.5,
+       "pose": "apontando a torre",
+       "expressao": "sorriso de vendedor"
+      }
+     ]
+    },
+    {
+     "nome": "poisson_rua",
+     "keyframes": [
+      {
+       "t": 37.6,
+       "pose": "inset rindo",
+       "expressao": "rindo/deboche"
+      },
+      {
+       "t": 38.8,
+       "pose": "anotando no caderno",
+       "expressao": "interessado"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 33.08,
+     "nota": "dolly lateral acompanhando o carro"
+    },
+    {
+     "t": 35.5,
+     "nota": "contra-plongée na torre"
+    },
+    {
+     "t": 38.8,
+     "nota": "close no caderno"
+    }
+   ],
+   "tres_d": "Cenário com profundidade: o carro passa em z=0, prédios em z=-600, torre em z=-2500 crescendo conforme a câmera se aproxima (dolly-in). Na base, câmera em contra-plongée olhando pra cima entre as vigas.",
+   "hud": [
+    {
+     "t": 33.2,
+     "tipo": "etiqueta",
+     "texto": "INSPEÇÃO \"OFICIAL\""
+    }
+   ],
+   "transicao": "corte seco",
+   "sons": [
+    {
+     "t": 33.1,
+     "som": "motor antigo + buzina"
+    },
+    {
+     "t": 38.8,
+     "som": "lápis rabiscando rápido"
+    }
+   ],
+   "inicio_frame": 1985,
+   "fim_frame": 2434,
+   "fala": "Depois, ele leva todos de carro pra inspecionar a torre, como se ela já fosse deles. Poisson, que ria no começo, agora anota tudo."
+  },
+  {
+   "id": "C08",
+   "ini": 40.56,
+   "fim": 53.83,
+   "cenario": "A: salão do hotel de luxo, 1925 (papel de parede vinho, dourado, lustre, janela com a torre), luz mais baixa (abajur)",
+   "imagens": [
+    "c08-escalada3-propina-storyboard.png",
+    "ref-02-ficha-lustig.png",
+    "ref-03-ficha-poisson.png",
+    "ref-05-objetos.png"
+   ],
+   "acao": "Escalada 3. Poisson vence: Lustig aperta a mão dele. Em \"pede uma propina\" Lustig se inclina com olhar de lado. A câmera desce pra baixo da mesa: um envelope gordo passa de mão em mão. Em \"La Casa de Papel\" Poisson sorri ganancioso (balão de pensamento simples, sem nada da série). Em \"paga tudo\" ele empurra o documento e o envelope.",
+   "personagens": [
+    {
+     "nome": "lustig",
+     "keyframes": [
+      {
+       "t": 42.3,
+       "pose": "aperto de mão",
+       "expressao": "sorriso de vendedor"
+      },
+      {
+       "t": 44.0,
+       "pose": "inclinado de lado",
+       "expressao": "pedindo propina"
+      }
+     ]
+    },
+    {
+     "nome": "poisson",
+     "keyframes": [
+      {
+       "t": 42.3,
+       "pose": "aperto de mão",
+       "expressao": "ganancioso"
+      },
+      {
+       "t": 46.6,
+       "pose": "pensando",
+       "expressao": "ganancioso"
+      },
+      {
+       "t": 51.0,
+       "pose": "entregando dinheiro",
+       "expressao": "ganancioso"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 40.56,
+     "nota": "plano dos dois na mesa"
+    },
+    {
+     "t": 44.0,
+     "nota": "câmera desce e passa por baixo do tampo"
+    },
+    {
+     "t": 46.6,
+     "nota": "volta pra cima, close em Poisson"
+    },
+    {
+     "t": 51.0,
+     "nota": "plano médio da entrega"
+    }
+   ],
+   "tres_d": "PONTO-CHAVE (escalada 3). O tampo da mesa é um plano 3D: a câmera desce, passa por baixo dele e mostra o envelope passando por baixo da mesa, com o tampo escuro em cima. Depois sobe de volta.",
+   "hud": [
+    {
+     "t": 42.3,
+     "tipo": "etiqueta",
+     "texto": "VENCEDOR: POISSON"
+    },
+    {
+     "t": 44.5,
+     "tipo": "etiqueta",
+     "texto": "PROPINA"
+    },
+    {
+     "t": 51.2,
+     "tipo": "texto",
+     "texto": "PREÇO + PROPINA"
+    }
+   ],
+   "transicao": "luz apaga (8 frames) → azul",
+   "sons": [
+    {
+     "t": 42.3,
+     "som": "aperto de mão"
+    },
+    {
+     "t": 44.0,
+     "som": "whoosh grave descendo"
+    },
+    {
+     "t": 45.0,
+     "som": "papel/notas"
+    },
+    {
+     "t": 51.0,
+     "som": "caixa registradora (ka-ching)"
+    }
+   ],
+   "inicio_frame": 2434,
+   "fim_frame": 3230,
+   "fala": "E aí vem o mais estranho: Poisson vence a disputa… e o diretor pede uma propina, por baixo da mesa. \"Esse cara é mais organizado que o Professor de La Casa de Papel\", pensa Poisson. E paga tudo: o preço da torre e a propina."
+  },
+  {
+   "id": "C09",
+   "ini": 53.83,
+   "fim": 67.6,
+   "cenario": "explicação: fundo azul-escuro de \"fundo do mar\"",
+   "imagens": [
+    "c09-sabe-por-que-isca-storyboard.png",
+    "ref-05-objetos.png"
+   ],
+   "acao": "\"Sabe por quê?\": a luz muda pro azul. Um anzol desce com o envelope da propina como isca; um peixe laranja nada em volta e morde. Etiqueta \"POISSON = PEIXE\". Em \"golpista pega o dinheiro e some\" um boneco cinza pega moedas e desaparece (puf). Em \"funcionário corrupto\" aparece um boneco de terno com a mão estendida. Em \"taxa de urgência\" um papel com carimbo \"URGENTE\" e uma fila de pessoas.",
+   "personagens": [
+    {
+     "nome": "peixe (objeto)",
+     "keyframes": [
+      {
+       "t": 56.0,
+       "pose": "nadando em volta",
+       "expressao": "-"
+      },
+      {
+       "t": 57.0,
+       "pose": "mordendo a isca",
+       "expressao": "-"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 53.83,
+     "nota": "plano escuro, o anzol desce do topo"
+    },
+    {
+     "t": 59.6,
+     "nota": "corta pros bonecos lado a lado"
+    },
+    {
+     "t": 63.2,
+     "nota": "close no carimbo URGENTE"
+    }
+   ],
+   "tres_d": "PONTO-CHAVE (explicação). O anzol e o envelope giram devagar no espaço 3D escuro; o peixe faz uma órbita em volta da isca, com raios de luz vindo de cima (volumétrico).",
+   "hud": [
+    {
+     "t": 54.9,
+     "tipo": "texto",
+     "texto": "A PROPINA FOI A ISCA"
+    },
+    {
+     "t": 56.5,
+     "tipo": "etiqueta",
+     "texto": "POISSON = \"PEIXE\" EM FRANCÊS"
+    },
+    {
+     "t": 63.3,
+     "tipo": "carimbo",
+     "texto": "URGENTE"
+    }
+   ],
+   "transicao": "clarão branco",
+   "sons": [
+    {
+     "t": 53.9,
+     "som": "música corta + drone grave de mistério"
+    },
+    {
+     "t": 56.0,
+     "som": "bolhas"
+    },
+    {
+     "t": 57.0,
+     "som": "nhac"
+    },
+    {
+     "t": 58.3,
+     "som": "puf"
+    },
+    {
+     "t": 63.3,
+     "som": "carimbo"
+    }
+   ],
+   "inicio_frame": 3230,
+   "fim_frame": 4056,
+   "fala": "Sabe por quê? A propina foi a isca. Poisson pensou: golpista pega o dinheiro e some. Quem pede um extra escondido… é funcionário corrupto de verdade. É como alguém que te cobra taxa de urgência: parece tão chato que só pode ser oficial."
+  },
+  {
+   "id": "C10",
+   "ini": 67.6,
+   "fim": 72.36,
+   "cenario": "janela de trem (por dentro), paisagem passando; depois fundo roxo",
+   "imagens": [
+    "c10-revelacao-lustig-foge-storyboard.png",
+    "ref-02-ficha-lustig.png"
+   ],
+   "acao": "Revelação: a etiqueta \"DIRETOR\" no peito de Lustig vira \"GOLPISTA\". Ele joga o chapéu pra cima, comemorando dentro do trem; notas voam pela janela. Plaquinha \"→ ÁUSTRIA\".",
+   "personagens": [
+    {
+     "nome": "lustig_rua",
+     "keyframes": [
+      {
+       "t": 68.0,
+       "pose": "etiqueta virando",
+       "expressao": "sorriso de vendedor"
+      },
+      {
+       "t": 70.8,
+       "pose": "braços pra cima no trem",
+       "expressao": "fugindo feliz"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 67.6,
+     "nota": "close no crachá virando"
+    },
+    {
+     "t": 70.8,
+     "nota": "plano do trem saindo"
+    }
+   ],
+   "tres_d": "Só parallax da paisagem pela janela do trem (2 camadas).",
+   "hud": [
+    {
+     "t": 68.6,
+     "tipo": "etiqueta",
+     "texto": "VICTOR LUSTIG: GOLPISTA"
+    },
+    {
+     "t": 70.8,
+     "tipo": "etiqueta",
+     "texto": "→ ÁUSTRIA"
+    }
+   ],
+   "transicao": "whoosh",
+   "sons": [
+    {
+     "t": 68.6,
+     "som": "flip de etiqueta"
+    },
+    {
+     "t": 70.8,
+     "som": "apito de trem"
+    }
+   ],
+   "inicio_frame": 4056,
+   "fim_frame": 4342,
+   "fala": "O tal diretor era Victor Lustig, um golpista. Ele fugiu pra Áustria com o dinheiro."
+  },
+  {
+   "id": "C11",
+   "ini": 72.36,
+   "fim": 75.94,
+   "cenario": "B: rua de Paris, 1925 (prédios creme, telhado azul-acinzentado, calçamento, torre ao fundo), fim de tarde nublado, porta da polícia",
+   "imagens": [
+    "c11-poisson-vergonha-storyboard.png",
+    "ref-03-ficha-poisson.png"
+   ],
+   "acao": "Poisson para na frente da porta da polícia (placa \"POLICE\"), fica vermelho, cobre o rosto com o chapéu e dá meia-volta.",
+   "personagens": [
+    {
+     "nome": "poisson_rua",
+     "keyframes": [
+      {
+       "t": 72.5,
+       "pose": "parado na porta",
+       "expressao": "desconfiado"
+      },
+      {
+       "t": 73.6,
+       "pose": "cobrindo o rosto",
+       "expressao": "envergonhado"
+      },
+      {
+       "t": 75.2,
+       "pose": "meia-volta",
+       "expressao": "envergonhado"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 72.36,
+     "nota": "plano médio"
+    },
+    {
+     "t": 73.6,
+     "nota": "push-in no rosto vermelho"
+    }
+   ],
+   "tres_d": "Parallax leve (prédio da polícia na frente, torre ao fundo).",
+   "hud": [
+    {
+     "t": 74.0,
+     "tipo": "texto",
+     "texto": "VERGONHA DEMAIS PRA DENUNCIAR"
+    }
+   ],
+   "transicao": "corte seco",
+   "sons": [
+    {
+     "t": 73.6,
+     "som": "\"ahem\" + grilo"
+    }
+   ],
+   "inicio_frame": 4342,
+   "fim_frame": 4556,
+   "fala": "E Poisson? Ficou com tanta vergonha que nem foi à polícia."
+  },
+  {
+   "id": "C12",
+   "ini": 75.94,
+   "fim": 81.24,
+   "cenario": "A: salão do hotel de luxo, 1925 (papel de parede vinho, dourado, lustre, janela com a torre) (mesmo enquadramento da cena 1)",
+   "imagens": [
+    "c12-loop-vende-de-novo-storyboard.png",
+    "ref-04-comerciantes.png",
+    "ref-06-cenario-hotel.png"
+   ],
+   "acao": "Etiqueta \"MESES DEPOIS…\". Mesmo salão, mesma mesa, mas com o GRUPO 2 de comerciantes. Lustig, calmo, repete o mesmo gesto da cena 1: desliza o documento pra câmera. Último quadro = primeiro quadro do C01 (loop).",
+   "personagens": [
+    {
+     "nome": "lustig",
+     "keyframes": [
+      {
+       "t": 78.5,
+       "pose": "deslizando o documento",
+       "expressao": "sorriso de vendedor"
+      }
+     ]
+    },
+    {
+     "nome": "comerciantes_grupo2",
+     "keyframes": [
+      {
+       "t": 76.5,
+       "pose": "sentados",
+       "expressao": "sério"
+      }
+     ]
+    }
+   ],
+   "camera": [
+    {
+     "t": 75.94,
+     "nota": "plano geral (zoom 0,75)"
+    },
+    {
+     "t": 78.5,
+     "nota": "dolly-in até o documento (zoom 1,6) = 1º quadro do C01"
+    }
+   ],
+   "tres_d": "PONTO-CHAVE (loop). Mesma câmera 3D do C01 ao contrário (dolly-in), terminando exatamente no enquadramento inicial.",
+   "hud": [
+    {
+     "t": 76.0,
+     "tipo": "etiqueta",
+     "texto": "MESES DEPOIS… DE NOVO"
+    }
+   ],
+   "transicao": "LOOP: o último quadro casa com o primeiro",
+   "sons": [
+    {
+     "t": 76.0,
+     "som": "relógio virando a página"
+    },
+    {
+     "t": 78.5,
+     "som": "papel deslizando (o mesmo do começo)"
+    }
+   ],
+   "inicio_frame": 4556,
+   "fim_frame": 4874,
+   "fala": "Então, meses depois, Lustig voltou pra Paris… pra vender a Torre Eiffel de novo."
+  }
+ ],
+ "personagens": {
+  "lustig": "ref-02-ficha-lustig.png (sem chapéu, dentro do hotel)",
+  "lustig_rua": "ref-01-figurino-1925.png (com chapéu fedora, na rua e no trem)",
+  "poisson": "ref-03-ficha-poisson.png (sem chapéu, dentro do hotel)",
+  "poisson_rua": "ref-01-figurino-1925.png (com chapéu-coco, na rua)",
+  "comerciantes_grupo1": "ref-04-comerciantes.png, fileira de cima (cenas 1 a 8)",
+  "comerciantes_grupo2": "ref-04-comerciantes.png, fileira de baixo (SÓ a cena 12)"
+ },
+ "musica": [
+  {
+   "de": 0,
+   "ate": 53.83,
+   "clima": "jazz anos 20 de \"golpe elegante\" (piano + contrabaixo), leve e malandro; abaixa ~50% sob a narração"
+  },
+  {
+   "de": 53.83,
+   "ate": 67.6,
+   "clima": "corta a música: drone grave de mistério com bolhas (luz azul)"
+  },
+  {
+   "de": 67.6,
+   "ate": 81.24,
+   "clima": "o jazz volta mais rápido e debochado; termina com o papel deslizando pro loop"
+  }
+ ],
+ "regras_3d": "Personagens sempre 2D (estilo do canal) dentro do espaço 3D. 3D forte só nos pontos-chave (C01, C04, C08, C09, C12); nas outras cenas, só profundidade/parallax. Nunca 3D em todo plano."
+}
