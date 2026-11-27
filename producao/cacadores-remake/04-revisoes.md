@@ -27,3 +27,16 @@ Depois: `src/videos/Cacadores2` (composição `Cacadores2`, 30 qps, 2:09) — 12
 | Diego "na direção errada" passava por trás do Lucas e pulava de lugar | entra pela direita, para a 520 px do Lucas |
 | Copo 3D enchia a tela, mãos fora do quadro | câmera mais longe (12,5) |
 | Lucas no chão cortado no "Levanta" | câmera recentrada |
+
+## Revisão 2 (vídeo inteiro, tiras dos trechos de ação)
+| Encontrado | Ajustado |
+|---|---|
+| No "Prova Hunter" o Lucas entrava andando no meio da fila de candidatos | anda menos e a fila fica mais à direita |
+| Soco do round 2: 2 quadros PRETOS (clarão branco + inversão no mesmo quadro = preto) | inversão só depois do clarão |
+| "Voa pra fora da arena" não lia (caía no mesmo piso) | faixa vermelha de limite no chão + "FORA!"; ele cai além dela |
+OK: andar com pés plantados, cochilo do Diego, corrida com Diego disparando, água dividida, gag do atalho, round 1
+(trava, coração, aura explode e some, queda, "Levanta"), contagem com closes, Licença Hunter, aperto de mão.
+
+## Dá para melhorar
+- Corrida ninja2 do Diego lê como "deitado" em plano aberto; num close ficaria melhor.
+- O copo 3D usa a mesma câmera girando nas 3 aparições; variar o ângulo daria mais ritmo.

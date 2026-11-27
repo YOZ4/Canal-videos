@@ -135,7 +135,7 @@ const A2L = anima(
     const andando = f < PARA;
     // caminhada de perfil com velocidade = passada (pés plantados pela camada de naturalidade)
     const tempoAndar = Math.min(u, PARA - A2_0);
-    const x = 300 + tempoAndar * ((170 * ESC) / PASSO) * 0.92;
+    const x = 300 + tempoAndar * ((170 * ESC) / PASSO) * 0.92 * 0.62; // para antes da fila (não entra no meio dos candidatos)
     const a = andarPerfil(u, andando ? 1 : Math.max(0, 1 - (f - PARA) / 8), PASSO);
     const g = giro(f, PARA + 4, 8);
     const base = g.trocou ? frente(x, { vira: 0.25 }) : perfil(x);
@@ -182,7 +182,7 @@ export const A2: React.FC<{ t0: number }> = ({ t0 }) => {
         </g>
         {CANDIDATOS.map((d, i) => {
           const r = respira(f, i * 5);
-          return <Boneco2D key={i} id={`a2c${i}`} d={d} pose={frente(820 + i * 230, { escala: ESC * 0.82, y: C - 40, vira: i % 2 ? -0.3 : 0.3, estica: 1 + r * 0.01, cabeca: Math.sin(f * 0.04 + i) * 3 })} rosto={vivo(ROSTO_BASE, f, `a2c${i}`)} />;
+          return <Boneco2D key={i} id={`a2c${i}`} d={d} pose={frente(900 + i * 230, { escala: ESC * 0.82, y: C - 40, vira: i % 2 ? -0.3 : 0.3, estica: 1 + r * 0.01, cabeca: Math.sin(f * 0.04 + i) * 3 })} rosto={vivo(ROSTO_BASE, f, `a2c${i}`)} />;
         })}
         <Boneco2D id="a2" d={LUCAS} pose={p} rosto={rosto} />
       </Cena>

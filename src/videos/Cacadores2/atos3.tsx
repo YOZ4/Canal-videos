@@ -350,7 +350,7 @@ export const A11: React.FC<{ t0: number }> = ({ t0 }) => {
       () => {
         const cam = LUTA2.camera(lf);
         const cong = LUTA2.congelado(lf);
-        const inv = f >= CONTATO2 + 1 && f < CONTATO2 + 3;
+        const inv = f >= CONTATO2 + 2 && f < CONTATO2 + 4; // depois do clarão (branco invertido viraria preto)
         const t = cong ? { x: (random(`s2${f}`) - 0.5) * 24, y: (random(`s2y${f}`) - 0.5) * 24 } : undefined;
         return (
           <AbsoluteFill style={{ filter: inv ? "invert(1) hue-rotate(180deg)" : undefined }}>
@@ -367,8 +367,11 @@ export const A11: React.FC<{ t0: number }> = ({ t0 }) => {
                 </>
               ) : null}
               {eventos.filter((e) => e.tipo === "pouso").map((e, i) => (e.tipo === "pouso" ? <Poeira key={i} x={e.x} y={C + 4} f={lf} de={e.f} dur={26} largura={1.5} /> : null))}
-              {/* corda / limite da arena (ele cai pra fora) */}
-              <rect x={-140} y={C - 10} width={30} height={60} fill="#5a4a3a" />
+              {/* limite da arena: faixa vermelha no chão — o Diego cai do lado de FORA */}
+              <rect x={1130} y={C - 6} width={18} height={70} fill="#e8343f" stroke="#1d1424" strokeWidth={5} />
+              <text x={1139} y={C + 120} textAnchor="middle" fontFamily="Fredoka" fontWeight={700} fontSize={54} fill="#e8343f" stroke="#1d1424" strokeWidth={8} paintOrder="stroke" opacity={f > VOA ? 1 : 0}>
+                FORA!
+              </text>
             </Cena>
             {f >= CONTATO2 && f < CONTATO2 + 2 ? <AbsoluteFill style={{ background: "#fff" }} /> : null}
           </AbsoluteFill>
