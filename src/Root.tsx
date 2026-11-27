@@ -4,6 +4,8 @@ import { LucasSaiyajin } from "./videos/LucasSaiyajin";
 import { Folha } from "./videos/Folha/Folha";
 import { Broly, DURACAO as DUR_BROLY } from "./videos/Broly/Broly";
 import { FolhaFuria } from "./videos/Folha/FolhaFuria";
+import { Folha1925 } from "./videos/TorreEiffel/Folha1925";
+import { TorreEiffel, DURACAO as DUR_TORRE } from "./videos/TorreEiffel/TorreEiffel";
 import { FolhaAngulos } from "./videos/Folha/FolhaAngulos";
 import { TesteJJK, DURACAO as DUR_JJK } from "./videos/EstiloJJK/TesteJJK";
 import { TesteMovimento2, DURACAO as DUR_MOV2 } from "./videos/Movimento/TesteMovimento2";
@@ -32,6 +34,8 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="FichaDiego" component={FichaDiego} durationInFrames={1} fps={30} width={FICHA_W} height={FICHA_H} />
       <Composition id="TesteFerramentas" component={TesteFerramentas} durationInFrames={DUR_FERR} fps={30} width={1080} height={1920} />
       <Composition id="Broly" component={Broly} durationInFrames={DUR_BROLY} fps={24} width={1080} height={1920} />
+      <Composition id="TorreEiffel" component={TorreEiffel} durationInFrames={DUR_TORRE} fps={60} width={1080} height={1920} />
+      <Composition id="Folha1925" component={Folha1925} durationInFrames={3} fps={30} width={1080} height={1920} />
       <Composition id="FolhaFuria" component={FolhaFuria} durationInFrames={4} fps={24} width={1080} height={1920} />
       <Composition id="FolhaAngulos" component={FolhaAngulos} durationInFrames={7} fps={24} width={1080} height={1920} />
       <Composition id="TesteJJK" component={TesteJJK} durationInFrames={DUR_JJK} fps={24} width={1080} height={1920} />

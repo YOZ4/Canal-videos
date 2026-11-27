@@ -3,7 +3,7 @@
  * Para criar um personagem novo, copie um destes e troque cores/cabelo.
  */
 
-export type TipoCabelo = "cacheado" | "topete";
+export type TipoCabelo = "cacheado" | "topete" | "penteado" | "careca" | "curto";
 
 export type Design = {
   nome: string;
@@ -39,6 +39,13 @@ export type Design = {
   musculos?: boolean;
   /** faixa amarrada na cintura (ex.: camiseta rasgada) */
   faixa?: { cor: string; sombra: string };
+  /** paletó: lapela (cor mais escura do paletó), camisa branca em V, botões; lenço = lenço branco no bolso */
+  terno?: { lapela: string; lenco?: boolean };
+  /** bigode fino (enrolado) ou grosso; cor própria (padrão = cor do cabelo) */
+  bigodeTipo?: "fino" | "grosso";
+  corBigode?: string;
+  /** chapéu (fica parado na cabeça, não balança com o cabelo) */
+  chapeu?: { tipo: "fedora" | "coco" | "boina"; cor: string; faixa?: string };
 };
 
 export const CONTORNO = "#1d1424";
@@ -152,3 +159,121 @@ export const CANDIDATOS: Design[] = [
   { ...LUCAS, nome: "c4", numero: undefined, camisa: "#3a8fd6", camisaSombra: "#2a6cb0", manga: "#3080c4", corCabelo: "#2a1a12", pele: "#8d5a3b", peleSombra: "#734528", olhos: "#2a1a12" },
   { ...DIEGO, nome: "c5", camisa: "#e2e2e8", camisaSombra: "#bcbcc6", manga: "#cfcfd8", corCabelo: "#c03a3a", corCabeloSombra: "#8e2626", sobrancelha: "#8e2626", brilhoCabelo: "#ff9a9a", pele: "#f4cdb0", olhos: "#2a6a3a" },
 ];
+
+// ---------------- Paris, 1925 (episódio "Torre Eiffel") ----------------
+/** homem de terno dos anos 20: paletó (camisa = cor do paletó), camisa branca, gravata, sapato escuro */
+export const homem1925 = (o: {
+  nome: string;
+  pele: string;
+  peleSombra: string;
+  paleto: string;
+  paletoSombra: string;
+  lapela: string;
+  calca: string;
+  gravata: string;
+  cabelo: Design["cabelo"];
+  corCabelo: string;
+  corCabeloSombra?: string;
+  bigodeTipo?: "fino" | "grosso";
+  corBigode?: string;
+  chapeu?: Design["chapeu"];
+  lenco?: boolean;
+  olhos?: string;
+}): Design => ({
+  nome: o.nome,
+  pele: o.pele,
+  peleSombra: o.peleSombra,
+  camisa: o.paleto,
+  camisaSombra: o.paletoSombra,
+  manga: o.paletoSombra,
+  calca: o.calca,
+  calcaSombra: o.calca,
+  tenis: "#2a2024",
+  sola: "#1a1418",
+  olhos: o.olhos ?? "#3a2416",
+  cabelo: o.cabelo,
+  corCabelo: o.corCabelo,
+  corCabeloSombra: o.corCabeloSombra ?? o.corCabelo,
+  sobrancelha: o.cabelo === "careca" ? o.corCabelo : o.corCabelo,
+  sobrancelhaGrossa: true,
+  brilhoCabelo: "#c8c0d0",
+  bigode: !!o.bigodeTipo,
+  bigodeTipo: o.bigodeTipo,
+  corBigode: o.corBigode,
+  gravata: o.gravata,
+  terno: { lapela: o.lapela, lenco: o.lenco },
+  chapeu: o.chapeu,
+});
+
+export const LUSTIG = homem1925({
+  nome: "Lustig",
+  pele: "#f2c8a4",
+  peleSombra: "#dba886",
+  paleto: "#5a5f6b",
+  paletoSombra: "#474b56",
+  lapela: "#454953",
+  calca: "#4a4f5a",
+  gravata: "#7a1f2b",
+  cabelo: "penteado",
+  corCabelo: "#1d1820",
+  corCabeloSombra: "#2e2832",
+  bigodeTipo: "fino",
+  corBigode: "#1d1820",
+  lenco: true,
+});
+export const LUSTIG_RUA: Design = { ...LUSTIG, chapeu: { tipo: "fedora", cor: "#3a3d44", faixa: "#1f1a20" } };
+
+export const POISSON = homem1925({
+  nome: "Poisson",
+  pele: "#f2c8a4",
+  peleSombra: "#dba886",
+  paleto: "#7a5a3a",
+  paletoSombra: "#64482e",
+  lapela: "#5e452b",
+  calca: "#6a5040",
+  gravata: "#3f6b4a",
+  cabelo: "careca",
+  corCabelo: "#6b4a2a",
+  bigodeTipo: "grosso",
+  corBigode: "#5e3e22",
+});
+export const POISSON_RUA: Design = { ...POISSON, chapeu: { tipo: "coco", cor: "#2a2622", faixa: "#151214" } };
+/** Poisson com vergonha (rosto vermelho) */
+export const POISSON_VERMELHO: Design = { ...POISSON_RUA, pele: "#f0a088", peleSombra: "#d8826c" };
+
+const COM_BASE = [
+  { pele: "#e0a878", peleSombra: "#c48a5e", cabelo: "curto" as const, corCabelo: "#3a2618", bigodeTipo: "grosso" as const, gravata: "#7a3a1a" },
+  { pele: "#f4cfb0", peleSombra: "#dcb090", cabelo: "curto" as const, corCabelo: "#a07a48", gravata: "#2a3e78", chapeu: { tipo: "boina" as const, cor: "#5a5e48", faixa: "#3e4232" } },
+  { pele: "#c98a5c", peleSombra: "#a96e44", cabelo: "penteado" as const, corCabelo: "#1d1820", bigodeTipo: "fino" as const, gravata: "#a8841c" },
+  { pele: "#eab48e", peleSombra: "#cc9470", cabelo: "curto" as const, corCabelo: "#9a9a9e", bigodeTipo: "grosso" as const, corBigode: "#a8a8ac", gravata: "#5e2a7a", chapeu: { tipo: "coco" as const, cor: "#1e1a1c", faixa: "#0e0b0d" } },
+  { pele: "#f2c8a4", peleSombra: "#dba886", cabelo: "curto" as const, corCabelo: "#6a4426", gravata: "#1d1d22" },
+];
+const TERNOS_1 = [
+  ["#3e4a5e", "#323c4e", "#2f3848", "#3a4352"],
+  ["#66694e", "#54573f", "#4e513a", "#5a5446"],
+  ["#4a3a52", "#3c2f44", "#382b40", "#3a3a44"],
+  ["#5a4632", "#4a3a28", "#443424", "#4a4a52"],
+  ["#3e5a48", "#324a3a", "#2e4436", "#5a5046"],
+];
+const TERNOS_2 = [
+  ["#2e3e66", "#253356", "#222f50", "#3a4458"],
+  ["#7a6a3c", "#655730", "#5e512c", "#5a5446"],
+  ["#2f4a36", "#263d2c", "#233828", "#3a3a44"],
+  ["#5e3a3e", "#4e3034", "#482c30", "#4a4a52"],
+  ["#4a4e60", "#3d4150", "#383c4a", "#5a5046"],
+];
+const comerciantes = (ternos: string[][], g: number) =>
+  COM_BASE.map((c, i) =>
+    homem1925({
+      ...c,
+      nome: `Comerciante ${g}.${i + 1}`,
+      paleto: ternos[i][0],
+      paletoSombra: ternos[i][1],
+      lapela: ternos[i][2],
+      calca: ternos[i][3],
+      // grupo 2: outra pessoa (troca bigode)
+      bigodeTipo: g === 2 ? (c.bigodeTipo === "grosso" ? "fino" : c.bigodeTipo ? undefined : "fino") : c.bigodeTipo,
+    }),
+  );
+export const COMERCIANTES_1 = comerciantes(TERNOS_1, 1);
+export const COMERCIANTES_2 = comerciantes(TERNOS_2, 2);

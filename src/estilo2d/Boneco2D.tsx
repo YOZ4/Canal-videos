@@ -76,6 +76,8 @@ export type Pose = {
   gira: number;
   /** vista de frente/costas: 0 = joelho dobra pro lado; 1 = joelho vem na direção da câmera (corrida de frente) */
   joelhoFrente?: number;
+  /** desenha esse braço DEPOIS da cabeça (mão na frente do rosto: "shh", mão na testa, cobrir o rosto) */
+  maoNaFrente?: "E" | "D" | "ambas";
 };
 
 export type Rosto = {
@@ -196,6 +198,32 @@ export const posMao = (p: Pose, qual: "E" | "D"): P => {
   const rx = m[0] * Math.cos(a) - m[1] * Math.sin(a);
   const ry = m[0] * Math.sin(a) + m[1] * Math.cos(a) + QUADRIL_Y + p.agacha;
   return [p.x + (rx * p.escala * p.lado * p.largura) / Math.sqrt(p.estica), p.y + ry * p.escala * p.estica];
+};
+
+const cacheAlcance = new Map<string, Braco>();
+/**
+ * Ângulos de braço (ombro/cotovelo) que levam a mão até `alvo` (coordenadas de mundo), com o resto da pose igual.
+ * Prefere cotovelo pouco dobrado. Ex.: mão na boca ("shh"), mão na testa, mão no ombro do outro.
+ */
+export const alcancar = (p: Pose, qual: "E" | "D", alvo: P, ombroMax = 200): Braco => {
+  const chave = `${ombroMax}|${p.vista}|${p.x | 0}|${p.y | 0}|${p.escala.toFixed(3)}|${p.lado}|${p.inclina.toFixed(1)}|${p.agacha | 0}|${p.estica.toFixed(3)}|${p.largura.toFixed(2)}|${qual}|${alvo[0] | 0}|${alvo[1] | 0}`;
+  const c = cacheAlcance.get(chave);
+  if (c) return c;
+  let melhor: Braco = qual === "E" ? p.bracoE : p.bracoD;
+  let custo = Infinity;
+  for (let o = -60; o <= ombroMax; o += 3) {
+    for (let k = -175; k <= 175; k += 3) {
+      const b = { ombro: o, cotovelo: k };
+      const m = posMao(qual === "E" ? { ...p, bracoE: b } : { ...p, bracoD: b }, qual);
+      const dd = Math.hypot(m[0] - alvo[0], m[1] - alvo[1]) + Math.abs(k) * 0.02 * p.escala;
+      if (dd < custo) {
+        custo = dd;
+        melhor = b;
+      }
+    }
+  }
+  cacheAlcance.set(chave, melhor);
+  return melhor;
 };
 
 /** posição (mundo) do pé. Perfil: "D" = pé da frente. Ignora `gira`. */
@@ -360,7 +388,7 @@ const BracoDesenho: React.FC<{
   return (
     <g>
       {biceps > 0.02 ? <circle cx={bulge[0]} cy={bulge[1]} r={rb + LINHA} fill={CONTORNO} /> : null}
-      <Tubo pts={[o, c, m]} largura={62} cor={pele} sombra={atras ? undefined : d.peleSombra} curvo />
+      <Tubo pts={[o, c, m]} largura={d.terno ? 72 : 62} cor={d.terno ? camisa : pele} sombra={atras ? undefined : d.terno ? d.camisaSombra : d.peleSombra} curvo />
       {biceps > 0.02 ? (
         <>
           <circle cx={bulge[0]} cy={bulge[1]} r={rb} fill={pele} />
@@ -374,7 +402,9 @@ const BracoDesenho: React.FC<{
           <g transform={`translate(${m[0] + dir[0] * 30} ${m[1] + dir[1] * 30})`}>{objeto}</g>
         )
       ) : null}
+      {d.terno ? <circle cx={m[0] - dir[0] * 34} cy={m[1] - dir[1] * 34} r={30} fill="#f4f1ea" stroke={CONTORNO} strokeWidth={5} /> : null}
       <Mao p={m} dir={dir} gesto={gesto} d={d} espelho={sentido} cor={pele} />
+      {d.terno ? null : <>
       <Tubo pts={[o, mangaFim]} largura={98} cor={camisa} />
       <circle cx={punho[0]} cy={punho[1]} r={40} fill={atras ? d.camisaSombra : d.manga} opacity={0.85} />
       <path
@@ -385,6 +415,7 @@ const BracoDesenho: React.FC<{
         transform={`translate(${-8 * sentido} -6)`}
         opacity={0.9}
       />
+      </>}
     </g>
   );
 };
@@ -423,7 +454,7 @@ const Tenis: React.FC<{ p: P; lado: number; d: Design; perfil?: boolean; rot?: n
       strokeLinejoin="round"
     />
     <path d="M -58 18 L 62 18 Q 70 22 64 27 L -54 27 Z" fill={d.sola} />
-    {perfil ? <path d="M -10 -28 L 20 -8 M 2 -30 L 30 -12" stroke="#c9c9d3" strokeWidth={5} strokeLinecap="round" /> : <path d="M -58 -30 L -58 28" stroke={CONTORNO} strokeWidth={LINHA} />}
+    {perfil ? <path d="M -10 -28 L 20 -8 M 2 -30 L 30 -12" stroke={d.terno ? "#4a3f46" : "#c9c9d3"} strokeWidth={5} strokeLinecap="round" /> : <path d="M -58 -30 L -58 28" stroke={CONTORNO} strokeWidth={LINHA} />}
   </g>
 );
 
@@ -780,6 +811,94 @@ const CabeloTopete: React.FC<{ d: Design; perfil?: boolean }> = ({ d, perfil }) 
     </g>
   );
 
+/** cabelo penteado pra trás (anos 20) e curto: calota com risca de brilho */
+const CabeloPenteado: React.FC<{ d: Design; perfil?: boolean; brilho?: boolean }> = ({ d, perfil, brilho = true }) =>
+  perfil ? (
+    <g>
+      <path d="M -146 30 Q -168 -70 -118 -140 Q -60 -196 30 -190 Q 120 -176 144 -96 Q 108 -96 70 -100 Q 10 -104 -40 -80 Q -90 -40 -104 30 Z" fill={d.corCabelo} stroke={CONTORNO} strokeWidth={LINHA} strokeLinejoin="round" />
+      {brilho ? ["M -96 -40 Q -60 -150 60 -170", "M -60 -70 Q -10 -150 100 -150"].map((q, i) => <path key={i} d={q} stroke={d.brilhoCabelo} strokeWidth={5} fill="none" strokeLinecap="round" opacity={0.7} />) : null}
+    </g>
+  ) : (
+    <g>
+      <path d="M -138 20 Q -156 -80 -112 -138 Q -60 -192 0 -192 Q 60 -192 112 -138 Q 156 -80 138 20 Q 128 -40 112 -64 Q 60 -96 0 -98 Q -60 -96 -112 -64 Q -128 -40 -138 20 Z" fill={d.corCabelo} stroke={CONTORNO} strokeWidth={LINHA} strokeLinejoin="round" />
+      <path d="M -112 -64 Q -60 -96 0 -98 Q 24 -88 36 -98 Q 60 -96 112 -64 Q 60 -84 30 -82 Q 0 -76 -40 -84 Q -80 -80 -112 -64 Z" fill={d.corCabeloSombra} opacity={0.5} />
+      {brilho ? ["M 10 -150 Q 60 -190 120 -160", "M 30 -120 Q 80 -176 140 -140", "M 50 -96 Q 100 -150 150 -110"].map((q, i) => <path key={i} d={q} stroke={d.brilhoCabelo} strokeWidth={5} fill="none" strokeLinecap="round" opacity={0.75} />) : null}
+    </g>
+  );
+
+/** careca com laterais (Poisson) */
+const CabeloCareca: React.FC<{ d: Design; perfil?: boolean }> = ({ d, perfil }) =>
+  perfil ? (
+    <g>
+      <path d="M -150 40 Q -160 -40 -126 -80 Q -96 -60 -90 0 Q -92 30 -110 50 Z" fill={d.corCabelo} stroke={CONTORNO} strokeWidth={LINHA} strokeLinejoin="round" />
+      <ellipse cx={10} cy={-100} rx={50} ry={16} fill="#ffffff" opacity={0.35} />
+    </g>
+  ) : (
+    <g>
+      {[-1, 1].map((sx) => (
+        <path key={sx} transform={`scale(${sx} 1)`} d="M -140 30 Q -156 -40 -128 -96 Q -100 -84 -104 -40 Q -110 0 -116 40 Z" fill={d.corCabelo} stroke={CONTORNO} strokeWidth={LINHA} strokeLinejoin="round" />
+      ))}
+      <ellipse cx={-10} cy={-112} rx={56} ry={16} fill="#ffffff" opacity={0.35} />
+    </g>
+  );
+
+/** chapéu (em coordenadas da cabeça; não balança com o cabelo) */
+export const Chapeu: React.FC<{ c: NonNullable<Design["chapeu"]>; perfil?: boolean }> = ({ c, perfil }) => {
+  const dx = perfil ? 14 : 0;
+  const escuro = c.faixa ?? "#1a1418";
+  if (c.tipo === "boina")
+    return (
+      <g transform={`translate(${dx} 0)`} stroke={CONTORNO} strokeWidth={LINHA} strokeLinejoin="round">
+        <path d={perfil ? "M -150 -70 Q -150 -190 0 -196 Q 150 -190 156 -96 L 210 -84 Q 200 -66 150 -70 Z" : "M -150 -70 Q -156 -186 0 -196 Q 156 -186 150 -70 Q 0 -96 -150 -70 Z"} fill={c.cor} />
+        {perfil ? null : <path d="M -150 -70 Q 0 -100 150 -70 Q 150 -46 130 -44 Q 0 -66 -130 -44 Q -150 -46 -150 -70 Z" fill={escuro} />}
+        <path d="M -60 -186 Q -10 -150 40 -190" fill="none" stroke={escuro} strokeWidth={5} />
+      </g>
+    );
+  if (c.tipo === "coco")
+    return (
+      <g transform={`translate(${dx} 0)`} stroke={CONTORNO} strokeWidth={LINHA} strokeLinejoin="round">
+        <path d="M -118 -96 Q -120 -250 0 -252 Q 120 -250 118 -96 Z" fill={c.cor} />
+        <rect x={-118} y={-126} width={236} height={30} fill={escuro} />
+        <path d="M -186 -92 Q -170 -112 -118 -108 L 118 -108 Q 170 -112 186 -92 Q 170 -74 0 -78 Q -170 -74 -186 -92 Z" fill={c.cor} />
+        <path d="M -60 -222 Q -20 -238 30 -232" stroke="#ffffff" strokeWidth={8} fill="none" opacity={0.25} strokeLinecap="round" />
+      </g>
+    );
+  return (
+    <g transform={`translate(${dx} 0)`} stroke={CONTORNO} strokeWidth={LINHA} strokeLinejoin="round">
+      <path d="M -112 -100 L -104 -220 Q -60 -244 -10 -222 Q 0 -232 10 -222 Q 60 -244 104 -220 L 112 -100 Z" fill={c.cor} />
+      <path d="M -10 -222 L 0 -160 L 10 -222" fill="none" stroke={escuro} strokeWidth={5} />
+      <rect x={-112} y={-136} width={224} height={34} fill={escuro} />
+      <path d="M -210 -96 Q -190 -118 -112 -112 L 112 -112 Q 190 -118 210 -96 Q 190 -74 0 -80 Q -190 -74 -210 -96 Z" fill={c.cor} />
+    </g>
+  );
+};
+
+/** bigode na vista de frente (x = deslocamento da vista 3/4) */
+const Bigode: React.FC<{ d: Design; x: number }> = ({ d, x }) => {
+  const cor = d.corBigode ?? d.corCabelo;
+  if (d.bigodeTipo === "fino")
+    return (
+      <g transform={`translate(${x} 60)`} fill={cor} stroke={CONTORNO} strokeWidth={3} strokeLinejoin="round">
+        <path d="M -4 -8 Q -34 -22 -64 -6 Q -76 -10 -74 -22 Q -68 -4 -62 2 Q -32 -6 -4 6 Z" />
+        <path d="M 4 -8 Q 34 -22 64 -6 Q 76 -10 74 -22 Q 68 -4 62 2 Q 32 -6 4 6 Z" />
+      </g>
+    );
+  if (d.bigodeTipo === "grosso")
+    return (
+      <path transform={`translate(${x} 58)`} d="M -78 14 Q -66 -26 -14 -16 Q 0 -20 14 -16 Q 66 -26 78 14 Q 50 2 14 10 Q 0 16 -14 10 Q -50 2 -78 14 Z" fill={cor} stroke={CONTORNO} strokeWidth={5} strokeLinejoin="round" />
+    );
+  return (
+    <path
+      transform={`translate(${x} 58)`}
+      d="M -70 6 Q -50 -22 -10 -10 Q 0 -14 10 -10 Q 50 -22 70 6 Q 40 0 10 6 Q 0 12 -10 6 Q -40 0 -70 6 Z"
+      fill={cor}
+      stroke={CONTORNO}
+      strokeWidth={5}
+      strokeLinejoin="round"
+    />
+  );
+};
+
 type CoresPoder = { cor: string; claro: string; escuro: string; brilho: string };
 const OURO: CoresPoder = { cor: "#ffd93a", claro: "#fff38a", escuro: "#f0a81c", brilho: "#ffe14a" };
 const CabeloSaiyajin: React.FC<{ id: string; perfil?: boolean; c?: CoresPoder }> = ({ id, perfil, c = OURO }) => {
@@ -823,6 +942,10 @@ const Cabelo: React.FC<{ d: Design; poder: number; id: string; perfil?: boolean;
         <CabeloSaiyajin id={id} perfil={perfil} c={d.cabeloPoder} />
       ) : dd.cabelo === "cacheado" ? (
         <CabeloCacheado d={dd} perfil={perfil} />
+      ) : dd.cabelo === "penteado" || dd.cabelo === "curto" ? (
+        <CabeloPenteado d={dd} perfil={perfil} brilho={dd.cabelo === "penteado"} />
+      ) : dd.cabelo === "careca" ? (
+        <CabeloCareca d={dd} perfil={perfil} />
       ) : (
         <CabeloTopete d={dd} perfil={perfil} />
       )}
@@ -889,6 +1012,7 @@ const Cabeca: React.FC<{ d: Design; r: Rosto; id: string; poder: number; balanco
       ) : null}
       <g transform={`translate(${-vira * 22} 0)`}>
         <Cabelo d={d} poder={poder} id={id} balanco={balanco} />
+        {d.chapeu ? <Chapeu c={d.chapeu} /> : null}
       </g>
       {(r.palido ?? 0) > 0.3 ? (
         <g opacity={r.palido} stroke="#5b4a8a" strokeWidth={5} strokeLinecap="round">
@@ -922,16 +1046,7 @@ const Cabeca: React.FC<{ d: Design; r: Rosto; id: string; poder: number; balanco
       <path d={`M ${-9 + gx(0)} 38 Q ${gx(0)} 48 ${9 + gx(0)} 38`} stroke={CONTORNO} strokeWidth={5} fill="none" strokeLinecap="round" />
       <Boca r={r} x={gx(0) * 0.95} escalaX={1 - Math.abs(vira) * 0.25} />
       <ExtrasRosto r={r} gx={gx} d={d} />
-      {d.bigode ? (
-        <path
-          transform={`translate(${gx(0)} 58) scale(${1 - Math.abs(vira) * 0.25} 1)`}
-          d="M -70 6 Q -50 -22 -10 -10 Q 0 -14 10 -10 Q 50 -22 70 6 Q 40 0 10 6 Q 0 12 -10 6 Q -40 0 -70 6 Z"
-          fill={d.corCabelo}
-          stroke={CONTORNO}
-          strokeWidth={5}
-          strokeLinejoin="round"
-        />
-      ) : null}
+      {d.bigode ? <Bigode d={d} x={gx(0)} /> : null}
       {d.oculos ? (
         <g fill="none" stroke={CONTORNO} strokeWidth={7}>
           <ellipse cx={gx(-52)} cy={-10} rx={50 * gs(-52)} ry={50} fill="#ffffff" fillOpacity={0.12} />
@@ -974,6 +1089,7 @@ const CabecaPerfil: React.FC<{ d: Design; r: Rosto; id: string; poder: number; b
       ) : null}
       {(r.nojo ?? 0) > 0 ? <ellipse cx={80} cy={22} rx={56} ry={22} fill="#7fc35c" opacity={0.45 * (r.nojo ?? 0)} /> : null}
       <Cabelo d={d} poder={poder} id={id} perfil balanco={balanco} />
+      {d.chapeu ? <Chapeu c={d.chapeu} perfil /> : null}
       <g transform={`translate(82 ${browY}) rotate(${-r.sobrancelha * 0.8})`}>
         {d.sobrancelhaGrossa ? <rect x={-30} y={-10} width={62} height={20} rx={10} fill={d.sobrancelha} /> : <rect x={-24} y={-5} width={50} height={10} rx={5} fill={d.sobrancelha} />}
       </g>
@@ -985,7 +1101,7 @@ const CabecaPerfil: React.FC<{ d: Design; r: Rosto; id: string; poder: number; b
       <Lagrima cx={78} lado={-1} forca={(r.lagrimas ?? 0) * 0.9} fim={110} />
       <Boca r={r} x={98} escalaX={0.6} />
       <ExtrasRosto r={r} gx={(x) => x} d={d} perfil />
-      {d.bigode ? <path d="M 84 54 Q 110 38 140 52 Q 128 66 96 64 Z" fill={d.corCabelo} stroke={CONTORNO} strokeWidth={5} strokeLinejoin="round" /> : null}
+      {d.bigode ? <path d={d.bigodeTipo === "fino" ? "M 96 58 Q 116 50 140 54 Q 146 46 144 42 Q 138 60 100 64 Z" : "M 84 54 Q 110 38 140 52 Q 128 66 96 64 Z"} fill={d.corBigode ?? d.corCabelo} stroke={CONTORNO} strokeWidth={d.bigodeTipo === "fino" ? 3 : 5} strokeLinejoin="round" /> : null}
       {d.oculos ? (
         <g fill="none" stroke={CONTORNO} strokeWidth={7}>
           <circle cx={88} cy={-10} r={42} fill="#ffffff" fillOpacity={0.12} />
@@ -1014,6 +1130,10 @@ const CabecaCostas: React.FC<{ d: Design; id: string; poder: number; balanco: nu
       <g transform={`translate(0 -60) rotate(${balanco}) translate(0 60)`}>
         {poder >= 0.5 ? (
           <CabeloSaiyajin id={`${id}c`} />
+        ) : d.cabelo === "penteado" || d.cabelo === "curto" ? (
+          <path d="M -140 30 Q -170 -90 -100 -160 Q 0 -220 100 -160 Q 170 -90 140 30 Q 100 80 0 86 Q -100 80 -140 30 Z" fill={d.corCabelo} stroke={CONTORNO} strokeWidth={LINHA} strokeLinejoin="round" />
+        ) : d.cabelo === "careca" ? (
+          <CabeloCareca d={d} />
         ) : d.cabelo === "cacheado" ? (
           <g>
             {[
@@ -1051,6 +1171,7 @@ const CabecaCostas: React.FC<{ d: Design; id: string; poder: number; balanco: nu
           </g>
         )}
       </g>
+      {d.chapeu ? <Chapeu c={d.chapeu} /> : null}
     </g>
   );
 };
@@ -1122,7 +1243,19 @@ const Frente: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
             <path d="M -140 0 L -110 -10 M 100 -14 L 130 -4" stroke={d.faixa.sombra} strokeWidth={6} fill="none" />
           </g>
         ) : null}
-        {d.gravata && !costas ? (
+        {d.terno && !costas ? (
+          <g transform={`translate(${pose.vira * 40} 0)`} stroke={CONTORNO} strokeLinejoin="round">
+            {/* camisa branca em V + colarinho */}
+            <path d={`M -56 ${-TRONCO} L 0 ${-TRONCO + 196} L 56 ${-TRONCO} Z`} fill="#f4f1ea" strokeWidth={5} />
+            <path d={`M -56 ${-TRONCO - 2} L -4 ${-TRONCO + 10} L -30 ${-TRONCO + 46} Z M 56 ${-TRONCO - 2} L 4 ${-TRONCO + 10} L 30 ${-TRONCO + 46} Z`} fill="#ffffff" strokeWidth={4} />
+            {d.gravata ? <path d={`M 0 ${-TRONCO + 12} l -16 22 l 10 120 l 6 14 l 6 -14 l 10 -120 Z`} fill={d.gravata} strokeWidth={4} /> : null}
+            {/* lapelas */}
+            <path d={`M -60 ${-TRONCO} L -100 ${-TRONCO + 70} L -70 ${-TRONCO + 92} L -92 ${-TRONCO + 108} L -6 ${-TRONCO + 214} L -2 ${-TRONCO + 200} Z`} fill={d.terno.lapela} strokeWidth={5} />
+            <path d={`M 60 ${-TRONCO} L 100 ${-TRONCO + 70} L 70 ${-TRONCO + 92} L 92 ${-TRONCO + 108} L 6 ${-TRONCO + 214} L 2 ${-TRONCO + 200} Z`} fill={d.terno.lapela} strokeWidth={5} />
+            {d.terno.lenco ? <path d={`M -126 ${-TRONCO + 116} L -86 ${-TRONCO + 110} L -100 ${-TRONCO + 132} Z`} fill="#ffffff" strokeWidth={3} /> : null}
+            {[-TRONCO + 250, -TRONCO + 310].map((y) => <circle key={y} cx={0} cy={y} r={7} fill="#2a2228" strokeWidth={0} />)}
+          </g>
+        ) : d.gravata && !costas ? (
           <path d={`M ${pose.vira * 40} ${-TRONCO + 16} l -20 26 l 14 170 l 6 18 l 6 -18 l 14 -170 Z`} fill={d.gravata} stroke={CONTORNO} strokeWidth={5} strokeLinejoin="round" />
         ) : null}
         {d.numero ? (
@@ -1141,8 +1274,8 @@ const Frente: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
           </text>
         ) : null}
         </g></Parte>
-        {!bracoAtras || longe > 0 ? bracoEEl : null}
-        {!bracoAtras || longe < 0 ? bracoDEl : null}
+        {(!bracoAtras || longe > 0) && !(pose.maoNaFrente === "E" || pose.maoNaFrente === "ambas") ? bracoEEl : null}
+        {(!bracoAtras || longe < 0) && !(pose.maoNaFrente === "D" || pose.maoNaFrente === "ambas") ? bracoDEl : null}
         <g transform={`translate(${v * 10} ${-TRONCO - 60}) rotate(${pose.cabeca}) translate(0 ${-R_CABECA + 18})`}>
           <Parte k="cabeca">
           {costas ? (
@@ -1152,6 +1285,8 @@ const Frente: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
           )}
           </Parte>
         </g>
+        {pose.maoNaFrente === "E" || pose.maoNaFrente === "ambas" ? bracoEEl : null}
+        {pose.maoNaFrente === "D" || pose.maoNaFrente === "ambas" ? bracoDEl : null}
       </g>
     </g>
   );
@@ -1190,6 +1325,14 @@ const Perfil: React.FC<{ d: Design; pose: Pose; rosto: Rosto; id: string; poder:
           strokeLinejoin="round"
         />
         <path d="M 60 -250 Q 40 -200 56 -150" stroke={d.camisaSombra} strokeWidth={4} fill="none" strokeLinecap="round" />
+        {d.terno ? (
+          <g stroke={CONTORNO} strokeLinejoin="round">
+            <path d={`M 40 ${-TRONCO} L 92 ${-TRONCO + 16} L 96 ${-TRONCO + 150} Z`} fill="#f4f1ea" strokeWidth={4} />
+            {d.gravata ? <path d={`M 84 ${-TRONCO + 20} L 100 ${-TRONCO + 26} L 98 ${-TRONCO + 140} L 88 ${-TRONCO + 130} Z`} fill={d.gravata} strokeWidth={4} /> : null}
+            <path d={`M 40 ${-TRONCO} L 60 ${-TRONCO + 80} L 96 ${-TRONCO + 196} L 70 ${-TRONCO + 100} Z`} fill={d.terno.lapela} strokeWidth={4} />
+            {[-TRONCO + 250, -TRONCO + 310].map((y) => <circle key={y} cx={92} cy={y} r={6} fill="#2a2228" strokeWidth={0} />)}
+          </g>
+        ) : null}
         {d.musculos ? (
           <g stroke={CONTORNO} strokeWidth={6} fill="none" strokeLinecap="round" opacity={0.75}>
             <path d="M 104 -300 Q 70 -250 20 -262" />
