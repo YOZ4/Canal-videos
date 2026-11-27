@@ -89,8 +89,26 @@ pendente) e faça commit + push junto com o trabalho.
     juntos; a orelha antes ficava "descolada" fora da cabeça), nariz ganha lateral, ombro/braço de longe vai para
     trás do tronco, quadril e pés acompanham. Afeta todos os vídeos que usam `vira` (para melhor). Os valores de cada expressão estão na lista `EXPR` do arquivo — reaproveitar nos episódios.
 
+15. **"O homem que vendeu a Torre Eiffel"** (`src/videos/TorreEiffel`, composição `TorreEiffel`, **60 qps**, 81 s, loop).
+    Ele mandou pronto: roteiro por cenas, `cenas.json`, legenda palavra a palavra, áudio e 15 imagens (fichas + storyboard
+    por cena), feitos no ChatGPT. Primeiro uso da **esteira de agentes**:
+    - `direcao-visual` escreveu `producao/torre-eiffel/02-direcao.md` (37 planos, golpes na palavra);
+    - a sessão principal animou (`03-animacao.md`);
+    - `revisor-qualidade` revisou o rascunho (`04-revisao-1.md`, 24 itens, "precisa de nova rodada");
+    - os ajustes foram aplicados e então veio o render final.
+    Estilo deste episódio: o vetorial limpo das fichas dele (não o JJK).
+    - **Novidades no boneco:** `homem1925()`, terno (lapela, camisa em V, mangas compridas), bigode fino/grosso,
+      chapéus fedora/coco/boina, cabelos penteado/careca/curto, `maoNaFrente` (mão na frente do rosto: "shh",
+      cobrir o rosto) e `alcancar()` (acha o braço para a mão chegar num ponto; resolve a pendência da "mão na cabeça").
+    - **"3D" que ele pediu:** câmera por camadas em z (dolly atravessando documento, mesa, personagens e parede),
+      `Torre3D` (treliça projetada de verdade: gira, órbita, contra-plongée) e a câmera passando por baixo do tampo da mesa.
+      Personagens sempre chapados.
+    - **Som:** `scripts/gerar_sons_1925.py` (jazz anos 20 normal, rádio e rápido, drone do mar e 26 efeitos).
+    - **Cuidado a 60 qps:** `piscar`/`respira`/`fala` do anim.ts contam a 30 qps, então chame com f/2 (ver `comum.tsx`).
+
 ## Pendências / ideias que ele ainda pode pedir
-- Testar a esteira de 4 agentes no próximo episódio e ajustar os arquivos dos agentes com o que ele achar.
+- Esteira de agentes testada na Torre Eiffel: perguntar o que ele achou do resultado e ajustar os agentes.
+- Torre Eiffel, ideias não feitas: luz do abajur iluminando os rostos de baixo (C08) e a cortina presa à mão (C01).
 - Gesto de "mão na cabeça" no Lucas gigante (o braço atual não alcança a cabeça; virou punho tremendo).
 - Fuga do Diego com corrida de pânico (braços se debatendo, olhando para trás) — hoje usa a corrida comum.
 - Usar as 3 skills novas num episódio de verdade e ver o que ele acha (3D: medir tempo de render antes).

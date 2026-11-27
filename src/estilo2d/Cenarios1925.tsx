@@ -122,6 +122,7 @@ export const CeuParis: React.FC<{ tom: TomParis; id?: string }> = ({ tom, id = "
       </linearGradient>
     </defs>
     <rect x={-3000} y={-4000} width={7000} height={5200} fill={`url(#ceu-${id})`} />
+    <rect x={-3000} y={1199} width={7000} height={2500} fill={CEU[tom][1]} />
   </g>
 );
 
@@ -276,7 +277,7 @@ export const Torre3D: React.FC<{ x: number; base: number; h: number; ang: number
   const corBase = ferrugem > 0.5 ? [150, 80, 46] : [138, 90, 58];
   const cor = (l: number) => `rgb(${corBase.map((c) => Math.round(c * l)).join(",")})`;
   const plataforma = (t: number, alto: number) => {
-    const m = meia(t) * 1.18;
+    const m = meia(t) * 1.04;
     const pts = cantos.map(([cx, cz]) => proj(cx * m, t, cz * m));
     const pts2 = cantos.map(([cx, cz]) => proj(cx * m, t - alto, cz * m));
     return (
@@ -322,8 +323,8 @@ export const Torre3D: React.FC<{ x: number; base: number; h: number; ang: number
           </g>
         );
       })}
-      {plataforma(0.3, 0.025)}
-      {plataforma(0.56, 0.02)}
+      {plataforma(0.3, 0.008)}
+      {plataforma(0.56, 0.006)}
       <line x1={topo[0]} y1={topo[1]} x2={ponta[0]} y2={ponta[1]} stroke={L} strokeWidth={4} />
       {ferrugem > 0
         ? new Array(16).fill(0).map((_, i) => {
@@ -412,7 +413,7 @@ export const Anzol: React.FC<{ x: number; y: number; esc?: number }> = ({ x, y, 
 );
 
 /** peixe laranja. boca 0..1 (abre para morder) */
-export const Peixe: React.FC<{ x: number; y: number; esc?: number; lado?: 1 | -1; boca?: number; f: number }> = ({ x, y, esc = 1, lado = 1, boca = 0, f }) => {
+export const Peixe: React.FC<{ x: number; y: number; esc?: number; lado?: 1 | -1; boca?: number; f: number; bigode?: boolean }> = ({ x, y, esc = 1, lado = 1, boca = 0, f, bigode }) => {
   const cauda = Math.sin(f * 0.35) * 14;
   return (
     <g transform={`translate(${x} ${y}) scale(${esc * lado} ${esc})`} stroke={L} strokeLinejoin="round">
@@ -423,6 +424,7 @@ export const Peixe: React.FC<{ x: number; y: number; esc?: number; lado?: 1 | -1
       <circle cx={-110} cy={-24} r={24} fill="#ffffff" strokeWidth={5} />
       <circle cx={-116} cy={-24} r={11} fill={L} stroke="none" />
       <path d={`M -200 ${-6 - boca * 30} L -150 0 L -200 ${6 + boca * 30}`} fill={boca > 0.1 ? "#7a2a2a" : "none"} strokeWidth={6} />
+      {bigode ? <path d="M -200 -20 Q -170 -50 -130 -30 Q -110 -40 -90 -26 Q -120 -6 -150 -14 Q -180 -4 -200 -20 Z" fill="#5e3e22" strokeWidth={4} /> : null}
     </g>
   );
 };

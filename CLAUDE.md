@@ -98,3 +98,12 @@ npx remotion render <Composicao> out/<arquivo>.mp4 --browser-executable=/opt/pw-
 - Lucas transformado: `LUCAS_FURIA` / `LUCAS_PODER` (cabelo verde espetado, olhos vazios, músculos, faixa). Cenário de rua: `RuaAnime`.
 - Sons de ambiente: `passaros.wav`, `transito.wav` (gerar_sfx.py). Silêncio da música antes do golpe/grito final.
 - Entrega: versão `-alta.mp4` só no chat; versão leve (< 100 MB) no git.
+
+## Episódio a 60 qps com personagens de época (modelo: `src/videos/TorreEiffel`, "Torre Eiffel")
+- Pacote do usuário (roteiro + cenas.json + legenda.json + storyboards) vai para `producao/<ep>/` e vira o 01 da esteira.
+- `comum.tsx`: `M` (mola a 60 qps), `resp`/`pisca` (f/2), `entraSai` (HUD com mola), `tremor`, `LEGENDAS` do legenda.json.
+- Personagens: `homem1925()` em personagens.ts (terno, bigode, chapéu). `alcancar(pose, "E"|"D", alvo, ombroMax)` e
+  `maoNaFrente` no Boneco2D para mão no rosto/boca/peito.
+- `Cenarios1925.tsx`: SalaoHotel, rua de Paris (dia/sépia/nublado), `Torre3D`, objetos, `EtiquetaHUD`, `Carimbo`, `Numero3D`.
+- Profundidade: camadas com escala `(z − camZf)/(z − camZ)` (ver `SalaMesa` em CenasA.tsx). O loop fecha deixando a
+  última cena no mesmo estado do quadro 0.

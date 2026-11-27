@@ -36,7 +36,7 @@ const FOCO_DOC: [number, number] = [540, 1450];
 /** posição do documento: u = 0 na mesa perto do Lustig, 1 = quadro do loop (E0), 1.15 = parado */
 const docEm = (u: number) => {
   const t = Math.min(1, u / 1.15);
-  return { x: 700 - 180 * t, y: 1170 + 280 * t, esc: 0.42 + 0.48 * t, rot: -12 + 8 * t, inclina: 18 * (1 - t) };
+  return { x: 700 - 180 * t, y: 1095 + 355 * t, esc: 0.42 + 0.48 * t, rot: -12 + 8 * t, inclina: 30 * (1 - t) };
 };
 const MaoEmpurra: React.FC<{ x: number; y: number; sai: number }> = ({ x, y, sai }) => {
   // manga do paletó + mão aberta empurrando a borda de cima do documento (some subindo)
@@ -58,7 +58,7 @@ const MaoEmpurra: React.FC<{ x: number; y: number; sai: number }> = ({ x, y, sai
   );
 };
 
-export const SalaMesa: React.FC<{ f: number; grupo: 1 | 2; camZ: number; docU: number; maoSai: number; cortina: number; lustig: Pose; rostoL: ReturnType<typeof pisca>; olharC: [number, number]; carimbo: number; engole?: number }> = ({
+export const SalaMesa: React.FC<{ f: number; grupo: 1 | 2; camZ: number; docU: number; maoSai: number; cortina: number; lustig: Pose; rostoL: ReturnType<typeof pisca>; olharC: [number, number]; carimbo: number; engole?: number; docSai?: number }> = ({
   f,
   grupo,
   camZ,
@@ -70,11 +70,13 @@ export const SalaMesa: React.FC<{ f: number; grupo: 1 | 2; camZ: number; docU: n
   olharC,
   carimbo,
   engole = 0,
+  docSai = 0,
 }) => {
   const prog = (camZ - CAM_PERTO) / (-700 - CAM_PERTO); // 0 perto, 1 final
   const pan: [number, number] = [0, -380 * (1 - prog)];
   const desfFundo = 10 * (1 - prog);
-  const doc = docEm(docU);
+  const doc0 = docEm(docU);
+  const doc = { ...doc0, x: doc0.x - 700 * docSai, y: doc0.y + 650 * docSai };
   const coms = grupo === 1 ? COMERCIANTES_1 : COMERCIANTES_2;
   const brilhoJanela = 1 - cortina * 0.12;
   return (
@@ -85,7 +87,8 @@ export const SalaMesa: React.FC<{ f: number; grupo: 1 | 2; camZ: number; docU: n
         </Desf>
       </g>
       <g transform={camada(800, camZ, FOCO_DOC, pan)}>
-        <Desf id="dfc" px={desfFundo * 0.8}>
+        <g opacity={1 - 0.4 * (1 - prog)}>
+        <Desf id="dfc" px={16 * (1 - prog)}>
           {coms.map((d, i) => {
             const x = 70 + i * 150;
             const engoliu = i === 2 ? engole : 0;
@@ -100,6 +103,7 @@ export const SalaMesa: React.FC<{ f: number; grupo: 1 | 2; camZ: number; docU: n
             );
           })}
         </Desf>
+        </g>
       </g>
       <g transform={camada(700, camZ, FOCO_DOC, pan)}>
         <Desf id="dfl" px={desfFundo * 0.6}>
@@ -126,9 +130,9 @@ export const C01: React.FC<{ f: number }> = ({ f }) => {
   const docU = f < 36 ? 1 + 0.15 * (1 - Math.pow(1 - f / 36, 2)) : 1.15;
   const maoSai = lin(f, 66, 110, 0, 1, CURVA.entra);
   // cortina: antecipação 160–170, puxa 172–200 (cortina segue 6 q atrás e balança)
-  const cortina = Math.min(1.05, M(f, 178, "solto"));
-  const base = P(910, 1330, 0.44, { bracoE: { ombro: 16, cotovelo: -10 } });
-  const alvo: [number, number] = [1004, 700];
+  const cortina = lin(f, 176, 198, 0, 1, CURVA.sai) + (f > 198 ? Math.sin((f - 198) * 0.5) * 0.04 * Math.exp(-(f - 198) / 12) : 0);
+  const base = P(860, 1330, 0.44, { bracoE: { ombro: 16, cotovelo: -10 } });
+  const alvo: [number, number] = [1090 - (60 + 75 * Math.min(1, lin(f - 6, 176, 198, 0, 1, CURVA.sai))), 720];
   const puxa = alcancar(base, "D", alvo);
   const t = M(f, 170, "natural");
   const recua = f >= 160 && f < 170 ? Math.sin(((f - 160) / 10) * Math.PI) : 0;
@@ -148,7 +152,7 @@ export const C01: React.FC<{ f: number }> = ({ f }) => {
   const tr = tremor(f, [[216, 4]]);
   return (
     <g transform={`translate(${tr.x} ${tr.y})`}>
-      <SalaMesa f={f} grupo={1} camZ={camZ} docU={docU} maoSai={maoSai} cortina={cortina} lustig={lustig} rostoL={pisca(rosto, f, "lu1")} olharC={[0.4, 0.6]} carimbo={carimbo} engole={f >= 210 && f < 222 ? 1 : 0} />
+      <SalaMesa f={f} grupo={1} camZ={camZ} docU={docU} docSai={CURVA.entra(Math.max(0, Math.min(1, (f - 96) / 110)))} maoSai={maoSai} cortina={cortina} lustig={lustig} rostoL={pisca(rosto, f, "lu1")} olharC={[0.4, 0.6]} carimbo={carimbo} engole={f >= 210 && f < 222 ? 1 : 0} />
     </g>
   );
 };
@@ -157,8 +161,8 @@ export const C12: React.FC<{ f: number }> = ({ f }) => {
   // geral (cortina aberta, grupo 2), depois dolly-in até o quadro do loop (E0)
   const camZ = lin(f, 4710, 4874, -700, CAM_PERTO, CURVA.suave);
   const docU = lin(f, 4720, 4874, 0, 1, (x) => x * x);
-  const maoSai = f < 4720 ? 1.2 : 0;
-  const base = P(910, 1330, 0.44, { bracoE: { ombro: 16, cotovelo: -10 } });
+  const maoSai = camZ > -260 ? 0 : 1.2;
+  const base = P(860, 1330, 0.44, { bracoE: { ombro: 16, cotovelo: -10 } });
   const punho = f >= 4600 && f < 4640 ? Math.sin(((f - 4600) / 40) * Math.PI) : 0;
   const empurra = M(f, 4712, "natural");
   const lustig = vivo({ ...base, bracoD: { ombro: 20 + 20 * punho, cotovelo: -60 * punho - 8 }, bracoE: { ombro: 16 + 50 * empurra, cotovelo: -10 }, maoE: empurra > 0.3 ? "aberta" : "bola" }, f);
@@ -185,10 +189,10 @@ export const C02: React.FC<{ f: number }> = ({ f }) => {
       agacha: sacode,
       estica: 1 + pre * 0.03 + (ri ? Math.sin((f - 342) * 0.25) * 0.02 : 0),
       cabeca: ri ? -8 * decai : 0,
-      bracoE: { ombro: 18 + (ri ? 14 * decai : 0), cotovelo: ri ? -70 * decai : -8 },
-      bracoD: limpa > 0.05 ? alcancar(P(540, 1880 + 18, 1.05), "D", [posCabeca(P(540, 1898, 1.05))[0] + 70, posCabeca(P(540, 1898, 1.05))[1] - 10]) : { ombro: 18 + (ri ? 14 * decai : 0), cotovelo: ri ? -70 * decai : -8 },
-      maoE: ri ? "punho" : "bola",
-      maoD: ri ? "punho" : "bola",
+      bracoE: ri ? alcancar(P(540, 1898, 1.05), "E", [470, posCabeca(P(540, 1898, 1.05))[1] + 330 + Math.sin(f * 0.4) * 8], 60) : { ombro: 18, cotovelo: -8 },
+      bracoD: limpa > 0.05 ? alcancar(P(540, 1880 + 18, 1.05), "D", [posCabeca(P(540, 1898, 1.05))[0] + 70, posCabeca(P(540, 1898, 1.05))[1] - 10]) : ri ? alcancar(P(540, 1898, 1.05), "D", [610, posCabeca(P(540, 1898, 1.05))[1] + 330 + Math.sin(f * 0.4 + 1) * 8], 60) : { ombro: 18, cotovelo: -8 },
+      maoE: ri ? "aberta" : "bola",
+      maoD: ri || limpa > 0.05 ? "aberta" : "bola",
       maoNaFrente: limpa > 0.05 ? "D" : undefined,
     }),
     f,
@@ -200,7 +204,7 @@ export const C02: React.FC<{ f: number }> = ({ f }) => {
   const taca = f >= 420 ? Math.min(1, (f - 420) / 12) : 0;
   return (
     <svg width={W} height={H}>
-      <g transform={`translate(${tr.x} ${tr.y}) translate(540 960) scale(1.35) translate(-540 -880)`}>
+      <g transform={`translate(${tr.x} ${tr.y}) translate(540 960) scale(${f >= 342 && f < 420 ? 1.75 : 1.35}) translate(-540 ${f >= 342 && f < 420 ? -760 : -880})`}>
         <g transform={`translate(${(f - 252) * 0.06} 0)`}>
           <Desf id="c2f" px={6}>
             <SalaoHotel f={f} semJanela id="s2" />
@@ -278,11 +282,12 @@ export const C03: React.FC<{ f: number }> = ({ f }) => {
         <g transform={camada(0.08)}>
           <CeuParis tom="dia" id="c3" />
         </g>
-        <g transform={camada(0.35)}>
+        <g transform={camada(0.55)}>
           <TorrePlana x={760} base={1200} h={1750} />
         </g>
         <g transform={camada(0.7)}>
           <Desf id="c3p" px={lustigVisivel ? 4 : 0}>
+            <rect x={-400} y={1200} width={1900} height={2400} fill="#8a8478" />
             <PredisParis base={1210} x0={-300} />
           </Desf>
         </g>
@@ -306,8 +311,9 @@ const SEIS: Design[] = [...COMERCIANTES_1, POISSON];
 export const C04: React.FC<{ f: number }> = ({ f }) => {
   const push = lin(f, 1098, 1170, 0, 1, CURVA.suave) + lin(f, 1170, 1260, 0, 0.12);
   const close = f >= 1260;
-  const zoom = close ? 1.6 : 0.72 + 0.78 * push;
-  const foco: [number, number] = close ? [540, 1060] : [540 + 0 * push, 1000 + 60 * push];
+  const poissonPlano = f >= 971 && f < 1040;
+  const zoom = close ? 2.6 : poissonPlano ? 1.8 : 0.95 + 0.6 * push;
+  const foco: [number, number] = close ? [540, 1000] : poissonPlano ? [680, 1060] : [480 + 60 * push, 1180 - 130 * push];
   const venda = 1272;
   const hit = f >= venda && f < venda + 8;
   const ff = hit ? venda : f; // hit-stop
@@ -321,8 +327,8 @@ export const C04: React.FC<{ f: number }> = ({ f }) => {
   const lus: Pose = vivo(P(820, 1340, 0.44, { inclina: -6 * lustigApoia, bracoE: { ombro: 30 + 20 * lustigApoia, cotovelo: -30 }, maoE: "aberta" }), f);
   return (
     <svg width={W} height={H}>
-      <g transform={`translate(${tr.x} ${tr.y}) translate(540 960) scale(${zoom / 0.72}) translate(${-foco[0]} ${-foco[1]})`}>
-        <g transform="translate(540 960) scale(0.72) translate(-540 -960)">
+      <g transform={`translate(${tr.x} ${tr.y}) translate(540 960) scale(${zoom}) translate(${-foco[0]} ${-foco[1]})`}>
+        <g>
           <SalaoHotel f={f} janelaX={820} quadroX={70} id="s4" />
           {SEIS.map((d, i) => {
             const chega = 864 + i * 10;
@@ -332,7 +338,7 @@ export const C04: React.FC<{ f: number }> = ({ f }) => {
             const w = andar(f / 2 + i * 3, 0.8, 7);
             const senta = M(f, chega, "pesado");
             const sobe = f >= chega - 4 && f < chega ? (f - chega + 4) / 4 : 0;
-            const y = 1330 + 80 * senta - 4 * sobe;
+            const y = 1330 + 22 * senta - 4 * sobe;
             const poisson = i === 5;
             const r = poisson ? (f > 1000 ? RP.rindo : RP.desconfiado) : RC.curioso;
             return (
@@ -397,7 +403,7 @@ export const C05: React.FC<{ f: number }> = ({ f }) => {
       {RETRATOS.map((d, i) => {
         const cx = i % 2 === 0 ? 270 : 810;
         const cy = i < 2 ? 560 : 1180;
-        const s = M(f, 1314 + i * 8, "solto");
+        const s = M(f, 1314 + i * 8, "natural");
         const r = i === 3 ? RP.interessado : RC.curioso;
         return (
           <g key={i} transform={`translate(${cx} ${cy}) scale(${s}) translate(${-cx} ${-cy})`}>
@@ -407,13 +413,13 @@ export const C05: React.FC<{ f: number }> = ({ f }) => {
               </clipPath>
             </defs>
             <g clipPath={`url(#ret${i})`}>
-              <Boneco2D id={`r5${i}`} d={d} pose={vivo(P(cx, cy + 760, 0.78, { cabeca: (i % 2 ? -1 : 1) * inclina }), f, i * 9)} rosto={{ ...r, olhar: [i % 2 ? -0.5 : 0.5, i < 2 ? 0.5 : -0.5], olhos: pisc ? 0.05 : r.olhos }} />
+              <Boneco2D id={`r5${i}`} d={d} pose={vivo(P(cx, cy + 760, 0.78, { cabeca: (i % 2 ? -1 : 1) * inclina }), f, i * 9)} rosto={{ ...r, olhar: [i % 2 ? -0.5 : 0.5, i < 2 ? 0.5 : -0.5], olhos: (i === 3 ? f >= 1386 && f < 1394 : pisc) ? 0.05 : r.olhos }} />
             </g>
             <rect x={cx - 230} y={cy - 280} width={460} height={500} rx={24} fill="none" stroke="#ffffff" strokeWidth={3} opacity={0.5} />
           </g>
         );
       })}
-      <EtiquetaHUD texto="POR QUE ALGUÉM ACREDITARIA?" x={540} y={850} s={M(f, 1318, "solto") * (f >= 1367 && f < 1380 ? 1.07 : 1)} tamanho={66} />
+      <EtiquetaHUD texto="POR QUE ALGUÉM ACREDITARIA?" x={540} y={850} s={M(f, 1318, "natural") * (f >= 1367 && f < 1380 ? 1.05 : 1)} tamanho={56} />
     </svg>
   );
 };

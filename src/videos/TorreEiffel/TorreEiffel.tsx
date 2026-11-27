@@ -96,7 +96,7 @@ export const TorreEiffel: React.FC = () => {
       <Som src="apito" de={4259} volume={0.35} />
       <Som src="whoosh" de={4335} volume={0.35} />
       <Som src="ahem" de={4416} volume={0.4} />
-      <Sequence from={4460} durationInFrames={96}>
+      <Sequence from={4460} durationInFrames={106}>
         <Html5Audio src={staticFile("sfx/grilo.wav")} volume={0.3} />
       </Sequence>
       <Som src="relogio" de={4562} volume={0.35} />

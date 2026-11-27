@@ -17,12 +17,14 @@ export const C06: React.FC<{ f: number }> = ({ f }) => {
   const hitP = 1673;
   const ff = f >= hitP && f < hitP + 6 ? hitP : f;
   const tr = tremor(f, [[hitP, 10]]);
-  const orbita = lin(ff, 1431, 1830, -12, 12, (x) => x);
-  const zoom = ff < 1660 ? 1 : ff < 1722 ? lin(ff, 1660, 1722, 1, 1.1) : lin(ff, 1722, 1762, 1.1, 1.8, CURVA.suave);
-  const focoY = ff < 1722 ? 960 : lin(ff, 1722, 1762, 960, 900, CURVA.suave);
+  const orbita = lin(ff, 1431, 1830, -15, 20, (x) => x);
+  const bandeiras = ff >= 1570 && ff < 1660;
+  const zoom = bandeiras ? 1.7 : ff < 1660 ? 1 : ff < 1722 ? lin(ff, 1660, 1722, 1, 1.1) : lin(ff, 1722, 1762, 1.1, 1.8, CURVA.suave);
+  const focoY = bandeiras ? 700 : ff < 1722 ? 960 : lin(ff, 1722, 1762, 960, 900, CURVA.suave);
   const ferrugem = lin(ff, 1726, 1790, 0, 1);
   const claro = f >= 1830 ? (f - 1830) / 6 : 0;
   return (
+    <>
     <FilmeMudo sepia={0.5} estrago={0.8} fps={8}>
       <svg width={W} height={H}>
         <g transform={`translate(${tr.x} ${tr.y}) translate(540 960) scale(${zoom}) translate(-540 ${-focoY})`}>
@@ -60,11 +62,18 @@ export const C06: React.FC<{ f: number }> = ({ f }) => {
             : null}
         </g>
         <EtiquetaHUD texto="1889: SÓ PRA EXPOSIÇÃO" x={540} y={260} s={entraSai(f, 1440, 1650)} />
-        {f >= hitP - 8 ? <Carimbo texto="PROVISÓRIA" x={540} y={560} t={f - (hitP - 7)} rot={-8} tamanho={130} /> : null}
         <EtiquetaHUD texto="CONSERTO CARO DEMAIS" x={540} y={1400} s={entraSai(f, 1765, 1835)} cor="#ff6b6b" />
         {claro > 0 ? <rect width={W} height={H} fill="#fff4dc" opacity={Math.min(1, claro * 1.5)} /> : null}
       </svg>
     </FilmeMudo>
+    {f >= hitP - 8 && f < 1830 ? (
+      <svg width={W} height={H} style={{ position: "absolute", left: 0, top: 0 }}>
+        <g transform={`translate(${tr.x} ${tr.y})`} opacity={0.92}>
+          <Carimbo texto="PROVISÓRIA" x={540} y={560} t={f - (hitP - 7)} rot={-8} tamanho={130} />
+        </g>
+      </svg>
+    ) : null}
+    </>
   );
 };
 
@@ -76,6 +85,8 @@ const C06Segredo: React.FC<{ f: number }> = ({ f }) => {
   const alvo = alcancar(base, "E", [boca[0] - 4, boca[1] + 56], 50);
   const repouso = { ombro: 16, cotovelo: -10 };
   const braco = { ombro: repouso.ombro + (alvo.ombro - repouso.ombro) * sobe, cotovelo: repouso.cotovelo + (alvo.cotovelo - repouso.cotovelo) * sobe };
+  const gesto = Math.max(0, M(f, 1842, "natural") - M(f, 1912, "natural"));
+  const gestoC = Math.max(0, M(f, 1846, "natural") - M(f, 1916, "natural"));
   const olhaLado = f >= 1918 && f < 1924 ? -0.9 : f >= 1924 && f < 1930 ? 0.9 : 0;
   const rosto = f >= 1928 ? { ...RL.segredo, sobrancelhaY: 2 + 6 * M(f, 1932, "solto") } : { ...RL.calmo, olhar: [olhaLado, 0] as [number, number] };
   return (
@@ -84,7 +95,7 @@ const C06Segredo: React.FC<{ f: number }> = ({ f }) => {
         <Desf id="c6s" px={8}>
           <SalaoHotel f={f} id="s6" janelaX={820} quadroX={70} />
         </Desf>
-        <Boneco2D id="lu6" d={LUSTIG} pose={vivo({ ...base, bracoE: braco, maoE: sobe > 0.3 ? "aponta" : "bola", maoNaFrente: sobe > 0.2 ? "E" : undefined }, f)} rosto={pisca(rosto, f, "lu6")} />
+        <Boneco2D id="lu6" d={LUSTIG} pose={vivo({ ...base, bracoE: braco, maoE: sobe > 0.3 ? "aponta" : "bola", maoNaFrente: sobe > 0.2 ? "E" : undefined, bracoD: { ombro: 16 + 24 * gesto, cotovelo: -10 - 85 * gestoC }, maoD: gesto > 0.4 ? "aberta" : "bola" }, f)} rosto={pisca(rosto, f, "lu6")} />
       </g>
       <rect width={W} height={H} fill="url(#vin6)" />
       <defs>
@@ -138,13 +149,14 @@ export const C07: React.FC<{ f: number }> = ({ f }) => {
 const C07Base: React.FC<{ f: number }> = ({ f }) => {
   const aponta = f >= 2148 ? M(f, 2148, "natural") : 0;
   const abre = M(f, 2214, "natural");
+  const abreE = M(f, 2218, "natural");
   const base = P(540, 1880, 0.95);
   const pose: Pose = vivo(
     {
       ...base,
       estica: 1 + 0.03 * abre,
-      bracoD: abre > 0.05 ? { ombro: 110, cotovelo: -10 } : { ombro: 16 + (150 - 16) * aponta, cotovelo: -10 + 4 * aponta },
-      bracoE: abre > 0.05 ? { ombro: 16 + 94 * abre, cotovelo: -10 } : { ombro: 16, cotovelo: -10 },
+      bracoD: abre > 0.05 ? { ombro: 118 + Math.sin(f * 0.11) * 3, cotovelo: -10 } : { ombro: 16 + (150 - 16) * aponta, cotovelo: -10 - 60 * Math.sin(Math.min(1, aponta) * Math.PI) },
+      bracoE: abre > 0.05 ? { ombro: 16 + 84 * abreE + Math.sin(f * 0.09 + 1) * 3, cotovelo: -10 } : { ombro: 16, cotovelo: -10 },
       maoD: abre > 0.05 ? "aberta" : aponta > 0.3 ? "aponta" : "bola",
       maoE: abre > 0.3 ? "aberta" : "bola",
       cabeca: -6 * aponta,
@@ -193,6 +205,8 @@ const C07Caderno: React.FC<{ f: number }> = ({ f }) => {
   const base = P(540, 2200, 1.25, { bracoE: { ombro: 40, cotovelo: -110 }, bracoD: { ombro: 36 + Math.sin(f * 1.0) * 4, cotovelo: -118 + Math.sin(f * 1.3) * 6 }, maoE: "bola", maoD: "punho" });
   const pose = vivo(base, f);
   const mE = posMao(pose, "E");
+  const mD = posMao(pose, "D");
+  const zig = Math.sin(f * 1.05) * 12;
   const escreve = lin(f, 2364, 2434, 0, 1, (x) => x);
   return (
     <svg width={W} height={H}>
@@ -202,8 +216,13 @@ const C07Caderno: React.FC<{ f: number }> = ({ f }) => {
           <PredisParis base={1100} x0={-300} />
           <Calcamento y={1100} id="c7nc" />
         </Desf>
-        <Boneco2D id="po7" d={POISSON_RUA} pose={pose} rosto={pisca(RP.interessado, f, "po7")} />
+        <Boneco2D id="po7" d={POISSON_RUA} pose={pose} rosto={f >= 2380 && f < 2420 ? RP.interessado : pisca(RP.interessado, f, "po7")} />
+        <rect x={mE[0] + 70 - 130} y={mE[1] - 70 - 170} width={260} height={340} rx={12} fill="#7a2f2a" stroke="#1d1424" strokeWidth={7} transform={`rotate(-8 ${mE[0] + 70} ${mE[1] - 70})`} />
         <Caderno x={mE[0] + 70} y={mE[1] - 70} esc={0.9} escreve={escreve} rot={-8} />
+        <g transform={`translate(${mD[0] - 40 + zig} ${mD[1] - 60}) rotate(-30)`}>
+          <rect x={-10} y={-120} width={20} height={130} rx={4} fill="#e8c040" stroke="#1d1424" strokeWidth={5} />
+          <path d="M -10 10 L 0 34 L 10 10 Z" fill="#f0d8b0" stroke="#1d1424" strokeWidth={4} />
+        </g>
         {f >= 2390 ? <Gota x={posCabeca(pose)[0] + 150} y={posCabeca(pose)[1] - 60} f={f} de={2390} escala={0.6} /> : null}
       </g>
     </svg>
@@ -211,18 +230,18 @@ const C07Caderno: React.FC<{ f: number }> = ({ f }) => {
 };
 
 // ================= C08: propina por baixo da mesa =================
-const MESA_Y = 1460;
+const MESA_Y = 1440;
 export const C08: React.FC<{ f: number }> = ({ f }) => {
   if (f >= 2790 && f < 3050) return <C08Pensa f={f} />;
   // câmera desce por baixo do tampo (2700–2740), volta (2775–2790)
-  const desce = f < 2700 ? 0 : f < 2740 ? CURVA.suave((f - 2700) / 40) : f < 2775 ? 1 : f < 2790 ? 1 - CURVA.suave((f - 2775) / 15) : 0;
+  const desce = f < 2700 ? 0 : f < 2716 ? 0.45 * CURVA.entra((f - 2700) / 16) : f < 2775 ? 1 : 0;
   const push = f >= 2537 && f < 2700 ? lin(f, 2537, 2640, 1, 1.1) : f >= 3050 ? 1 : 1;
-  const camY = 900 * desce;
-  const zoom = push * (1 + 0.35 * desce);
+  const camY = 620 * desce;
+  const zoom = 1.25 * push * (1 + 0.35 * desce);
   // aperto de mão (2556): Lustig bracoD, Poisson bracoE
-  const lus0 = P(380, 1700, 0.6);
-  const poi0 = P(720, 1700, 0.6);
-  const meio: [number, number] = [550, 1330];
+  const lus0 = P(330, 1820, 0.95);
+  const poi0 = P(760, 1820, 0.95);
+  const meio: [number, number] = [545, 1260];
   const aperta = f >= 2548 && f < 2640;
   const sacode = aperta && f >= 2562 ? Math.sin(((f - 2562) / 12) * Math.PI * 2) * 14 * Math.max(0, 1 - (f - 2562) / 40) : 0;
   const aproxima = M(f, 2548, "natural") - M(f, 2630, "natural");
@@ -234,21 +253,19 @@ export const C08: React.FC<{ f: number }> = ({ f }) => {
   // embaixo da mesa: Poisson passa o envelope (mão D dele) para a mão E do Lustig... usamos braços "de baixo"
   const sob = f >= 2710 && f < 2790;
   const passa = lin(f, 2746, 2775, 0, 1, CURVA.suave);
-  const envX = 700 - 220 * passa;
+  const envX = 640 - 200 * passa;
   const envY = MESA_Y + 120;
-  const bLs = alcancar(lus0, "D", [envX - 30, envY]);
-  const bPs = alcancar(poi0, "E", [Math.max(envX + 30, 600), envY]);
   // inclina para pedir propina (2645)
   const inclinaL = (M(f, 2645, "natural") - M(f, 2700, "natural")) * 10;
   // entrega final (3058): Poisson empurra documento + envelope
   const entrega = f >= 3050;
   const empurra = M(f, 3058, "natural");
   const guarda = M(f, 3130, "natural");
-  const lus: Pose = vivo({ ...lus0, inclina: inclinaL, bracoD: sob ? bLs : aperta ? mixB(rep, bL, aproxima) : rep, maoD: sob || aperta ? "aberta" : "bola" }, f);
+  const lus: Pose = vivo({ ...lus0, inclina: inclinaL, bracoD: sob ? rep : aperta ? mixB(rep, bL, aproxima) : rep, maoD: aperta ? "aberta" : "bola" }, f);
   const poi: Pose = vivo(
     {
       ...poi0,
-      bracoE: sob ? (f >= 2740 ? bPs : rep) : aperta ? mixB(rep, bP, aproxima - recuaP * 0.3) : entrega ? mixB(rep, alcancar(poi0, "E", [580, MESA_Y - 20]), empurra) : rep,
+      bracoE: sob ? rep : aperta ? mixB(rep, bP, aproxima - recuaP * 0.3) : entrega ? mixB(rep, alcancar(poi0, "E", [580, MESA_Y - 20]), empurra) : rep,
       maoE: sob || aperta || entrega ? "aberta" : "bola",
       peE: { dx: 0, dy: sob ? -Math.abs(Math.sin(f * 0.5)) * 18 : 0 },
     },
@@ -259,7 +276,7 @@ export const C08: React.FC<{ f: number }> = ({ f }) => {
   const apaga = f >= 3214 ? (f < 3220 ? (Math.floor((f - 3214) / 2) % 2) * 0.6 : Math.min(1, (f - 3220) / 10)) : 0;
   return (
     <svg width={W} height={H}>
-      <g transform={`translate(540 960) scale(${zoom}) translate(-540 ${-960 + -camY})`}>
+      <g transform={`translate(540 960) scale(${zoom}) translate(-540 ${-1250 - camY})`}>
         <SalaoHotel f={f} luz="abajur" semJanela id="s8" />
         <Boneco2D id="lu8" d={LUSTIG} pose={lus} rosto={pisca(rostoL, f, "lu8")} />
         <Boneco2D id="po8" d={POISSON} pose={poi} rosto={pisca(rostoP, f, "po8")} />
@@ -269,7 +286,7 @@ export const C08: React.FC<{ f: number }> = ({ f }) => {
             <path d={`M -200 ${MESA_Y} L 1280 ${MESA_Y} L 1180 ${MESA_Y - 90 * (1 - desce * 2)} L -100 ${MESA_Y - 90 * (1 - desce * 2)} Z`} fill="#f4f1ea" stroke="#1d1424" strokeWidth={5} />
             <rect x={-200} y={MESA_Y} width={1480} height={260} fill="#ece8de" stroke="#1d1424" strokeWidth={5} />
             {/* abajur */}
-            <g transform={`translate(540 ${MESA_Y - 60})`}>
+            <g transform={`translate(930 ${MESA_Y - 60})`}>
               <circle r={260} fill="#ffb45a" opacity={0.18 * (1 - apaga)} />
               <rect x={-8} y={-150} width={16} height={150} fill="#5a4030" />
               <path d="M -70 -150 L 70 -150 L 44 -230 L -44 -230 Z" fill={apaga > 0.5 ? "#6a4a2a" : "#ffcf8a"} stroke="#1d1424" strokeWidth={5} />
@@ -287,7 +304,17 @@ export const C08: React.FC<{ f: number }> = ({ f }) => {
             <rect x={-600} y={-2000} width={2400} height={MESA_Y + 60 + 2000 - 80 * (desce - 0.5)} fill="#1a1020" />
             <rect x={-600} y={MESA_Y + 40 - 80 * (desce - 0.5)} width={2400} height={20} fill="#3a2418" />
             <rect x={-600} y={MESA_Y + 56 - 80 * (desce - 0.5)} width={2400} height={6} fill="#ffb45a" opacity={0.7} />
-            {sob && f >= 2740 && f < 2790 ? <Envelope x={envX} y={envY} esc={0.4} rot={-4 + Math.sin(f * 0.3) * 3} /> : null}
+            {sob ? (
+              <g strokeLinecap="round">
+                <path d={`M ${lus0.x + 60} ${MESA_Y + 70} Q ${lus0.x + 110} ${envY} ${envX - 70} ${envY}`} stroke="#1d1424" strokeWidth={74} fill="none" />
+                <path d={`M ${lus0.x + 60} ${MESA_Y + 70} Q ${lus0.x + 110} ${envY} ${envX - 70} ${envY}`} stroke="#5a5f6b" strokeWidth={60} fill="none" />
+                <circle cx={envX - 60} cy={envY} r={34} fill="#f2c8a4" stroke="#1d1424" strokeWidth={6} />
+                <path d={`M ${poi0.x - 60} ${MESA_Y + 70} Q ${poi0.x - 110} ${envY} ${envX + 70} ${envY}`} stroke="#1d1424" strokeWidth={74} fill="none" />
+                <path d={`M ${poi0.x - 60} ${MESA_Y + 70} Q ${poi0.x - 110} ${envY} ${envX + 70} ${envY}`} stroke="#7a5a3a" strokeWidth={60} fill="none" />
+                <Envelope x={envX} y={envY} esc={0.4} rot={-4 + Math.sin(f * 0.3) * 3} />
+                <circle cx={envX + 60} cy={envY} r={34} fill="#f2c8a4" stroke="#1d1424" strokeWidth={6} />
+              </g>
+            ) : null}
           </g>
         )}
       </g>
@@ -321,7 +348,7 @@ const C08Pensa: React.FC<{ f: number }> = ({ f }) => {
   const balao = M(f, 2810, "solto");
   return (
     <svg width={W} height={H}>
-      <g transform="translate(540 960) scale(1.15) translate(-540 -900)">
+      <g transform={f >= 2905 ? "translate(540 960) scale(1.5) translate(-540 -1150)" : "translate(540 960) scale(1.15) translate(-540 -900)"}>
         <Desf id="c8p" px={7}>
           <SalaoHotel f={f} luz="abajur" id="s8p" janelaX={820} quadroX={70} />
         </Desf>
@@ -383,10 +410,10 @@ export const C09: React.FC<{ f: number }> = ({ f }) => {
     const frente = Math.sin(orb) > 0;
     const morde = ff >= 3402;
     const recua = ff >= 3402 && ff < 3412 ? (ff - 3402) / 10 : 0;
-    const peixeX = morde ? 540 + 130 + 160 * recua - (ff >= 3412 ? Math.min(1, (ff - 3412) / 6) * 280 : 0) : 540 + Math.cos(orb) * 360;
+    const peixeX = morde ? 540 + 130 + 160 * recua - (ff >= 3412 ? Math.min(1, (ff - 3412) / 6) * 280 : 0) : 540 + Math.cos(orb) * 250;
     const peixeY = morde ? anzolY + 60 : anzolY + 80 + Math.sin(orb * 2) * 60;
     const peixeEsc = morde ? 0.75 : frente ? 0.8 : 0.55;
-    const peixe = f >= 3360 ? <Peixe x={peixeX} y={peixeY} esc={peixeEsc} lado={morde ? 1 : Math.cos(orb + 0.01) < 0 ? 1 : -1} boca={morde && ff < 3420 ? 1 : 0} f={f} /> : null;
+    const peixe = f >= 3360 ? <Peixe x={peixeX} y={peixeY} esc={peixeEsc} lado={morde ? 1 : Math.cos(orb + 0.01) < 0 ? 1 : -1} boca={morde && ff < 3420 ? 1 : 0} f={f} bigode={f >= 3390 && f < 3450} /> : null;
     return (
       <svg width={W} height={H}>
         <g transform={`translate(${tr.x} ${tr.y})`}>
@@ -425,15 +452,15 @@ export const C09: React.FC<{ f: number }> = ({ f }) => {
   }
   // P30: golpista (some) x funcionário corrupto (mão estendida)
   if (f < 3790) {
-    const aparece = M(f, 3703, "solto");
+    const aparece = M(f, 3673, "natural");
     return (
       <svg width={W} height={H}>
         {fundo}
         <rect x={140} y={830} width={280} height={680} rx={60} fill="none" stroke="#c8ccd8" strokeWidth={6} strokeDasharray="22 18" opacity={0.6} />
         {f >= 3600 ? <path d="M 200 1000 L 360 1160 M 360 1000 L 200 1160" stroke="#e04848" strokeWidth={26} strokeLinecap="round" transform={`translate(280 1080) scale(${M(f, 3600, "solto")}) translate(-280 -1080)`} /> : null}
         {aparece > 0.01 ? (
-          <g transform={`translate(780 1500) scale(${aparece}) translate(-780 -1500)`}>
-            <Boneco2D id="cor9" d={CORRUPTO} pose={vivo(P(780, 1500, 0.7, { bracoD: { ombro: 70, cotovelo: -40 }, maoD: "aberta" }), f)} rosto={{ olhos: 0.8, olhar: [-0.4, 0], sobrancelha: 8, sobrancelhaY: 0, sorriso: 0.2, boca: 0, canto: 0.4, bochecha: 0.3 }} />
+          <g transform={`translate(690 1500) scale(${aparece}) translate(-690 -1500)`}>
+            <Boneco2D id="cor9" d={CORRUPTO} pose={vivo(P(690, 1500, 0.7, { bracoD: { ombro: 70, cotovelo: -40 }, maoD: "aberta" }), f)} rosto={{ olhos: 0.8, olhar: [-0.4, 0], sobrancelha: 8, sobrancelhaY: 0, sorriso: 0.2, boca: 0, canto: 0.4, bochecha: 0.3 }} />
           </g>
         ) : null}
         {f >= 3740 ? <path d="M 700 600 l 40 44 l 90 -100" stroke="#2e9b6a" strokeWidth={26} fill="none" strokeLinecap="round" strokeLinejoin="round" transform={`translate(760 600) scale(${M(f, 3740, "solto")}) translate(-760 -600)`} /> : null}
@@ -448,13 +475,13 @@ export const C09: React.FC<{ f: number }> = ({ f }) => {
       <g transform={`translate(${tr.x} ${tr.y})`}>
         {fundo}
         {[0, 1, 2, 3, 4].map((i) => (
-          <Boneco2D key={i} id={`fi${i}`} d={CINZA} pose={vivo(P(160 + i * 190, 1250, 0.3, { peD: { dx: 0, dy: Math.floor((f + i * 7) / 8) % 2 ? -14 : 0 }, bracoD: i % 2 ? { ombro: 60, cotovelo: -100 } : { ombro: 16, cotovelo: -10 } }), f, i)} rosto={{ olhos: 0.7, olhar: [0, 0.5], sobrancelha: 12, sobrancelhaY: 0, sorriso: -0.2, boca: 0, canto: 0, bochecha: 0.3 }} />
+          <Boneco2D key={i} id={`fi${i}`} d={CINZA} pose={vivo(P(120 + i * 210, 980, 0.28, { peD: { dx: 0, dy: Math.floor((f + i * 7) / 8) % 2 ? -14 : 0 }, bracoD: i % 2 ? { ombro: 35, cotovelo: -125 } : { ombro: 16, cotovelo: -10 } }), f, i)} rosto={{ olhos: 0.7, olhar: [0, 0.5], sobrancelha: 12, sobrancelhaY: 0, sorriso: -0.2, boca: 0, canto: 0, bochecha: 0.3 }} />
         ))}
-        <g transform="translate(540 1180)">
+        <g transform={f >= 3946 ? "translate(540 960) scale(1.6) translate(0 -180) scale(0.85)" : "translate(540 1300) scale(0.85)"}>
           {brilho > 0 ? <circle r={420} fill="#ffd23f" opacity={0.25 * brilho} /> : null}
           <Documento x={0} y={0} esc={1.05} rot={-3} carimbo={0} />
         </g>
-        {f >= 3862 ? <Carimbo texto="URGENTE" x={560} y={1300} t={f - 3863} rot={-12} tamanho={130} /> : null}
+        {f >= 3862 ? <g transform={f >= 3946 ? "translate(540 960) scale(1.6) translate(-540 -1130)" : ""}><Carimbo texto="URGENTE" x={560} y={1400} t={f - 3863} rot={-12} tamanho={130} /></g> : null}
       </g>
       {claro > 0 ? <rect width={W} height={H} fill="#ffffff" opacity={Math.min(1, claro * 1.5)} /> : null}
     </svg>
@@ -465,12 +492,18 @@ export const C09: React.FC<{ f: number }> = ({ f }) => {
 export const C10: React.FC<{ f: number }> = ({ f }) => {
   if (f < 4240) {
     const zoom = lin(f, 4126, 4190, 1.8, 1.2, CURVA.suave);
-    const pose = vivo(P(540, 2050, 1.0), f);
+    const base10 = P(540, 1900, 1.0);
+    const cab0 = posCabeca(base10);
+    const lapel = M(f, 4147, "natural");
+    const bLap = alcancar(base10, "E", [cab0[0] - 30, cab0[1] + 300], 80);
+    const pose = vivo({ ...base10, bracoE: { ombro: 16 + (bLap.ombro - 16) * lapel, cotovelo: -10 + (bLap.cotovelo + 10) * lapel }, maoNaFrente: lapel > 0.3 ? "E" : undefined }, f);
     const cab = posCabeca(pose);
+    const cx = lin(f, 4126, 4190, cab[0] - 130, 540, CURVA.suave);
+    const cy = lin(f, 4126, 4190, cab[1] + 240, cab[1] + 160, CURVA.suave);
     const vira = lin(f, 4186, 4200, 0, 1, CURVA.suave);
     return (
       <svg width={W} height={H}>
-        <g transform={`translate(540 960) scale(${zoom}) translate(-540 ${-960 + (zoom - 1.2) * 300})`}>
+        <g transform={`translate(540 960) scale(${zoom}) translate(${-cx} ${-cy})`}>
           <rect width={W} height={H} fill="#5a3a2a" />
           <rect x={90} y={300} width={900} height={760} rx={30} fill="#bfe3ff" stroke="#1d1424" strokeWidth={10} />
           <g>
@@ -491,7 +524,7 @@ export const C10: React.FC<{ f: number }> = ({ f }) => {
             </g>
           </g>
           <Boneco2D id="lu10" d={LUSTIG_RUA} pose={pose} rosto={pisca(f < 4150 ? RL.vendedor : { ...RL.vendedor, canto: 0.8, olhos: f >= 4215 && f < 4225 ? 0.1 : 0.78 }, f, "lu10")} />
-          <Cracha x={cab[0] - 130} y={cab[1] + 420} vira={vira} esc={0.85} />
+          <Cracha x={cab[0] - 130} y={cab[1] + 240} vira={vira} esc={0.85} />
         </g>
         <EtiquetaHUD texto="VICTOR LUSTIG: GOLPISTA" x={540} y={260} s={M(f, 4200, "solto")} cor="#ff6b6b" />
       </svg>
@@ -509,7 +542,19 @@ export const C10: React.FC<{ f: number }> = ({ f }) => {
   return (
     <svg width={W} height={H}>
       <rect width={W} height={H} fill="#3a2752" />
-      <g transform={`translate(${sai} 0)`}>
+      <g stroke="#1d1424">
+        <rect x={0} y={1350} width={W} height={14} fill="#5a4a6a" />
+        <rect x={0} y={1400} width={W} height={14} fill="#5a4a6a" />
+        {new Array(12).fill(0).map((_, i) => {
+          const x = ((i * 110 - (f > 4300 ? (f - 4300) * 14 : 0)) % 1320 + 1320) % 1320 - 120;
+          return <rect key={i} x={x} y={1340} width={40} height={84} fill="#4a3a2a" strokeWidth={3} />;
+        })}
+      </g>
+      {new Array(4).fill(0).map((_, i) => {
+        const t = ((f + i * 15) % 60) / 60;
+        return <circle key={i} cx={300 + sai * 1.2 - t * 200} cy={380 - t * 220} r={30 + t * 50} fill="#d8d0e0" opacity={0.6 * (1 - t)} />;
+      })}
+      <g transform={`translate(${sai} 0) translate(540 1000) scale(1.2) translate(-540 -880)`}>
         <rect x={60} y={500} width={960} height={720} rx={30} fill="#5a3a2a" stroke="#1d1424" strokeWidth={10} />
         <rect x={140} y={560} width={800} height={480} rx={20} fill="#a0d2f4" stroke="#1d1424" strokeWidth={8} />
         <defs>
@@ -545,7 +590,7 @@ export const C11: React.FC<{ f: number }> = ({ f }) => {
   const zoom = f < 4416 ? 1 : lin(f, 4416, 4466, 1, 1.6, CURVA.suave);
   const chega = M(f, 4342, "pesado");
   const vermelho = lin(f, 4420, 4440, 0, 1);
-  const d0: Design = { ...POISSON_RUA, pele: mistura(POISSON.pele, "#f0a088", vermelho), peleSombra: mistura(POISSON.peleSombra, "#d8826c", vermelho) };
+  const d0: Design = { ...POISSON_RUA, pele: mistura(POISSON.pele, "#e86f5a", vermelho), peleSombra: mistura(POISSON.peleSombra, "#cc5a48", vermelho) };
   const cobre = f >= 4446 && f < 4512;
   const g = giro(f, 4512, 10);
   const virou = f >= 4517;
@@ -554,14 +599,14 @@ export const C11: React.FC<{ f: number }> = ({ f }) => {
   const base = P(x, 1700 + (1 - chega) * 0, 0.6);
   const cab = posCabeca(base);
   const hesita = f >= 4360 && f < 4400 ? Math.sin(((f - 4360) / 40) * Math.PI) : 0;
-  const bE = cobre ? alcancar(base, "E", [cab[0] - 40, cab[1] + 20]) : { ombro: 16, cotovelo: -10 };
-  const bD = cobre ? alcancar(base, "D", [cab[0] + 40, cab[1] + 20]) : { ombro: 16 + 50 * hesita, cotovelo: -10 - 30 * hesita };
+  const bE = cobre ? alcancar(base, "E", [cab[0] - 75, cab[1] + 115], 90) : { ombro: 16, cotovelo: -10 };
+  const bD = cobre ? alcancar(base, "D", [cab[0] + 75, cab[1] + 115], 90) : { ombro: 16 + 50 * hesita, cotovelo: -10 - 30 * hesita };
   const semChapeu: Design = { ...d0, chapeu: undefined };
   const w = andarPerfil(f / 2, 0.8, 12);
   const pose: Pose = virou
     ? { ...PERFIL_BASE, x, y: 1700 - (anda ? w.bob : 0), escala: 0.6, lado: -1, inclina: 8, cabeca: 10, peE: anda ? w.peE : PERFIL_BASE.peE, peD: anda ? w.peD : PERFIL_BASE.peD, bracoE: w.bracoE, bracoD: w.bracoD, largura: g.largura }
     : vivo({ ...base, bracoE: bE, bracoD: bD, maoE: cobre ? "aberta" : "bola", maoD: hesita > 0.3 || cobre ? "aberta" : "bola", maoNaFrente: cobre ? "ambas" : undefined, largura: f >= 4512 ? g.largura : 1 }, f);
-  const rosto = pisca(f < 4416 ? RP.desconfiado : { ...RP.vergonha, olhar: f >= 4480 && f < 4500 ? [0.4, -0.3] : [0, 0.6] }, f, "po11");
+  const rosto = pisca(f < 4416 ? RP.desconfiado : { ...RP.vergonha, vergonha: vermelho, olhar: f >= 4480 && f < 4500 ? [0.4, -0.3] : [0, 0.6] }, f, "po11");
   return (
     <svg width={W} height={H}>
       <g transform={`translate(540 960) scale(${zoom}) translate(${-540 + (zoom - 1) * -60} ${-960 + (zoom - 1) * -330})`}>
@@ -581,7 +626,7 @@ export const C11: React.FC<{ f: number }> = ({ f }) => {
           <Boneco2D id="po11" d={cobre ? semChapeu : d0} pose={pose} rosto={rosto} />
         </g>
         {cobre ? (
-          <g transform={`translate(${cab[0]} ${cab[1] + 30}) scale(0.62)`}>
+          <g transform={`translate(${cab[0]} ${cab[1] + 150 - (f >= 4480 && f < 4500 ? 25 : 0)}) scale(0.85) rotate(-12)`}>
             <Chapeu c={POISSON_RUA.chapeu!} />
           </g>
         ) : null}
@@ -590,7 +635,7 @@ export const C11: React.FC<{ f: number }> = ({ f }) => {
           : null}
       </g>
       <rect width={W} height={H} fill="#c8d0e0" opacity={0.06} />
-      <EtiquetaHUD texto="VERGONHA DEMAIS PRA DENUNCIAR" x={540} y={260} s={M(f, 4446, "solto")} tamanho={58} />
+      <EtiquetaHUD texto="VERGONHA DEMAIS PRA DENUNCIAR" x={540} y={260} s={M(f, 4446, "natural")} tamanho={48} />
     </svg>
   );
 };
