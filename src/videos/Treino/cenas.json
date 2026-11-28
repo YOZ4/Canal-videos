@@ -1,0 +1,74 @@
+[
+ {
+  "id": "C01",
+  "de": 0.0,
+  "ate": 4.26,
+  "fala": "Você coloca só a barra vazia no supino… e seu braço treme inteiro."
+ },
+ {
+  "id": "C02",
+  "de": 4.26,
+  "ate": 7.24,
+  "fala": "\"Cachinho, isso aí é cabo de vassoura?\", ri o Diego."
+ },
+ {
+  "id": "C03",
+  "de": 7.24,
+  "ate": 14.0,
+  "fala": "A barra pesa vinte quilos. O Topete treina peito todo santo dia e dorme cinco horas por noite."
+ },
+ {
+  "id": "C04",
+  "de": 14.0,
+  "ate": 18.7,
+  "fala": "Você vai fazer diferente: três treinos por semana, comida de verdade… e cama cedo."
+ },
+ {
+  "id": "C05",
+  "de": 18.7,
+  "ate": 26.2,
+  "fala": "Duas semanas depois, você já levanta mais peso. Mas no espelho… nada mudou. \"Força de mentirinha\", diz o Diego."
+ },
+ {
+  "id": "C06",
+  "de": 26.2,
+  "ate": 32.4,
+  "fala": "Dois meses depois, você tira folga. O Diego posta foto treinando às duas da manhã: \"Descanso é pra fraco.\""
+ },
+ {
+  "id": "C07",
+  "de": 32.4,
+  "ate": 39.1,
+  "fala": "Seis meses depois, a camiseta começa a apertar. E o Diego, treinando o dobro… parou de crescer. Como assim?"
+ },
+ {
+  "id": "C08",
+  "de": 39.1,
+  "ate": 48.1,
+  "fala": "Sabe por quê? No começo, quem fica forte é o seu cérebro: ele aprende a ligar mais fibras do músculo ao mesmo tempo. Por isso a força chega antes do tamanho."
+ },
+ {
+  "id": "C09",
+  "de": 48.1,
+  "ate": 58.88,
+  "fala": "E o músculo não cresce no treino. Ele cresce depois. A construção de músculo mais que dobra nas vinte e quatro horas seguintes… e uma única noite sem dormir corta essa obra em dezoito por cento."
+ },
+ {
+  "id": "C10",
+  "de": 58.88,
+  "ate": 64.4,
+  "fala": "É como uma reforma: o treino quebra a parede, e o descanso levanta ela de novo… maior."
+ },
+ {
+  "id": "C11",
+  "de": 64.4,
+  "ate": 71.95,
+  "fala": "Um ano depois, você coloca oitenta quilos na barra. A Bia passa e pergunta: \"Esse aí é o Capitão América?\" O Diego fica mudo."
+ },
+ {
+  "id": "C12",
+  "de": 71.95,
+  "ate": 76.59,
+  "fala": "Porque o treino que mais te fez crescer… foi o dia em que você nem foi pra academia."
+ }
+]

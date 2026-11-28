@@ -70,6 +70,7 @@ export const mixPose = (a: Pose, b: Pose, t: number): Pose => ({
   biceps: mixN(a.biceps, b.biceps, t),
   gira: mixN(a.gira, b.gira, t),
   joelhoFrente: mixN(a.joelhoFrente ?? 0, b.joelhoFrente ?? 0, t),
+  musculo: mixN(a.musculo ?? 0, b.musculo ?? 0, t),
   inclina: mixN(a.inclina, b.inclina, t),
   estica: mixN(a.estica, b.estica, t),
   agacha: mixN(a.agacha, b.agacha, t),
@@ -90,6 +91,7 @@ export const mixRosto = (a: Rosto, b: Rosto, t: number): Rosto => ({
   boca: mixN(a.boca, b.boca, t),
   canto: mixN(a.canto, b.canto, t),
   bochecha: mixN(a.bochecha, b.bochecha, t),
+  olheiras: mixN(a.olheiras ?? 0, b.olheiras ?? 0, t),
 });
 
 export const kPose = (f: number, keys: Key<Pose>[]): Pose => {

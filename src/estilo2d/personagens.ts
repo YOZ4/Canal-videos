@@ -3,7 +3,7 @@
  * Para criar um personagem novo, copie um destes e troque cores/cabelo.
  */
 
-export type TipoCabelo = "cacheado" | "topete";
+export type TipoCabelo = "cacheado" | "topete" | "longo";
 
 export type Design = {
   nome: string;
@@ -125,3 +125,23 @@ export const CANDIDATOS: Design[] = [
   { ...LUCAS, nome: "c4", numero: undefined, camisa: "#3a8fd6", camisaSombra: "#2a6cb0", manga: "#3080c4", corCabelo: "#2a1a12", pele: "#8d5a3b", peleSombra: "#734528", olhos: "#2a1a12" },
   { ...DIEGO, nome: "c5", camisa: "#e2e2e8", camisaSombra: "#bcbcc6", manga: "#cfcfd8", corCabelo: "#c03a3a", corCabeloSombra: "#8e2626", sobrancelha: "#8e2626", brilhoCabelo: "#ff9a9a", pele: "#f4cdb0", olhos: "#2a6a3a" },
 ];
+
+/** Bia (crush do Lucas) */
+export const BIA: Design = {
+  ...DIEGO,
+  nome: "Bia",
+  pele: "#c98b62",
+  peleSombra: "#ad7150",
+  camisa: "#e86a9a",
+  camisaSombra: "#c44f7c",
+  manga: "#d65c8a",
+  calca: "#3f5f8f",
+  calcaSombra: "#33508a",
+  olhos: "#3a2a20",
+  cabelo: "longo",
+  corCabelo: "#2a1a1e",
+  corCabeloSombra: "#140c10",
+  sobrancelha: "#2a1a1e",
+  sobrancelhaGrossa: false,
+  brilhoCabelo: "#6a4a55",
+};
