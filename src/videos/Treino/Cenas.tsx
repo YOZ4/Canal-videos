@@ -73,7 +73,7 @@ export const C01: React.FC<P> = ({ de }) => {
   const { s, g, f } = useT(de);
   const ligado = s >= 0.1;
   const yaw = k(s, [[0, 18], [2.2, 18], [4.1, 64, CURVA.suave]]);
-  const zoom = k(s, [[0, 1.7], [2.2, 1.78], [4.1, 0.82, CURVA.suave]]);
+  const zoom = k(s, [[0, 1.7], [2.2, 1.78], [4.1, 1.08, CURVA.suave]]);
   const sobe = k(s, [[0.1, 0.12], [4.2, 0.55, CURVA.suave]]);
   const pts = pontosSupino(yaw, sobe);
   const centroPlano = { x: pts.ancora.x - 330, y: pts.ancora.y - 160 };
@@ -239,7 +239,7 @@ export const C03: React.FC<P> = ({ de }) => {
           <Palco cam={{ x: 560, y: 900, zoom: 1.4 }}>
             <Academia escura={0.25} />
             <Boneco2D id="c03b" d={DIEGO} pose={frente(470, { cabeca: -8, bracoD: { ombro: 150, cotovelo: 20 }, maoD: "aberta", estica: 1 + Math.max(0, Math.sin((s - 12.3) * 2)) * 0.03 })} rosto={vivo(s < 13.3 ? { ...CANSADO, olhos: 0, boca: 1, sorriso: 0 } : CANSADO, g, "c03b")} />
-            <Relogio x={860} y={560} r={110} horas={5} />
+            <Relogio x={760} y={560} r={100} horas={5} />
           </Palco>
         )}
       </AbsoluteFill>
@@ -275,7 +275,7 @@ export const C04: React.FC<P> = ({ de }) => {
     <>
       <Palco cam={{ x: 540 + imp.x, y: 980 + imp.y, zoom: k(s, [[14, 1.0], [18.7, 1.08]]) }}>
         <QuartoLucas noite={0} semCalendario />
-        <g transform={`translate(540 500) scale(${pop(14.9) * 0.78})`}>
+        <g transform={`translate(330 520) scale(${pop(14.9) * 0.9})`}>
           <CalendarioSemana x={0} y={0} marcados={[0, 2, 4]} />
         </g>
         <g transform={`translate(230 830) scale(${pop(16.4) * 0.9})`}>
@@ -287,8 +287,8 @@ export const C04: React.FC<P> = ({ de }) => {
         <Boneco2D id="c04" d={LUCAS} pose={pose} rosto={vivo(DETERMINADO, g, "c04")} />
         {soco > 0.9 && s < 18.5 ? <Impacto x={540 + 20} y={1650 - 560 * 0.68} f={Math.round(g)} de={Math.round(18.15 * 30)} dur={10} /> : null}
       </Palco>
-      <Rotulo2 texto="3 TREINOS/SEMANA" x={540} y={330} de={L(14.9, de)} tamanho={56} />
-      <Rotulo2 texto="COMIDA DE VERDADE" x={250} y={1010} de={L(16.4, de)} tamanho={44} cor="#ffffff" />
+      <Rotulo2 texto="3 TREINOS/SEMANA" x={360} y={330} de={L(14.9, de)} tamanho={56} />
+      <Rotulo2 texto="COMIDA DE VERDADE" x={300} y={1010} de={L(16.4, de)} tamanho={44} cor="#ffffff" />
       <Rotulo2 texto="CAMA CEDO" x={850} y={1010} de={L(17.9, de)} tamanho={44} cor="#ffffff" />
       <Som src="pop" de={L(14.9, de)} volume={0.5} />
       <Som src="pop" de={L(16.4, de)} volume={0.5} />
@@ -520,8 +520,8 @@ export const C08: React.FC<P> = ({ de }) => {
         )}
       </Palco>
       {s < 42.8 ? <Rotulo2 texto="O CÉREBRO APRENDE" x={540} y={260} de={L(40.3, de)} tamanho={72} /> : null}
-      {s > 43.0 && !balanca ? <Placar titulo="FIBRAS LIGADAS" valor={`${acesas}`} x={540} y={330} de={L(43.0, de)} /> : null}
-      {balanca ? <Rotulo2 texto="FORÇA ANTES DO TAMANHO" x={540} y={330} de={L(45.9, de)} tamanho={66} /> : null}
+      {s > 43.0 && !balanca ? <Placar titulo="FIBRAS LIGADAS" valor={`${acesas}`} x={860} y={760} de={L(43.0, de)} /> : null}
+      {balanca ? <Rotulo2 texto="FORÇA ANTES DO TAMANHO" x={540} y={760} de={L(45.9, de)} tamanho={52} /> : null}
       {new Array(4).fill(0).map((_, i) => (
         <Som key={i} src="zap" de={Math.max(0, S(tLiga + i * 0.45) - de)} volume={0.45} />
       ))}
@@ -618,7 +618,7 @@ export const C10: React.FC<P> = ({ de }) => {
   const { s, g } = useT(de);
   const HIT = 60.4;
   const REC = 62.0;
-  const marreta = k(s, [[59.6, 0], [60.15, -0.35, CURVA.sai], [HIT, 1, CURVA.entra], [60.9, 0.9]]);
+  const marreta = k(s, [[59.6, 0], [60.15, -0.2, CURVA.sai], [HIT, 1, CURVA.entra], [60.9, 0.92]]);
   const zoom = k(s, [[62.5, 1], [64.2, 0.84, CURVA.suave]]);
   // parede antes: 5 colunas x 6 linhas; depois: 6 x 8 (maior)
   const antes = { cols: 5, rows: 6, w: 120, h: 56 };
@@ -672,7 +672,7 @@ export const C10: React.FC<P> = ({ de }) => {
         {tijolos}
         {/* marreta TREINO */}
         {s < 61.4 ? (
-          <g transform={`translate(860 ${base - 120}) rotate(${-80 + marreta * 80})`}>
+          <g transform={`translate(860 ${base - 120}) rotate(${12 - marreta * 92})`}>
             <rect x={-14} y={-420} width={28} height={420} rx={10} fill="#8a5a30" stroke={CONTORNO} strokeWidth={6} />
             <rect x={-90} y={-500} width={180} height={110} rx={14} fill="#6a6f80" stroke={CONTORNO} strokeWidth={8} />
             <text x={0} y={-430} textAnchor="middle" fontFamily="Fredoka" fontWeight={700} fontSize={38} fill="#fff">
@@ -710,7 +710,7 @@ export const C11: React.FC<P> = ({ de }) => {
   const { s, g } = useT(de);
   if (s < 70.7) {
     const yaw = k(s, [[64.4, 18], [66.6, 64, CURVA.suave]]);
-    const zoom = k(s, [[64.4, 1.7], [66.6, 0.82, CURVA.suave]]);
+    const zoom = k(s, [[64.4, 1.7], [66.6, 0.95, CURVA.suave]]);
     const sobe = 0.55 + 0.45 * Math.sin((s - 64.4) * 2.2 + Math.PI / 2);
     const pts = pontosSupino(yaw, sobe);
     const t = k(s, [[64.4, 0], [66.6, 1, CURVA.suave]]);
@@ -790,7 +790,7 @@ export const C12: React.FC<P> = ({ de }) => {
         <Coberta x={0} respira={respira(g)} />
         {push < 0.3 ? <Zzz x={330} y={1080} g={g} /> : null}
       </Palco>
-      <Rotulo2 texto="O SEGREDO: O DIA DE FOLGA" x={540} y={1180} de={L(73.5, de)} tamanho={64} />
+      <Rotulo2 texto="O SEGREDO: O DIA DE FOLGA" x={540} y={400} de={L(73.5, de)} tamanho={64} />
       <Som src="ronco-leve" de={L(72.1, de)} volume={0.45} />
       <Som src="ding" de={L(73.5, de)} volume={0.5} />
     </>
